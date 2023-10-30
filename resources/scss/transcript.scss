@@ -1,0 +1,78 @@
+.transcript-wrapper {
+    padding: 0 3rem;
+
+    .transcript-title {
+        text-transform: uppercase;
+        text-align: center;
+        padding: 1.5rem;
+        font-weight: bold;
+    }
+
+    .transcript-header {
+        padding: 2.5rem;
+        box-shadow: 4px 4px rgba(100, 100, 100, 0.5);
+        border: 1px solid #cccccc;
+        margin: 0.5rem auto 2.5rem auto;
+
+        .transcript-item {
+            text-transform: uppercase;
+
+            .caption {
+                font-weight: 700;
+                display: inline-block;
+                width: 2in;
+            }
+        }
+    }
+
+    .list-table {
+        width: 100%;
+
+        thead {
+            background-color: #eee;
+
+            tr {
+                th {
+                    padding: 0.25rem 0.5rem;
+                    text-transform: uppercase;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    padding: 0.25rem 0.5rem;
+                }
+            }
+        }
+    }
+
+    .authority {
+        .principal {
+            display: inline-block;
+            width: 3in;
+
+            .stamp {
+                display: block;
+                height: 1.5rem;
+            }
+
+            .signature {
+                display: block;
+                height: 1.5rem;
+                border-bottom: 1px solid #000;
+                margin: 1rem 0 0.5rem;
+            }
+
+            .name {
+                text-transform: uppercase;
+            }
+
+            .position {
+                text-transform: uppercase;
+                font-weight: 700;
+            }
+        }
+    }
+}
