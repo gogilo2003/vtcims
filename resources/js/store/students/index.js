@@ -4,6 +4,7 @@ import mutations from './mutations';
 
 const state = {
     students: [],
+    meta: {},
     student: {},
     filtered: {}
 };

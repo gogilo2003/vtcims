@@ -3,17 +3,37 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Student extends Model
 {
     use HasFactory;
 
-    protected $appends = ['admission_no', 'name', 'intake_name', 'course_name', 'sponsor_name', 'program_name'];
+    protected $appends = [
+        'admission_no',
+        'name',
+        'intake_name',
+        'course_name',
+        'sponsor_name',
+        'program_name',
+        'student_role_name',
+        'photo_url'
+    ];
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo ? Storage::disk('public')->url($this->photo) : \Laravolt\Avatar\Facade::create($this->name)->toBase64();
+    }
 
     public function getIntakeNameAttribute()
     {
         return $this->intake->name;
+    }
+
+    public function getStudentRoleNameAttribute()
+    {
+        return $this->role->name;
     }
 
     public function getCourseNameAttribute()

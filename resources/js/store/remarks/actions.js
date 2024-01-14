@@ -5,7 +5,7 @@ const token = localStorage.getItem('token')
 export default {
     async list({ commit }) {
         axios.get(`/api/eschool/grading/remarks?api_token=${token}`).then(response => {
-            commit('SET_REMARKS', response.data)
+            commit('SET_REMARKS', response.data.data)
         })
     },
     async view({ commit }, payload) {
@@ -16,7 +16,7 @@ export default {
     async store({ commit }, payload) {
         payload.api_token = token
         return axios.post(`/api/eschool/grading/remarks`, payload).then(response => {
-            commit('ADD_REMARK', response.data.fee)
+            commit('ADD_REMARK', response.data.remark)
             return response
         });
     },

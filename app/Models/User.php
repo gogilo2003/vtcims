@@ -42,4 +42,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    function isAdmin(): bool
+    {
+        return $this->is_admin;
+    }
+
+    function hasPermission(string $permission = null): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+        return false;
+    }
 }

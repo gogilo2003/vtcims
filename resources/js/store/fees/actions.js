@@ -15,7 +15,7 @@ export default {
     },
     async actionStore({ commit }, payload) {
         payload.api_token = token
-        return axios.post(`/api/eschool/fees`, payload).then(response => {
+        return axios.post(`/api/eschool/fees/?api_token=${token}`, payload).then(response => {
             commit('ADD_FEE', response.data.fee)
             return response
         });
@@ -24,5 +24,8 @@ export default {
         return axios.patch(`/api/eschool/fees/view/`, { api_token: token, ...payload }).then(response => {
             commit('UPDATE_FEE', response.data.fee, payload)
         })
+    },
+    actionSet({ commit }, payload) {
+        commit('SET_FEE', payload)
     }
 }

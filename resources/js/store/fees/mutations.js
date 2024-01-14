@@ -2,6 +2,9 @@ export default {
     SET_FEES: (state, fees) => {
         state.fees = fees
     },
+    SET_FEE: (state, fee) => {
+        state.fee = fee
+    },
     ADD_FEE: (state, fee) => {
         state.fees.unshift(fee)
     },

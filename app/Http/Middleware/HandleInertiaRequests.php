@@ -30,6 +30,21 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $notification = [];
+
+        if (session('success')) {
+            $notification['success'] = session('success');
+        }
+        if (session('warning')) {
+            $notification['warning'] = session('warning');
+        }
+        if (session('danger')) {
+            $notification['danger'] = session('danger');
+        }
+        if (session('info')) {
+            $notification['info'] = session('info');
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -39,6 +54,7 @@ class HandleInertiaRequests extends Middleware
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+            'notification' => $notification,
         ];
     }
 }

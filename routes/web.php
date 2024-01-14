@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Vtcims\StudentController;
+use App\Http\Controllers\V1\StudentController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -34,6 +34,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('students')->name('students')->group(function () {
         Route::get('', [StudentController::class, 'index']);
+        Route::post('', [StudentController::class, 'store'])->name('-store');
+        Route::patch('{student}', [StudentController::class, 'update'])->name('-update');
+        Route::delete('{student}', [StudentController::class, 'destroy'])->name('-destroy');
+        Route::post('photo', [StudentController::class, 'photo'])->name('-photo');
     });
 
     Route::prefix('profile')->name('profile')->group(function () {

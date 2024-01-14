@@ -1,10 +1,16 @@
 <script lang="ts" setup>
 import NavLink from '@/Components/NavLink.vue';
-import { links } from '../Pages/links';
+import { links } from '../links';
+
+defineProps<{
+    show: boolean;
+}>()
+
 
 </script>
 <template>
-    <div class="h-[calc(100svh_-_4rem)] sticky top-0 w-56 bg-gray-800 py-16">
+    <div class="h-[calc(100svh_-_4rem)] sticky top-16 bg-gray-800 py-16 flex flex-col gap-4 overflow-hidden transition-['width'] duration-500 ease-in-out"
+        :class="{ 'w-64': show, 'w-0': !show }">
         <NavLink v-for="{ name, caption } in links" :href="route(name)" :active="route().current(name)">
             {{ caption }}
         </NavLink>

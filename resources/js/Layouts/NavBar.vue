@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import Icon from '@/Components/Icons/Icon.vue';
 
 const showingNavigationDropdown = ref(false);
 
@@ -13,19 +13,37 @@ defineProps({
     title: String
 })
 
+const emit = defineEmits(['toggle'])
+const toggleState = ref(false)
+
+const toggle = () => {
+    toggleState.value = !toggleState.value
+    emit('toggle', toggleState.value)
+}
+
+onMounted(() => {
+    toggleState.value = localStorage.getItem('toggleState') == "1" ? true : false
+    emit('toggle', toggleState.value)
+})
+
+watch(() => toggleState.value, value => {
+    localStorage.setItem('toggleState', value ? "1" : "0")
+})
 </script>
 <template>
-    <nav class="bg-white border-b border-gray-100">
+    <nav class="bg-white border-b border-lime-500 sticky top-0">
         <!-- Primary Navigation Menu -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <!-- Logo -->
                     <div class="shrink-0 flex items-center gap-2">
-                        <Link :href="route('dashboard')">
-                        <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
-                        </Link>
-                        <div v-text="title" />
+                        <button @click="toggle">
+                            <!-- <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" /> -->
+                            <Icon :type="toggleState ? 'close' : 'menu'"
+                                class="block h-7 w-auto text-gray-400 hover:text-gray-500" />
+                        </button>
+                        <div class="text-sm uppercase font-light" v-text="title" />
                     </div>
                 </div>
 
@@ -62,34 +80,18 @@ defineProps({
                 <!-- Hamburger -->
                 <div class="-mr-2 flex items-center sm:hidden">
                     <button @click="showingNavigationDropdown = !showingNavigationDropdown"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                            <path :class="{
-                                hidden: showingNavigationDropdown,
-                                'inline-flex': !showingNavigationDropdown,
-                            }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 6h16M4 12h16M4 18h16" />
-                            <path :class="{
-                                hidden: !showingNavigationDropdown,
-                                'inline-flex': showingNavigationDropdown,
-                            }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:gray-lime-500 transition duration-150 ease-in-out">
+                        <Icon type="person" class="block h-7 w-auto" />
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Responsive Navigation Menu -->
-        <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="sm:hidden">
-            <div class="pt-2 pb-3 space-y-1">
-                <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                    Dashboard
-                </ResponsiveNavLink>
-            </div>
-
+        <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }"
+            class="sm:hidden absolute top-16 left-0 right-0 bg-gray-50">
             <!-- Responsive Settings Options -->
-            <div class="pt-4 pb-1 border-t border-gray-200">
+            <div class="pt-4 py-1 border-t border-b-4 border-lime-500">
                 <div class="px-4">
                     <div class="font-medium text-base text-gray-800">
                         {{ $page.props.auth.user.name }}

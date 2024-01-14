@@ -31,14 +31,14 @@ class CreateStudentsTable extends Migration
             $table->boolean('gender')->nullable();
             $table->date('date_of_admission')->useCurrent();
             $table->integer('intake_id')->unsigned();
-            $table->foreign('intake_id')->references('id')->on('intakes');
             $table->integer('program_id')->unsigned();
-            $table->foreign('program_id')->references('id')->on('programs');
             $table->integer('sponsor_id')->unsigned();
-            $table->foreign('sponsor_id')->references('id')->on('sponsors');
             $table->integer('student_role_id')->unsigned();
-            $table->foreign('student_role_id')->references('id')->on('student_roles');
             $table->timestamps();
+            $table->foreign('intake_id')->references('id')->on('intakes');
+            $table->foreign('program_id')->references('id')->on('programs');
+            $table->foreign('sponsor_id')->references('id')->on('sponsors');
+            $table->foreign('student_role_id')->references('id')->on('student_roles');
         });
     }
 
