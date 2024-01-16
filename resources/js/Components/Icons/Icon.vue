@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import ActivityLog from './ActivityLog.vue'
 import Add from './Add.vue'
 import Address from './Address.vue'
@@ -110,10 +110,12 @@ const icon = computed(() => {
     } else if (props.type == 'person') {
         return Person;
     }
-
+    classes.value = `pi ${props.type}`
     return 'span';
 })
+
+const classes = ref("")
 </script>
 <template>
-    <component :is="icon" />
+    <component :is="icon" :class="classes" />
 </template>

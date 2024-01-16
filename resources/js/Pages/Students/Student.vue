@@ -12,33 +12,9 @@ import Calendar from 'primevue/calendar';
 import { iStudent } from "@/interfaces/index";
 
 const props = defineProps<{
-    show: Boolean,
+    show: boolean,
     edit: Boolean,
-    student: {
-        type: iStudent,
-        default: {
-            id: null,
-            first_name: "",
-            middle_name: "",
-            surname: "",
-            phone: "",
-            email: "",
-            box_no: "",
-            post_code: "",
-            town: "",
-            physical_address: "",
-            date_of_birth: null,
-            birth_cert_no: null,
-            idno: null,
-            gender: null,
-            date_of_admission: null,
-            intake: null,
-            program: null,
-            sponsor: null,
-            student_role: null,
-            status: "",
-        }
-    }
+    student: iStudent
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
@@ -112,7 +88,7 @@ const submit = async () => {
                     detail: page?.props?.notification?.success,
                     life: 3000
                 })
-                close()
+                close(false)
                 resetErrors()
             },
             onError: () => {
@@ -158,7 +134,7 @@ const submit = async () => {
 
                 resetErrors()
 
-                close()
+                close(false)
             },
             onError: () => {
                 toast.add({
@@ -181,8 +157,8 @@ const resetErrors = () => {
 onMounted(() => {
 })
 
-const close = () => {
-    emit('closed', true)
+const close = (value: boolean) => {
+    emit('closed', value)
 }
 
 const visible = ref(false)
@@ -191,14 +167,12 @@ const dialogTitle = computed(() => props.edit ? 'Edit Student' : 'New Student')
 watch(() => props.show, (value) => {
     visible.value = value
 })
+
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog v-model:visible="visible" :closeable="true" @close="close" modal :header="dialogTitle"
+    <Dialog v-model:visible="visible" :closeable="true" @update:visible="close" modal :header="dialogTitle"
         :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-        <template #header>
-            <h4>Student Details</h4>
-        </template>
         <div class="">
             <form @submit.prevent="submit">
                 <div class="card-body">
@@ -334,7 +308,7 @@ watch(() => props.show, (value) => {
                 </div>
                 <div class="flex gap-2 items-center justify-between">
                     <Button type="submit" label="Save" rounded />
-                    <Button type="reset" @click="close" label="Cancel" rounded outlined severity="danger" />
+                    <Button type="reset" @click="close(false)" label="Cancel" rounded outlined severity="danger" />
                 </div>
             </form>
         </div>

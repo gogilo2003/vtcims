@@ -37,7 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('', [StudentController::class, 'store'])->name('-store');
         Route::patch('{student}', [StudentController::class, 'update'])->name('-update');
         Route::delete('{student}', [StudentController::class, 'destroy'])->name('-destroy');
-        Route::post('photo', [StudentController::class, 'photo'])->name('-photo');
+        Route::post('photo/{student}', [StudentController::class, 'picture'])->name('-photo');
     });
 
     Route::prefix('profile')->name('profile')->group(function () {

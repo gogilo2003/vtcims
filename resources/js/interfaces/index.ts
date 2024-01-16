@@ -18,13 +18,13 @@ export interface iStudent {
     physical_address: string,
     date_of_birth: Date,
     birth_cert_no: string,
-    idno: Number,
+    idno: Number | null,
     gender: string,
-    date_of_admission: Date,
-    intake_id: Number,
-    program_id: Number,
-    sponsor_id: Number,
-    student_role_id: Number,
+    date_of_admission: Date | null,
+    intake_id: Number | null,
+    program_id: Number | null,
+    sponsor_id: Number | null,
+    student_role_id: Number | null,
     name: string,
     intake_name: string,
     program_name: string,
@@ -52,4 +52,10 @@ export interface iStudents {
 export interface iItem {
     id: Number,
     name: String
+}
+
+export interface iPhoto {
+    id: Number | null,
+    url: string,
+    photo: string
 }

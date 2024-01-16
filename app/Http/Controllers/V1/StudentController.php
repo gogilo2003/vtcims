@@ -64,6 +64,7 @@ class StudentController extends Controller
             'programs' => $programs,
             'sponsors' => $sponsors,
             'student_roles' => $student_roles,
+            'search' => $search,
         ]);
     }
 
@@ -145,9 +146,10 @@ class StudentController extends Controller
             $file = $request->photo;
 
             if ($file->isValid()) {
-
-                if (Storage::disk('public')->exists($student->photo) && $student->photo) {
-                    Storage::dist('public')->unlink($student->photo);
+                if ($student->photo) {
+                    if (Storage::disk('public')->exists($student->photo)) {
+                        Storage::dist('public')->unlink($student->photo);
+                    }
                 }
 
                 $student->photo = $file->storePublicly('students', ["disk" => "public"]);
