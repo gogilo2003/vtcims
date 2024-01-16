@@ -116,32 +116,33 @@ const uploadPic = (student: iStudent) => {
     <View :show="showView" @closed="onCloseView" :student="student" />
 
     <AuthenticatedLayout title="Students">
-        <div class="pb-3 md:pb-8 flex gap-8">
+        <div class="pb-3 md:pb-8 flex gap-3 justify-between">
             <SecondaryButton @click="newStudent">
                 <Icon type="add" />
-                <span>New Student</span>
+                <span class="hidden md:inline-flex">New Student</span>
             </SecondaryButton>
-            <!-- <div>
+            <div>
                 <span class="relative">
                     <i class="pi pi-search absolute -top-[40%] translate-y-[50%] left-2 opacity-50" />
                     <InputText v-model="searchVal" placeholder="Search" class="px-8 w-full"
-                        :pt="{ root: { class: 'rounded-full focus:ring-primary-500' } }" />
+                        :pt="{ root: { class: 'rounded-full focus:ring-primary-500 text-surface-600 dark:text-surface-200 bg-surface-0 dark:bg-surface-700' } }" />
                 </span>
-            </div> -->
+            </div>
         </div>
         <div class="flex flex-col gap-2">
-            <div class="px-5 py-3 shadow bg-white rounded-lg flex flex-col md:flex-row gap-2 md:items-center justify-between"
+            <div class="px-5 py-3 shadow bg-white dark:bg-gray-700 rounded-lg flex flex-col md:flex-row gap-2 md:items-center justify-between"
                 v-for="student in students.data">
                 <div>
                     <div class="text-sm font-semibold uppercase" v-text="student.name"></div>
-                    <div class="flex flex-col md:flex-row gap-2 md:items-center text-xs capitalize text-gray-600">
-                        <div class="flex gap-2">
+                    <div
+                        class="flex flex-col md:flex-row md:items-center text-xs capitalize text-gray-600 dark:text-gray-400 divide-x">
+                        <div class="flex gap-2 md:pr-2">
                             <span class="md:hidden font-semibold uppercase">Admission Number:</span>
-                            <span v-text="student.admission_no" class="text-lime-700"></span>
+                            <span v-text="student.admission_no" class="text-lime-700 dark:text-lime-500"></span>
                         </div>
-                        <span v-text="student.course_name"></span>
-                        <span v-text="student.program_name"></span>
-                        <span v-text="student.sponsor_name"></span>
+                        <span class="md:px-2" v-text="student.course_name"></span>
+                        <span class="md:px-2" v-text="student.program_name"></span>
+                        <span class="md:px-2" v-text="student.sponsor_name"></span>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-1">

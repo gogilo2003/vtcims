@@ -17,7 +17,7 @@ const toggleState = (value: boolean) => {
 <template>
     <Head :title="title" />
     <div class="transition ease-in-out duration-500">
-        <div class="min-h-screen bg-gray-100 transition ease-in-out duration-500">
+        <div class="min-h-screen bg-gray-100 dark:bg-gray-600 transition ease-in-out duration-500">
             <NavBar :title="title" @toggle="toggleState" />
 
             <div class="flex transition ease-in-out duration-500">

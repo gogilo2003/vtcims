@@ -203,7 +203,7 @@ watch(() => props.show, (value) => {
                             <span class="text-red-400" v-if="page.props.errors.phone"
                                 v-text="page.props.errors.phone"></span>
                         </div>
-                        <div class="relative z-0 col-span-2" :class="{ 'has-error': page.props.errors.email }">
+                        <div class="relative z-0 md:col-span-2" :class="{ 'has-error': page.props.errors.email }">
                             <label :class="{ 'text-red-400': page.props.errors.email }" for="email">Email</label>
                             <InputText id="email" v-model="form.email" />
                             <span class="text-red-400" v-if="page.props.errors.email"
@@ -227,7 +227,8 @@ watch(() => props.show, (value) => {
                             <InputText id="town" v-model="form.town" />
                             <span class="text-red-400" v-if="page.props.errors.town" v-text="page.props.errors.town"></span>
                         </div>
-                        <div class="relative z-0 col-span-3" :class="{ 'has-error': page.props.errors.physical_address }">
+                        <div class="relative z-0 md:col-span-3"
+                            :class="{ 'has-error': page.props.errors.physical_address }">
                             <label :class="{ 'text-red-400': page.props.errors.physical_address }"
                                 for="physical_address">Physical Address</label>
                             <Textarea id="physical_address" v-model="form.physical_address"></Textarea>

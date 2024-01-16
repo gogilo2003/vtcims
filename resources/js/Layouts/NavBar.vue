@@ -31,7 +31,7 @@ watch(() => toggleState.value, value => {
 })
 </script>
 <template>
-    <nav class="bg-white border-b border-lime-500 sticky top-0">
+    <nav class="relative z-10 bg-white dark:bg-gray-800 border-b border-lime-500 sticky top-0">
         <!-- Primary Navigation Menu -->
         <div class="px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
