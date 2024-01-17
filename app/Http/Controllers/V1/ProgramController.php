@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
+use Inertia\Inertia;
 use App\Models\Program;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\StoreProgramRequest;
+use App\Http\Requests\V1\UpdateProgramRequest;
 
 class ProgramController extends Controller
 {
@@ -28,43 +30,35 @@ class ProgramController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProgramRequest $request)
     {
-        //
-    }
+        $program = new Program;
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Program $program)
-    {
-        //
-    }
+        $program->name = $request->name;
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Program $program)
-    {
-        //
+        $program->save();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Program added');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Program $program)
+    public function update(UpdateProgramRequest $request, Program $program)
     {
-        //
+        $program = Program::find($request->id);
+
+        $program->name = $request->name;
+
+        $program->save();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Program updated');
     }
 
     /**
@@ -72,6 +66,10 @@ class ProgramController extends Controller
      */
     public function destroy(Program $program)
     {
-        //
+        $program->delete();
+
+        return redirect()
+            ->back()
+            ->with('global-success', 'Program deleted');
     }
 }

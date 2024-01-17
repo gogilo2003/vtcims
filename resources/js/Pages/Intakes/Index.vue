@@ -52,7 +52,7 @@ watch(() => searchVal.value, debounce((value: string) => {
 </script>
 <template>
     <AuthenticatedLayout title="Intakes">
-        <div class="flex items-center justify-between gap-2 mb-3">
+        <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
             <SecondaryButton @click="newIntake">
                 <Icon type="add" />
                 <span class="hidden md:inline-flex">New Intake</span>
