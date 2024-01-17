@@ -10,8 +10,9 @@ defineProps<{
 </script>
 <template>
     <div class="h-[calc(100svh_-_4rem)] sticky top-16 bg-gray-800 py-16 flex flex-col gap-4 overflow-hidden transition-['width'] duration-500 ease-in-out"
-        :class="{ 'w-64': show, 'w-0': !show }">
-        <NavLink v-for="{ name, caption } in links" :href="route(name)" :active="route().current(name)">
+        :class="{ 'w-72': show, 'w-0': !show }">
+        <NavLink v-for="{ name, caption, items } in links" :href="name ? route(name) : '#'"
+            :active="name ? route().current(name) : false" :items="items">
             {{ caption }}
         </NavLink>
     </div>

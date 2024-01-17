@@ -59,3 +59,31 @@ export interface iPhoto {
     url: string,
     photo: string
 }
+
+
+export interface iMenuItem {
+    name: string,
+    caption: string,
+}
+
+export interface iCourse {
+    id: number,
+    code: string,
+    name: string,
+}
+export interface iSubject {
+    id: number,
+    code: string,
+    name: string,
+    courses: Array<{
+        id: number,
+        code: string,
+        name: string
+    }>
+}
+
+export interface iInstructor {
+    id: number,
+    name: string
+}
+

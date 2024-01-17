@@ -1,10 +1,16 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\V1\StudentController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\V1\CourseController;
+use App\Http\Controllers\V1\IntakeController;
+use App\Http\Controllers\V1\ProgramController;
+use App\Http\Controllers\V1\SponsorController;
+use App\Http\Controllers\V1\StudentController;
+use App\Http\Controllers\V1\SubjectController;
+use App\Http\Controllers\V1\DepartmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +44,43 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('{student}', [StudentController::class, 'update'])->name('-update');
         Route::delete('{student}', [StudentController::class, 'destroy'])->name('-destroy');
         Route::post('photo/{student}', [StudentController::class, 'picture'])->name('-photo');
+    });
+
+    Route::prefix('subjects')->name('subjects')->group(function () {
+        Route::get('', [SubjectController::class, 'index']);
+        Route::post('', [SubjectController::class, 'store'])->name('-store');
+        Route::patch('{subject}', [SubjectController::class, 'update'])->name('-update');
+        Route::delete('{subject}', [SubjectController::class, 'destroy'])->name('-destroy');
+    });
+    Route::prefix('departments')->name('departments')->group(function () {
+        Route::get('', [DepartmentController::class, 'index']);
+        Route::post('', [DepartmentController::class, 'store'])->name('-store');
+        Route::patch('{department}', [DepartmentController::class, 'update'])->name('-update');
+        Route::delete('{department}', [DepartmentController::class, 'destroy'])->name('-destroy');
+    });
+    Route::prefix('courses')->name('courses')->group(function () {
+        Route::get('', [CourseController::class, 'index']);
+        Route::post('', [CourseController::class, 'store'])->name('-store');
+        Route::patch('{course}', [CourseController::class, 'update'])->name('-update');
+        Route::delete('{course}', [CourseController::class, 'destroy'])->name('-destroy');
+    });
+    Route::prefix('programs')->name('programs')->group(function () {
+        Route::get('', [ProgramController::class, 'index']);
+        Route::post('', [ProgramController::class, 'store'])->name('-store');
+        Route::patch('{program}', [ProgramController::class, 'update'])->name('-update');
+        Route::delete('{program}', [ProgramController::class, 'destroy'])->name('-destroy');
+    });
+    Route::prefix('sponsors')->name('sponsors')->group(function () {
+        Route::get('', [SponsorController::class, 'index']);
+        Route::post('', [SponsorController::class, 'store'])->name('-store');
+        Route::patch('{sponsor}', [SponsorController::class, 'update'])->name('-update');
+        Route::delete('{sponsor}', [SponsorController::class, 'destroy'])->name('-destroy');
+    });
+    Route::prefix('intakes')->name('intakes')->group(function () {
+        Route::get('', [IntakeController::class, 'index']);
+        Route::post('', [IntakeController::class, 'store'])->name('-store');
+        Route::patch('{intake}', [IntakeController::class, 'update'])->name('-update');
+        Route::delete('{intake}', [IntakeController::class, 'destroy'])->name('-destroy');
     });
 
     Route::prefix('profile')->name('profile')->group(function () {

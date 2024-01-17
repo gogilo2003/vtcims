@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Staff extends Model
@@ -72,5 +73,14 @@ class Staff extends Model
     public function admin()
     {
         return $this->belongsTo('App\Models\Admin');
+    }
+    /**
+     * Get the status that owns the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function status(): BelongsTo
+    {
+        return $this->belongsTo(StaffStatus::class, 'status_id', 'id');
     }
 }
