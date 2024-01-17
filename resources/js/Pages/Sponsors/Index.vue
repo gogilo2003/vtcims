@@ -24,7 +24,8 @@ const props = defineProps<{
         to: number,
         total: number
         data: Array<iSponsor>
-    },
+    }
+    search: string
 }>()
 
 const newSponsor = () => { }

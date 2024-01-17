@@ -12,8 +12,9 @@ import InputText from 'primevue/inputtext';
 const props = defineProps<{
     subjects: {
         data: Array<iSubject>
-    },
+    }
     instructors: Array<iInstructor>
+    search: string
 }>()
 
 const newSubject = () => { }
