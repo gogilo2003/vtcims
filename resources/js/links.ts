@@ -1,16 +1,27 @@
 export const links = [
     {
         name: 'dashboard',
+        icon: 'dashboard',
         caption: 'Dashboard'
     },
     {
         name: 'students',
+        icon: 'people',
         caption: 'Students'
     },
     {
         name: '',
+        icon: 'settings',
         caption: 'Setup',
         items: [
+            {
+                name: 'programs',
+                caption: 'Programs',
+            },
+            {
+                name: 'sponsors',
+                caption: 'Sponsors',
+            },
             {
                 name: 'departments',
                 caption: 'Departments',
@@ -22,14 +33,6 @@ export const links = [
             {
                 name: 'intakes',
                 caption: 'Intakes',
-            },
-            {
-                name: 'programs',
-                caption: 'Programs',
-            },
-            {
-                name: 'sponsors',
-                caption: 'Sponsors',
             },
             {
                 name: 'subjects',

@@ -5,6 +5,7 @@ import { iMenuItem } from '../interfaces/index';
 import Icon from '@/Components/Icons/Icon.vue';
 
 const props = defineProps<{
+    icon: string;
     href: string;
     active: boolean;
     items: Array<iMenuItem>
@@ -38,9 +39,10 @@ const onClickAway = () => {
 
 <template>
     <component :is="items?.length ? 'span' : Link" :href="href"
-        class="ml-4 md:ml-8 my-0 block items-center text-lg font-medium leading-5 transition duration-150 ease-in-out relative rounded-l-full"
+        class="ml-4 md:ml-8 my-0 flex items-center text-lg font-medium leading-5 transition duration-150 ease-in-out relative rounded-l-full"
         :class="classes">
-        <span @click="showSubmenu = !showSubmenu" class="cursor-pointer px-6 py-4 flex justify-between">
+        <Icon class="h-6 w-6 object-contain ml-4 flex-none" :type="icon" />
+        <span @click="showSubmenu = !showSubmenu" class="cursor-pointer pl-3 pr-6 py-4 flex justify-between flex-1">
             <slot />
             <Icon v-if="items?.length" :type="showSubmenu ? 'pi-chevron-up' : 'pi-chevron-down'"
                 class="transition duration-300" />
