@@ -20,16 +20,16 @@ export const links = [
                 caption: 'Courses',
             },
             {
+                name: 'intakes',
+                caption: 'Intakes',
+            },
+            {
                 name: 'programs',
                 caption: 'Programs',
             },
             {
                 name: 'sponsors',
                 caption: 'Sponsors',
-            },
-            {
-                name: 'intakes',
-                caption: 'Intakes',
             },
             {
                 name: 'subjects',

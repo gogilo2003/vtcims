@@ -70,6 +70,10 @@ export interface iCourse {
     id: number,
     code: string,
     name: string,
+    staff: Array<{
+        id: number,
+        name: string,
+    }>
 }
 export interface iSubject {
     id: number,
@@ -85,5 +89,58 @@ export interface iSubject {
 export interface iInstructor {
     id: number,
     name: string
+}
+
+export interface iStaff {
+    id: number,
+    idno: number,
+    pfno: number,
+    manno: number,
+    photo: string,
+    surname: string,
+    first_name: string,
+    last_name: string,
+    box_no: string,
+    post_code: string,
+    town: string,
+    email: string,
+    phone: string,
+    employer: string,
+    gender: string,
+    staff_role_id: string,
+    status_id: string,
+    teach: string,
+    admin_id: string,
+}
+export interface iDepartment {
+    id: number,
+    code: string,
+    name: string,
+    hod: iInstructor
+}
+
+export interface iIntake {
+    id: number
+    name: string
+    staff: iInstructor
+    course: iCourse
+}
+
+export interface iProgram {
+    id: number
+    name: string
+    description: string
+}
+
+export interface iSponsor {
+    id: number
+    name: string
+    contact_person: string
+    email: string
+    phone: string
+    box_no: string
+    post_code: string
+    town: string
+    address: string
 }
 

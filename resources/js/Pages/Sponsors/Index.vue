@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iSubject } from '../../interfaces/index';
+import { iSponsor, iLink } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import { ref, watch } from 'vue';
@@ -10,13 +10,24 @@ import Icon from '../../Components/Icons/Icon.vue';
 import InputText from 'primevue/inputtext';
 
 const props = defineProps<{
-    subjects: {
-        data: Array<iSubject>
+    sponsors: {
+        current_page: number,
+        first_page_url: string,
+        from: number,
+        last_page: number,
+        last_page_url: string,
+        links: Array<iLink>,
+        next_page_url: string,
+        path: string,
+        per_page: number,
+        prev_page_url: string,
+        to: number,
+        total: number
+        data: Array<iSponsor>
     },
-    instructors: Array<iInstructor>
 }>()
 
-const newSubject = () => { }
+const newSponsor = () => { }
 
 const searchVal = ref(props.search)
 
@@ -28,19 +39,19 @@ watch(() => searchVal.value, debounce((value: string) => {
         data = { search: value }
     }
 
-    router.get(route('subjects'), data, {
-        only: ['subjects', 'search'],
+    router.get(route('sponsors'), data, {
+        only: ['sponsors', 'search'],
         preserveScroll: true,
         preserveState: true
     })
 }, 500))
 </script>
 <template>
-    <AuthenticatedLayout title="Subjects">
+    <AuthenticatedLayout title="Sponsors">
         <div class="flex items-center justify-between gap-2 mb-3">
-            <SecondaryButton @click="newSubject">
+            <SecondaryButton @click="newSponsor">
                 <Icon type="add" />
-                <span class="hidden md:inline-flex">New Subject</span>
+                <span class="hidden md:inline-flex">New Sponsor</span>
             </SecondaryButton>
             <div>
                 <span class="relative">
@@ -51,16 +62,13 @@ watch(() => searchVal.value, debounce((value: string) => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <div v-for="subject in subjects.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
+            <div v-for="sponsor in sponsors.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
-                    <div v-text="subject.name" class="uppercase text-sm font-semibold text-gray-800"></div>
-                    <div class="flex gap-1">
-                        <span class="text-xs font-semibold text-gray-800">COURSES:</span>
-                        <span v-for="course in subject.courses" v-text="course.code" class="text-xs text-gray-500"></span>
-                    </div>
+                    <div v-text="sponsor.name" class="uppercase text-sm font-semibold text-gray-800"></div>
+                    <div v-text="sponsor.contact_person" class="text-xs text-gray-600"></div>
                 </div>
             </div>
-            <Paginator :items="subjects" />
+            <Paginator :items="sponsors" />
         </div>
     </AuthenticatedLayout>
 </template>

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
+use App\Models\Staff;
 use App\Models\Course;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Inertia\Inertia;
 
 class CourseController extends Controller
 {
@@ -13,7 +15,31 @@ class CourseController extends Controller
      */
     public function index()
     {
-        //
+        $search = request()->input('search');
+
+        $courses = Course::when($search, function ($query) use ($search) {
+            $query->where('name', 'LIKE', '%' . $search . '%');
+        })->with('staff')->paginate(10)->through(fn ($item) => [
+            "id" => $item->id,
+            "code" => $item->code,
+            "name" => $item->name,
+            "staff" => [
+                "id" => $item->staff->id,
+                "name" => trim(sprintf(
+                    '%s %s %s',
+                    $item->staff->surname,
+                    $item->staff->first_name,
+                    $item->staff->middle_name
+                )),
+            ]
+        ]);
+        $instructors = Staff::whereHas('status', function ($query) {
+            $query->where('name', 'current');
+        })->where('teach', 1)->get()->map(fn ($item) => [
+            "id" => $item->id,
+            "name" => sprintf("%s %s %s", $item->surname, $item->last_name, $item->middle_name),
+        ]);
+        return Inertia::render('Courses/Index', ['courses' => $courses, 'instructors' => $instructors, 'search' => $search,]);
     }
 
     /**

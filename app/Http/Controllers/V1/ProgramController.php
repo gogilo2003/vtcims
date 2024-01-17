@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use App\Http\Controllers\Controller;
 use App\Models\Program;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ProgramController extends Controller
 {
@@ -13,7 +14,17 @@ class ProgramController extends Controller
      */
     public function index()
     {
-        //
+        $search = request()->input('search');
+
+        $programs = Program::when($search, function ($query) use ($search) {
+            $query->where('name', 'LIKE', '%' . $search . '%');
+        })->paginate(10)->through(fn ($item) => [
+            "id" => $item->id,
+            "name" => $item->name,
+            "description" => $item->description ?? $item->name,
+        ]);
+
+        return Inertia::render('Programs/Index', ['programs' => $programs, 'search' => $search,]);
     }
 
     /**

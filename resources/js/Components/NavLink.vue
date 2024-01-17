@@ -30,6 +30,10 @@ watchEffect(() => {
 })
 
 const showSubmenu = ref(false)
+
+const onClickAway = () => {
+    showSubmenu.value = false
+}
 </script>
 
 <template>
@@ -42,10 +46,12 @@ const showSubmenu = ref(false)
                 class="transition duration-300" />
         </span>
         <div v-if="items?.length && showSubmenu"
-            class="absolute z-20 left-0 top-[100%] bg-gray-100 text-gray-800 p-3 ml-6 w-[calc(100%_-_2.5rem)] rounded-b-lg border-t border-gray-800 flex flex-col gap-1">
+            class="absolute z-20 left-0 top-[100%] bg-gray-100 text-gray-800 p-3 ml-6 w-[calc(100%_-_2.5rem)] rounded-b-lg border-t border-gray-800 flex flex-col gap-1"
+            v-click-away="onClickAway">
             <Link
-                class="w-full text-base px-3 py-2 bg-gray-50 hover:bg-primary-500 hover:text-gray-100 transition-all duration-300 rounded"
-                :href="route(name)" v-for="{ name, caption } in items">{{
+                class="w-full text-base px-3 py-2 transition-all duration-300 rounded bg-gray-50 hover:bg-primary-500 hover:text-gray-100"
+                :class="{ 'bg-primary-500 text-gray-100': route().current(name) }" :href="route(name)"
+                v-for="{ name, caption } in items">{{
                     caption }}
             </Link>
         </div>

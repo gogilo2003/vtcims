@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iCourse, iDepartment, iLink } from '../../interfaces/index';
+import { iInstructor, iDepartment, iLink } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import { ref, watch } from 'vue';
@@ -10,7 +10,7 @@ import Icon from '../../Components/Icons/Icon.vue';
 import InputText from 'primevue/inputtext';
 
 const props = defineProps<{
-    courses: {
+    intakes: {
         current_page: number,
         first_page_url: string,
         from: number,
@@ -23,14 +23,14 @@ const props = defineProps<{
         prev_page_url: string,
         to: number,
         total: number
-        data: Array<iCourse>
+        data: Array<iIntake>
     },
-    instructors: Array<iInstructor>,
-    departments: Array<iDepartment>,
+    instructors: Array<iInstructor>
+    courses: Array<iInstructor>
     search: string
 }>()
 
-const newCourse = () => { }
+const newIntake = () => { }
 
 const searchVal = ref(props.search)
 
@@ -42,8 +42,8 @@ watch(() => searchVal.value, debounce((value: string) => {
         data = { search: value }
     }
 
-    router.get(route('courses'), data, {
-        only: ['courses', 'search'],
+    router.get(route('intakes'), data, {
+        only: ['intakes', 'search'],
         preserveScroll: true,
         preserveState: true
     })
@@ -51,11 +51,11 @@ watch(() => searchVal.value, debounce((value: string) => {
 
 </script>
 <template>
-    <AuthenticatedLayout title="Courses">
+    <AuthenticatedLayout title="Intakes">
         <div class="flex items-center justify-between gap-2 mb-3">
-            <SecondaryButton @click="newCourse">
+            <SecondaryButton @click="newIntake">
                 <Icon type="add" />
-                <span class="hidden md:inline-flex">New Course</span>
+                <span class="hidden md:inline-flex">New Intake</span>
             </SecondaryButton>
             <div>
                 <span class="relative">
@@ -66,22 +66,22 @@ watch(() => searchVal.value, debounce((value: string) => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <div v-for="course in courses.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
+            <div v-for="intake in intakes.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
-                    <div v-text="course.name" class="uppercase text-sm font-semibold text-gray-800"></div>
+                    <div v-text="intake.name" class="uppercase text-sm font-semibold text-gray-800"></div>
                     <div class="flex gap-2 flex-col md:flex-row">
                         <div class="flex items-center gap-1">
-                            <span class="text-xs font-semibold text-gray-800">Code:</span>
-                            <span v-text="course.code" class="text-xs text-gray-500"></span>
+                            <span class="text-xs font-semibold text-gray-800">COURSE NAME:</span>
+                            <span v-text="intake.course.name" class="text-xs text-gray-500"></span>
                         </div>
                         <div class="flex items-center gap-1">
-                            <span class="text-xs font-semibold text-gray-800">Instructor:</span>
-                            <span v-text="course.staff.name" class="text-xs text-gray-500"></span>
+                            <span class="text-xs font-semibold text-gray-800">HEAD OF DEPARTMENT:</span>
+                            <span v-text="intake.staff.name" class="text-xs text-gray-500"></span>
                         </div>
                     </div>
                 </div>
             </div>
-            <Paginator :items="courses" />
+            <Paginator :items="intakes" />
         </div>
     </AuthenticatedLayout>
 </template>

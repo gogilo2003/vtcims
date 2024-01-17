@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use Inertia\Inertia;
-use App\Models\Staff;
+use App\Models\Course;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -17,7 +17,11 @@ class SubjectController extends Controller
      */
     public function index()
     {
-        $subjects = Subject::with('courses')->paginate(10)->through(fn ($item) => [
+        $search = request()->input('search');
+
+        $subjects = Subject::when($search, function ($query) use ($search) {
+            $query->where('name', 'LIKE', '%' . $search . '%');
+        })->with('courses')->paginate(10)->through(fn ($item) => [
             "id" => $item->id,
             "code" => $item->code,
             "name" => $item->name,
@@ -27,10 +31,14 @@ class SubjectController extends Controller
                 "name" => $item->name,
             ])
         ]);
-        $instructors = Staff::whereHas('status', function ($query) {
-            $query->where('name', 'current');
-        })->where('teach', 1)->get();
-        return Inertia::render('Subjects/Index', ['subjects' => $subjects, 'instructors' => $instructors]);
+
+        $courses = Course::orderBy('name', 'ASC')->get()->map(fn ($item) => [
+            "id" => $item->id,
+            "code" => $item->code,
+            "name" => $item->name,
+        ]);
+
+        return Inertia::render('Subjects/Index', ['subjects' => $subjects, 'courses' => $courses, 'search' => $search,]);
     }
 
     /**

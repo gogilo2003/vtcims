@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
+use Inertia\Inertia;
+use App\Models\Staff;
 use App\Models\Department;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class DepartmentController extends Controller
 {
@@ -13,7 +15,26 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        //
+        $search = request()->input('search');
+
+        $departments = Department::when($search, function ($query) use ($search) {
+            $query->where('name', 'LIKE', '%' . $search . '%');
+        })->with('hod')->paginate(10)->through(fn ($item) => [
+            "id" => $item->id,
+            "code" => $item->code,
+            "name" => $item->name,
+            "hod" => [
+                "id" => $item->hod->id,
+                "name" => trim(sprintf('%s %s %s', $item->hod->surname, $item->hod->first_name, $item->hod->middle_name)),
+            ]
+        ]);
+        $instructors = Staff::whereHas('status', function ($query) {
+            $query->where('name', 'current');
+        })->where('teach', 1)->get()->map(fn ($item) => [
+            "id" => $item->id,
+            "name" => sprintf("%s %s %s", $item->surname, $item->last_name, $item->middle_name),
+        ]);
+        return Inertia::render('Departments/Index', ['departments' => $departments, 'instructors' => $instructors, 'search' => $search,]);
     }
 
     /**
