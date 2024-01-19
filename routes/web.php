@@ -46,6 +46,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('photo/{student}', [StudentController::class, 'picture'])->name('-photo');
     });
 
+    Route::prefix('staff')->name('staff')->group(function () {
+        Route::get('', [StudentController::class, 'index']);
+        Route::post('', [StudentController::class, 'store'])->name('-store');
+        Route::patch('{student}', [StudentController::class, 'update'])->name('-update');
+        Route::delete('{student}', [StudentController::class, 'destroy'])->name('-destroy');
+        Route::post('photo/{student}', [StudentController::class, 'picture'])->name('-photo');
+    });
+
     Route::prefix('subjects')->name('subjects')->group(function () {
         Route::get('', [SubjectController::class, 'index']);
         Route::post('', [SubjectController::class, 'store'])->name('-store');
