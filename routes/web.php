@@ -59,6 +59,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('', [SubjectController::class, 'store'])->name('-store');
         Route::patch('{subject}', [SubjectController::class, 'update'])->name('-update');
         Route::delete('{subject}', [SubjectController::class, 'destroy'])->name('-destroy');
+        Route::prefix('allocations')->name('-allocations')->group(function () {
+            Route::get('', [AllocationController::class, 'index']);
+        });
     });
     Route::prefix('departments')->name('departments')->group(function () {
         Route::get('', [DepartmentController::class, 'index']);
