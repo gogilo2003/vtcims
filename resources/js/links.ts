@@ -1,13 +1,17 @@
-export const links = [
+import { iMenu } from "./interfaces"
+
+export const links: iMenu[] = [
     {
         name: 'dashboard',
         icon: 'dashboard',
-        caption: 'Dashboard'
+        caption: 'Dashboard',
+        items: null
     },
     {
         name: 'students',
         icon: 'people',
-        caption: 'Students'
+        caption: 'Students',
+        items: null
     },
     {
         name: '',

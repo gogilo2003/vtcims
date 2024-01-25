@@ -17,6 +17,7 @@ import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import { generateIntakeName } from '../../helpers';
+import Toast from 'primevue/toast';
 
 const props = defineProps<{
     intakes: {
@@ -44,11 +45,12 @@ const props = defineProps<{
 const toast = useToast()
 
 const form = useForm({
-    course: null,
-    start_date: null,
-    end_date: null,
-    instructor: null,
-    name: "",
+    id: 0,
+    course: 0,
+    start_date: new Date(),
+    end_date: new Date(),
+    instructor: 0,
+    name: ""
 })
 
 const showIntakeDialog = ref(false)
@@ -58,6 +60,21 @@ const course = ref<iCourse>()
 
 const newIntake = () => {
     showIntakeDialog.value = true
+    edit.value = false
+}
+
+const editIntake = (intake: iIntake) => {
+    console.log(intake.start_date);
+
+    form.id = intake.id
+    form.course = intake.course.id
+    form.start_date = new Date(intake.start_date)
+    form.end_date = new Date(intake.end_date)
+    form.name = intake.name
+    form.instructor = intake.staff.id
+
+    showIntakeDialog.value = true
+    edit.value = true
 }
 
 const cancel = () => {
@@ -86,18 +103,19 @@ watch(() => searchVal.value, debounce((value: string) => {
 
 watch(() => form.course, (value) => {
     course.value = props.courses.filter(item => item.id == value)[0]
-    form.name = generateIntakeName(course.value.code, form.start_date)
+    if (course.value) {
+        form.name = generateIntakeName(course.value.code, form.start_date)
+    }
 })
 watch(() => form.start_date, (value) => {
     course.value = props.courses.filter(item => item.id == form.course)[0]
-    form.name = generateIntakeName(course.value.code, form.start_date)
+    form.name = generateIntakeName(course?.value?.code, form.start_date)
 })
 
 const submit = () => {
     if (edit.value) {
-
-    } else {
-        form.post(route('intakes-store'), {
+        form.patch(route('intakes-update', form.id), {
+            only: ['notification', 'intakes', 'errors'],
             onSuccess: () => {
                 toast.add({
                     severity: 'success',
@@ -105,6 +123,31 @@ const submit = () => {
                     detail: props?.notification?.success,
                     life: 8000
                 })
+                form.reset()
+                showIntakeDialog.value = false
+            },
+            onError: () => {
+                toast.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: props?.notification?.danger ?? 'An error ocurred! Please try gain',
+                    life: 8000
+                })
+            }
+        })
+    } else {
+
+        form.post(route('intakes-store'), {
+            only: ['notification', 'intakes', 'errors'],
+            onSuccess: () => {
+                toast.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: props?.notification?.success,
+                    life: 8000
+                })
+                form.reset()
+                showIntakeDialog.value = false
             },
             onError: () => {
                 toast.add({
@@ -121,7 +164,7 @@ const submit = () => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog :header="dialogTitle" v-model:visible="showIntakeDialog" :style="{ width: '50vw' }"
+    <Dialog modal :header="dialogTitle" v-model:visible="showIntakeDialog" :style="{ width: '50vw' }"
         :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
         <form @submit.prevent="submit">
             <div class="mb-3 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -191,7 +234,7 @@ const submit = () => {
                     </div>
                 </div>
                 <div>
-                    <SecondaryButton>
+                    <SecondaryButton @click="editIntake(intake)">
                         <Icon class="h-4" type="edit" />
                         <span class="hidden md:inline-block">Edit</span>
                     </SecondaryButton>

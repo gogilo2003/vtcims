@@ -8,7 +8,7 @@ const props = defineProps<{
     icon: string;
     href: string;
     active: boolean;
-    items: Array<iMenuItem>
+    items: iMenuItem[] | null
 }>();
 
 const activeState = ref(false)
@@ -47,15 +47,19 @@ const onClickAway = () => {
             <Icon v-if="items?.length" :type="showSubmenu ? 'pi-chevron-up' : 'pi-chevron-down'"
                 class="transition duration-300" />
         </span>
-        <div v-if="items?.length && showSubmenu"
-            class="absolute z-20 left-0 top-[100%] bg-gray-100 text-gray-800 p-3 ml-6 w-[calc(100%_-_2.5rem)] rounded-b-lg border-t border-gray-800 flex flex-col gap-1"
-            v-click-away="onClickAway">
-            <Link
-                class="w-full text-base px-3 py-2 transition-all duration-300 rounded bg-gray-50 hover:bg-primary-500 hover:text-gray-100"
-                :class="{ 'bg-primary-500 text-gray-100': route().current(name) }" :href="route(name)"
-                v-for="{ name, caption } in items">{{
-                    caption }}
-            </Link>
-        </div>
+        <Transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 scale-95"
+            enter-to-class="opacity-100 scale-100" leave-active-class="transition ease-in duration-75"
+            leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+            <div v-if="items?.length && showSubmenu"
+                class="absolute z-20 left-0 top-[100%] bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-400 p-3 ml-6 w-[calc(100%_-_2.5rem)] rounded-b-lg border-t border-gray-800 flex flex-col gap-1"
+                v-click-away="onClickAway">
+                <Link
+                    class="w-full text-base px-3 py-2 transition-all duration-300 rounded bg-gray-50 dark:bg-gray-700 hover:bg-primary-500 hover:text-gray-100"
+                    :class="{ 'bg-primary-500 text-gray-100': route().current(name), 'dark:text-gray-300': !route().current(name) }"
+                    :href="route(name)" v-for="{ name, caption } in items">{{
+                        caption }}
+                </Link>
+            </div>
+        </Transition>
     </component>
 </template>

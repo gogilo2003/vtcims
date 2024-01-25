@@ -6,6 +6,7 @@ import DropdownLink from '@/Components/DropdownLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
 import Icon from '@/Components/Icons/Icon.vue';
+import InputSwitch from 'primevue/inputswitch';
 
 const showingNavigationDropdown = ref(false);
 
@@ -29,6 +30,19 @@ onMounted(() => {
 watch(() => toggleState.value, value => {
     localStorage.setItem('toggleState', value ? "1" : "0")
 })
+
+const dark = ref()
+
+watch(() => dark.value, (value) => {
+    if (value) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+})
+onMounted(() => {
+    dark.value = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+})
 </script>
 <template>
     <nav class="z-10 bg-white dark:bg-gray-800 border-b border-lime-500 sticky top-0">
@@ -46,43 +60,46 @@ watch(() => toggleState.value, value => {
                         <div class="text-sm uppercase font-light text-gray-900 dark:text-gray-300" v-text="title" />
                     </div>
                 </div>
+                <div class="flex items-center">
+                    <InputSwitch v-model="dark" />
+                    <div class="hidden sm:flex sm:items-center sm:ml-6">
 
-                <div class="hidden sm:flex sm:items-center sm:ml-6">
-                    <!-- Settings Dropdown -->
-                    <div class="ml-3 relative">
-                        <Dropdown align="right" width="48">
-                            <template #trigger>
-                                <span class="inline-flex rounded-md">
-                                    <button type="button"
-                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-300 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-400 focus:outline-none transition ease-in-out duration-150">
-                                        {{ $page.props.auth.user.name }}
+                        <!-- Settings Dropdown -->
+                        <div class="ml-3 relative">
+                            <Dropdown align="right" width="48">
+                                <template #trigger>
+                                    <span class="inline-flex rounded-md">
+                                        <button type="button"
+                                            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-300 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-400 focus:outline-none transition ease-in-out duration-150">
+                                            {{ $page.props.auth.user.name }}
 
-                                        <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-                                </span>
-                            </template>
+                                            <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
+                                                viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </span>
+                                </template>
 
-                            <template #content>
-                                <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
-                                <DropdownLink :href="route('logout')" method="post" as="button">
-                                    Log Out
-                                </DropdownLink>
-                            </template>
-                        </Dropdown>
+                                <template #content>
+                                    <DropdownLink :href="route('profile.edit')"> Profile </DropdownLink>
+                                    <DropdownLink :href="route('logout')" method="post" as="button">
+                                        Log Out
+                                    </DropdownLink>
+                                </template>
+                            </Dropdown>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Hamburger -->
-                <div class="-mr-2 flex items-center sm:hidden">
-                    <button @click="showingNavigationDropdown = !showingNavigationDropdown"
-                        class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:gray-lime-500 transition duration-150 ease-in-out">
-                        <Icon type="person" class="block h-7 w-auto" />
-                    </button>
+                    <!-- Hamburger -->
+                    <div class="-mr-2 flex items-center sm:hidden">
+                        <button @click="showingNavigationDropdown = !showingNavigationDropdown"
+                            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:gray-lime-500 transition duration-150 ease-in-out">
+                            <Icon type="person" class="block h-7 w-auto" />
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -8,6 +8,7 @@ import { router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import Icon from '../../Components/Icons/Icon.vue';
 import InputText from 'primevue/inputtext';
+import ListItem from '@/Components/ListItem.vue';
 
 const props = defineProps<{
     programs: {
@@ -48,7 +49,7 @@ watch(() => searchVal.value, debounce((value: string) => {
 }, 500))
 </script>
 <template>
-    <AuthenticatedLayout title="Intakes">
+    <AuthenticatedLayout title="Programs">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
             <SecondaryButton @click="newProgram">
                 <Icon type="add" />
@@ -63,12 +64,13 @@ watch(() => searchVal.value, debounce((value: string) => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <div v-for="program in programs.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
+            <ListItem v-for="program in programs.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
-                    <div v-text="program.name" class="uppercase text-sm font-semibold text-gray-800"></div>
-                    <div v-text="program.description" class="text-xs text-gray-600"></div>
+                    <div v-text="program.name" class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-500">
+                    </div>
+                    <div v-text="program.description" class="text-xs text-gray-600 dark:text-gray-300"></div>
                 </div>
-            </div>
+            </ListItem>
             <Paginator :items="programs" />
         </div>
     </AuthenticatedLayout>

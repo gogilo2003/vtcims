@@ -8,6 +8,7 @@ import { router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import Icon from '../../Components/Icons/Icon.vue';
 import InputText from 'primevue/inputtext';
+import ListItem from '@/Components/ListItem.vue';
 
 const props = defineProps<{
     courses: {
@@ -66,21 +67,22 @@ watch(() => searchVal.value, debounce((value: string) => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <div v-for="course in courses.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
+            <ListItem v-for="course in courses.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
-                    <div v-text="course.name" class="uppercase text-sm font-semibold text-gray-800"></div>
+                    <div v-text="course.name" class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-500">
+                    </div>
                     <div class="flex gap-2 flex-col md:flex-row">
                         <div class="flex items-center gap-1">
-                            <span class="text-xs font-semibold text-gray-800">Code:</span>
-                            <span v-text="course.code" class="text-xs text-gray-500"></span>
+                            <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">Code:</span>
+                            <span v-text="course.code" class="text-xs text-gray-500 dark:text-gray-400"></span>
                         </div>
                         <div class="flex items-center gap-1">
-                            <span class="text-xs font-semibold text-gray-800">Instructor:</span>
-                            <span v-text="course.staff.name" class="text-xs text-gray-500"></span>
+                            <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">Instructor:</span>
+                            <span v-text="course.staff.name" class="text-xs text-gray-500 dark:text-gray-400"></span>
                         </div>
                     </div>
                 </div>
-            </div>
+            </ListItem>
             <Paginator :items="courses" />
         </div>
     </AuthenticatedLayout>

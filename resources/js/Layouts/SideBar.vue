@@ -6,7 +6,6 @@ defineProps<{
     show: boolean;
 }>()
 
-
 </script>
 <template>
     <div class="h-[calc(100svh_-_4rem)] sticky top-16 bg-gray-800 py-16 flex flex-col gap-4 overflow-hidden transition-['width'] duration-500 ease-in-out"

@@ -60,6 +60,12 @@ export interface iPhoto {
     photo: string
 }
 
+export interface iMenu {
+    name: string
+    icon: string
+    caption: string
+    items: iMenuItem[] | null
+}
 
 export interface iMenuItem {
     name: string,
@@ -121,9 +127,11 @@ export interface iDepartment {
 
 export interface iIntake {
     id: number
+    start_date: string
+    end_date: string
     name: string
     staff: iInstructor
-    course: iCourse
+    course: iCourse,
 }
 
 export interface iProgram {
@@ -143,4 +151,3 @@ export interface iSponsor {
     town: string
     address: string
 }
-

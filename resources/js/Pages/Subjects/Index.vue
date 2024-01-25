@@ -8,6 +8,7 @@ import { router } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import Icon from '../../Components/Icons/Icon.vue';
 import InputText from 'primevue/inputtext';
+import ListItem from '@/Components/ListItem.vue';
 
 const props = defineProps<{
     subjects: {
@@ -52,15 +53,17 @@ watch(() => searchVal.value, debounce((value: string) => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <div v-for="subject in subjects.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
+            <ListItem v-for="subject in subjects.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
-                    <div v-text="subject.name" class="uppercase text-sm font-semibold text-gray-800"></div>
+                    <div v-text="subject.name" class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-500">
+                    </div>
                     <div class="flex gap-1">
-                        <span class="text-xs font-semibold text-gray-800">COURSES:</span>
-                        <span v-for="course in subject.courses" v-text="course.code" class="text-xs text-gray-500"></span>
+                        <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">COURSES:</span>
+                        <span v-for="course in subject.courses" v-text="course.code"
+                            class="text-xs text-gray-500 dark:text-gray-400"></span>
                     </div>
                 </div>
-            </div>
+            </ListItem>
             <Paginator :items="subjects" />
         </div>
     </AuthenticatedLayout>
