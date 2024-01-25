@@ -8,6 +8,8 @@ use App\Models\Course;
 use App\Models\Intake;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\StoreIntakeRequest;
+use Illuminate\Support\Carbon;
 
 class IntakeController extends Controller
 {
@@ -66,9 +68,22 @@ class IntakeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreIntakeRequest $request)
     {
-        //
+        $course = Course::find($request->course);
+        $name = $course->code . strtoupper(date_format(date_create($request->start_date), '/Y/M'));
+
+        $intake = new Intake;
+        $intake->start_date = Carbon::parse($request->start_date);
+        $intake->end_date = Carbon::parse($request->end_date);
+        $intake->staff_id = $request->instructor;
+        $intake->course_id = $request->course;
+        $intake->name = $name;
+        $intake->save();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Class/Intake created');
     }
 
     /**

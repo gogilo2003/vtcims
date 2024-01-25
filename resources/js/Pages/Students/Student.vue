@@ -105,15 +105,15 @@ const submit = async () => {
         form.post(route('students-store'), {
             only: ['students', 'notification', 'errors'],
             onSuccess: () => {
-                form.first_name = null
-                form.middle_name = null
-                form.surname = null
-                form.phone = null
-                form.email = null
-                form.box_no = null
-                form.post_code = null
-                form.town = null
-                form.physical_address = null
+                form.first_name = ""
+                form.middle_name = ""
+                form.surname = ""
+                form.phone = ""
+                form.email = ""
+                form.box_no = ""
+                form.post_code = ""
+                form.town = ""
+                form.physical_address = ""
                 form.date_of_birth = null
                 form.birth_cert_no = null
                 form.idno = null
@@ -123,13 +123,13 @@ const submit = async () => {
                 form.program = null
                 form.sponsor = null
                 form.student_role = null
-                form.status = null
+                form.status = ""
 
                 toast.add({
                     severity: 'success',
                     summary: 'Success',
                     detail: page?.props?.notification?.success,
-                    life: 3000
+                    life: 8000
                 })
 
                 resetErrors()
@@ -141,7 +141,7 @@ const submit = async () => {
                     severity: 'error',
                     summary: 'Error',
                     detail: "An error ocurred! Please check the values you provided and try again.",
-                    life: 3000
+                    life: 8000
                 })
 
                 resetErrors()

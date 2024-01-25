@@ -67,9 +67,9 @@ export interface iMenuItem {
 }
 
 export interface iCourse {
-    id: number,
-    code: string,
-    name: string,
+    id: number
+    code: string
+    name: string
     staff: Array<{
         id: number,
         name: string,

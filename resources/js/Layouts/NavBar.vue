@@ -31,7 +31,7 @@ watch(() => toggleState.value, value => {
 })
 </script>
 <template>
-    <nav class="relative z-10 bg-white dark:bg-gray-800 border-b border-lime-500 sticky top-0">
+    <nav class="z-10 bg-white dark:bg-gray-800 border-b border-lime-500 sticky top-0">
         <!-- Primary Navigation Menu -->
         <div class="px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -41,9 +41,9 @@ watch(() => toggleState.value, value => {
                         <button @click="toggle">
                             <!-- <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" /> -->
                             <Icon :type="toggleState ? 'close' : 'menu'"
-                                class="block h-7 w-auto text-gray-400 hover:text-gray-500" />
+                                class="block h-7 w-auto text-gray-400 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-400" />
                         </button>
-                        <div class="text-sm uppercase font-light" v-text="title" />
+                        <div class="text-sm uppercase font-light text-gray-900 dark:text-gray-300" v-text="title" />
                     </div>
                 </div>
 
@@ -54,7 +54,7 @@ watch(() => toggleState.value, value => {
                             <template #trigger>
                                 <span class="inline-flex rounded-md">
                                     <button type="button"
-                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-300 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-400 focus:outline-none transition ease-in-out duration-150">
                                         {{ $page.props.auth.user.name }}
 
                                         <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"

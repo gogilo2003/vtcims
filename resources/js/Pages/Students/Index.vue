@@ -11,6 +11,7 @@ import { router } from '@inertiajs/vue3';
 import Paginator from '@/Components/Paginator.vue';
 import { debounce } from 'lodash'
 import InputText from 'primevue/inputtext';
+import ListItem from '@/Components/ListItem.vue';
 
 const props = defineProps<{
     students: iStudents,
@@ -130,8 +131,7 @@ const uploadPic = (student: iStudent) => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <div class="px-5 py-3 shadow bg-white dark:bg-gray-700 rounded-lg flex flex-col md:flex-row gap-2 md:items-center justify-between"
-                v-for="student in students.data">
+            <ListItem v-for="student in students.data">
                 <div>
                     <div class="text-sm font-semibold uppercase" v-text="student.name"></div>
                     <div
@@ -159,7 +159,7 @@ const uploadPic = (student: iStudent) => {
                         <Icon class="h-4 w-4" type="delete" /><span class="hidden md:block">Delete</span>
                     </SecondaryButton>
                 </div>
-            </div>
+            </ListItem>
             <Paginator :items="students" />
         </div>
     </AuthenticatedLayout>
