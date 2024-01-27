@@ -34,6 +34,8 @@ watch(() => toggleState.value, value => {
 const dark = ref()
 
 watch(() => dark.value, (value) => {
+    localStorage.setItem('theme', value ? 'dark' : 'light')
+
     if (value) {
         document.documentElement.classList.add('dark')
     } else {
@@ -45,7 +47,7 @@ onMounted(() => {
 })
 </script>
 <template>
-    <nav class="z-10 bg-white dark:bg-gray-800 border-b border-lime-500 sticky top-0">
+    <nav class="z-10 bg-white dark:bg-gray-600 border-b border-lime-500 dark:border-gray-800 sticky top-0">
         <!-- Primary Navigation Menu -->
         <div class="px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">

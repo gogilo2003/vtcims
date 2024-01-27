@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+
+defineProps(['students'])
 </script>
 
 <template>
     <AuthenticatedLayout title="Dashboard">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 text-gray-900">You're logged in!</div>
+            <div class="p-6 text-gray-800">
+                <pre v-text="students"></pre>
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>

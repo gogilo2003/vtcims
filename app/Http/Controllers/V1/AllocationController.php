@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Models\Term;
 use Inertia\Inertia;
 use App\Models\Staff;
-use App\Models\Course;
+use App\Models\Subject;
 use App\Models\Allocation;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreAllocationRequest;
 use App\Http\Requests\V1\UpdateAllocationRequest;
+use App\Models\Intake;
 
 class AllocationController extends Controller
 {
@@ -26,8 +29,11 @@ class AllocationController extends Controller
                     ->orWhere('middle_name', 'LIKE', "%$search%");
             })->orWhereHas('subject', function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%$search%");
-            })->orWhereHas('intake', function ($query) use ($search) {
-                $query->where('name', 'LIKE', "%$search%");
+                // })->orWhereHas('intakes', function ($query) use ($search) {
+                //     $query->where('name', 'LIKE', "%$search%");
+            })->orWhereHas('term', function ($query) use ($search) {
+                $query->where('name', 'LIKE', "%$search%")
+                    ->orWhere('year', $search);
             });
         })->orderBy('created_at', 'DESC')
             ->with('term', 'staff', 'subject', 'intakes')
@@ -42,7 +48,7 @@ class AllocationController extends Controller
                     "end_date" => $item->term->end_date->isoFormat('lll'),
                     "year_name" => $item->term->year_name,
                 ],
-                "staff" => [
+                "instructor" => [
                     "id" => $item->staff->id,
                     "name" => sprintf("%s %s %s", $item->staff->surname, $item->staff->first_name, $item->staff->middle_name),
                 ],
@@ -57,7 +63,11 @@ class AllocationController extends Controller
                 ]),
             ]);
 
-        $courses = Course::all();
+        $subjects = Subject::all()->map(fn ($item) => [
+            "id" => $item->id,
+            "code" => $item->code,
+            "name" => ucwords(strtolower($item->name)),
+        ]);
 
         $instructors = Staff::whereHas('status', function ($query) {
             $query->where('name', 'LIKE', '%current%');
@@ -68,7 +78,29 @@ class AllocationController extends Controller
                 "name" => sprintf("%s %s %s", $item->first_name, $item->middle_name, $item->surname)
             ]);
 
-        return Inertia::render('Allocations/Index', ['allocations' => $allocations, 'courses' => $courses, 'instructors' => $instructors]);
+        $terms = Term::orderBy('year', 'DESC')->orderBy('name', 'DESC')->get()->map(fn ($item) => [
+            "id" => $item->id,
+            "name" => $item->name,
+            "year" => $item->year,
+            "year_name" => $item->year_name,
+            "start_date" => Carbon::parse($item->start_date)->isoFormat('lll'),
+            "end_date" => Carbon::parse($item->end_date)->isoFormat('lll'),
+        ]);
+
+        $intakes = Intake::orderBy('start_date', 'DESC')->get()->map(fn ($item) => [
+            "id" => $item->id,
+            "name" => $item->name,
+            "start_date" => $item->start_date,
+            "end_date" => $item->end_date,
+        ]);
+
+        return Inertia::render('Allocations/Index', [
+            'allocations' => $allocations,
+            'subjects' => $subjects,
+            'instructors' => $instructors,
+            'terms' => $terms,
+            'intakes' => $intakes,
+        ]);
     }
 
     /**
@@ -76,7 +108,14 @@ class AllocationController extends Controller
      */
     public function store(StoreAllocationRequest $request)
     {
-        //
+        $allocation = new Allocation();
+        $allocation->staff_id = $request->instructor;
+        $allocation->subject_id = $request->subject;
+        $allocation->term_id = $request->term;
+        $allocation->save();
+
+        $allocation->intakes()->sync($request->intakes);
+        return redirect()->back()->with('success', 'Allocation created');
     }
 
     /**
@@ -98,9 +137,15 @@ class AllocationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAllocationRequest $request, Allocation $intakeStaffSubject)
+    public function update(UpdateAllocationRequest $request, Allocation $allocation)
     {
-        //
+        $allocation->staff_id = $request->instructor;
+        $allocation->subject_id = $request->subject;
+        $allocation->term_id = $request->term;
+        $allocation->save();
+
+        $allocation->intakes()->sync($request->intakes);
+        return redirect()->back()->with('success', 'Allocation updated');
     }
 
     /**

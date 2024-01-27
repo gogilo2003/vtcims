@@ -154,8 +154,15 @@ export interface iSponsor {
 
 export interface iAllocation {
     id: number
-    staff_subject_id: number
-    staff: {
+    term: {
+        id: number
+        name: string
+        year: number
+        start_date: string
+        end_date: string
+        year_name: string
+    }
+    instructor: {
         id: number,
         name: string
     }
@@ -164,10 +171,10 @@ export interface iAllocation {
         code: string,
         name: string
     }
-    intake: {
-        id: number,
+    intakes: Array<{
+        id: number
         name: string
-    }
+    }> | []
 }
 export interface iAllocations {
     current_page: string

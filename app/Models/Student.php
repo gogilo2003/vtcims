@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Student extends Model
@@ -28,32 +29,43 @@ class Student extends Model
 
     public function getIntakeNameAttribute()
     {
-        return $this->intake->name;
+        if ($this->intake) {
+            return $this->intake->name;
+        }
+        return '';
     }
 
     public function getStudentRoleNameAttribute()
     {
-        return $this->role->name;
+        return $this->role ? $this->role->name : '';
     }
 
     public function getCourseNameAttribute()
     {
-        return $this->intake->course->name;
+        if ($this->intake) {
+            return $this->intake->course->name;
+        }
+        return '';
     }
 
     public function getSponsorNameAttribute()
     {
-        return $this->sponsor->name;
+        return $this->sponsor ? $this->sponsor->name : '';
     }
 
     public function getProgramNameAttribute()
     {
-        return $this->program->name;
+        return $this->program ? $this->program->name : '';
     }
 
-    public function intake()
+    /**
+     * Get the intake that owns the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function intake(): BelongsTo
     {
-        return $this->belongsTo('App\Models\Intake');
+        return $this->belongsTo(Intake::class);
     }
 
     public function program()
@@ -93,7 +105,10 @@ class Student extends Model
 
     public function getAdmissionNoAttribute()
     {
-        return strtoupper($this->intake->course->code . '/' . str_pad($this->id, 4, '0', 0) . '/' . date_format(date_create($this->date_of_admission), 'Y'));
+        if ($this->intake) {
+            return strtoupper($this->intake->course->code . '/' . str_pad($this->id, 4, '0', 0) . '/' . date_format(date_create($this->date_of_admission), 'Y'));
+        }
+        return '';
     }
 
     public function getAddressAttribute()

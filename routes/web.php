@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\V1\TermController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\IntakeController;
 use App\Http\Controllers\V1\ProgramController;
@@ -35,9 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     //     return Inertia::render('Dashboard');
     // });
 
-    Route::get('/', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/', [HomeController::class, 'dashboard'])->name('dashboard');
 
     Route::prefix('students')->name('students')->group(function () {
         Route::get('', [StudentController::class, 'index']);
@@ -64,6 +64,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('allocations')->name('allocations')->group(function () {
         Route::get('', [AllocationController::class, 'index']);
+        Route::post('', [AllocationController::class, 'store'])->name('-store');
+        Route::patch('{allocation}', [AllocationController::class, 'update'])->name('-update');
+        Route::delete('{allocation}', [AllocationController::class, 'destroy'])->name('-destroy');
     });
 
     Route::prefix('departments')->name('departments')->group(function () {
@@ -95,6 +98,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('', [IntakeController::class, 'store'])->name('-store');
         Route::patch('{intake}', [IntakeController::class, 'update'])->name('-update');
         Route::delete('{intake}', [IntakeController::class, 'destroy'])->name('-destroy');
+    });
+    Route::prefix('terms')->name('terms')->group(function () {
+        Route::get('', [TermController::class, 'index']);
+        Route::post('', [TermController::class, 'store'])->name('-store');
+        Route::patch('{term}', [TermController::class, 'update'])->name('-update');
+        Route::delete('{term}', [TermController::class, 'destroy'])->name('-destroy');
     });
 
     Route::prefix('profile')->name('profile')->group(function () {

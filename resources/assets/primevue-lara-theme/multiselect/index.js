@@ -6,7 +6,7 @@ export default {
             'relative',
 
             // Shape
-            'w-full md:max-w-[20rem]',
+            'w-full ',
             'rounded-md',
 
             // Color and Background
@@ -272,13 +272,13 @@ export default {
 
             // Color
             { 'text-surface-700 dark:text-white/80': !context.focused && !context.selected },
-            { 'bg-surface-200 dark:bg-surface-600/60 text-surface-700 dark:text-white/80': context.focused && !context.selected },
+            { 'bg-surface-200 dark:bg-surface-400/40 text-primary-700 dark:text-primary/80': context.focused && !context.selected },
             { 'bg-primary-100 dark:bg-primary-400/40 text-primary-700 dark:text-white/80': context.focused && context.selected },
             { 'bg-primary-50 dark:bg-primary-400/40 text-primary-700 dark:text-white/80': !context.focused && context.selected },
 
             //States
-            { 'hover:bg-surface-100 dark:hover:bg-surface-600/80': !context.focused && !context.selected },
-            { 'hover:text-surface-700 hover:bg-surface-100 dark:hover:text-white dark:hover:bg-surface-600/80': context.focused && !context.selected },
+            { 'hover:bg-surface-100 dark:hover:bg-gray-600/80': !context.focused && !context.selected },
+            { 'hover:text-surface-700 hover:bg-surface-100 dark:hover:text-primary-500 dark:hover:bg-surface-600': context.focused && !context.selected },
 
             // Transitions
             'transition-shadow',

@@ -22,7 +22,11 @@ class UpdateAllocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "term" => "required|integer|exists:terms,id",
+            "instructor" => "required|integer|exists:staff,id",
+            "subject" => "required|integer|exists:subjects,id",
+            "intakes" => "required|array|min:1",
+            "intakes.*" => "required|integer|exists:intakes,id",
         ];
     }
 }

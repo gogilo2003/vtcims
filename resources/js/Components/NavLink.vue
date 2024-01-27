@@ -15,8 +15,8 @@ const activeState = ref(false)
 
 const classes = computed(() =>
     activeState.value
-        ? 'bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 before:h-4 before:w-4 before:bg-gray-800 before:absolute before:-top-4 before:right-0 before:shadow-[5px_5px_0_5px] before:rounded-[0_0_100vw_0] before:shadow-gray-100 dark:before:shadow-gray-600 after:h-4 after:w-4 after:bg-gray-800 after:absolute after:-bottom-4 after:right-0 after:shadow-[5px_-5px_0_5px] after:rounded-[0_100vw_0_0] after:shadow-gray-100 dark:after:shadow-gray-600'
-        : 'bg-gray-800 text-gray-100'
+        ? 'bg-gray-100 dark:bg-gray-600 text-primary-500 dark:text-gray-200 before:h-4 before:w-4 before:bg-transparent before:absolute before:-top-4 before:right-0 before:shadow-[5px_5px_0_5px] before:rounded-[0_0_100vw_0] before:shadow-gray-100 dark:before:shadow-gray-600 after:h-4 after:w-4 after:bg-transparent after:absolute after:-bottom-4 after:right-0 after:shadow-[5px_-5px_0_5px] after:rounded-[0_100vw_0_0] after:shadow-gray-100 dark:after:shadow-gray-600'
+        : 'bg-primary-500 dark:bg-gray-800 text-gray-100'
 );
 
 watchEffect(() => {

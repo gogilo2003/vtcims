@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iCourse, iAllocation, iAllocations } from '../../interfaces/index';
+import { iInstructor, iCourse, iAllocation, iAllocations, iIntake } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import Icon from '../../Components/Icons/Icon.vue';
@@ -17,11 +17,31 @@ import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
+import MultiSelect from 'primevue/multiselect';
+
 
 const props = defineProps<{
     allocations: iAllocations,
     instructors: Array<iInstructor>
-    courses: Array<iCourse>
+    subjects: Array<{
+        id: number,
+        code: string,
+        name: string,
+    }>
+    terms: Array<{
+        id: number
+        name: string
+        year: string
+        year_name: string
+        start_date: string
+        end_date: string
+    }>
+    intakes: Array<{
+        id: number,
+        name: string
+        start_date: string
+        end_date: string
+    }>,
     search: string,
     notification: Object,
     errors: Object
@@ -31,14 +51,15 @@ const toast = useToast()
 
 const form = useForm({
     id: 0,
-    staff_subject: 0,
-    intake: 0,
+    term: 0,
+    instructor: 0,
+    subject: 0,
+    intakes: new Array
 })
 
 const showAllocationDialog = ref(false)
 const edit = ref(false)
 const dialogTitle = ref('New Allocation')
-const course = ref<iCourse>()
 
 const newAllocation = () => {
     showAllocationDialog.value = true
@@ -48,8 +69,10 @@ const newAllocation = () => {
 const editAllocation = (allocation: iAllocation) => {
 
     form.id = allocation.id
-    form.staff_subject = allocation.staff_subject_id
-    form.intake = allocation.intake.id
+    form.term = allocation.term.id
+    form.instructor = allocation.instructor.id
+    form.subject = allocation.subject.id
+    form.intakes = allocation.intakes.map(intake => intake.id)
 
     showAllocationDialog.value = true
     edit.value = true
@@ -129,17 +152,19 @@ const submit = () => {
     }
 
 }
+
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog modal :header="dialogTitle" v-model:visible="showAllocationDialog" :style="{ width: '50vw' }"
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+    <Dialog modal :header="dialogTitle" v-model:visible="showAllocationDialog" :pt="{
+        root: { class: 'w-full md:w-72 lg:w-[48rem]' }
+    }">
         <form @submit.prevent="submit">
             <div class="mb-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <InputLabel value="Course" />
-                    <Dropdown :options="courses" option-value="id" option-label="name" v-model="form.course" filter />
-                    <InputError :message="form.errors.course" />
+                    <InputLabel value="Subject" />
+                    <Dropdown :options="subjects" option-value="id" option-label="name" v-model="form.subject" filter />
+                    <InputError :message="form.errors.subject" />
                 </div>
                 <div>
                     <InputLabel value="Instructor" />
@@ -148,20 +173,15 @@ const submit = () => {
                     <InputError :message="form.errors.instructor" />
                 </div>
                 <div>
-                    <InputLabel value="Start Date" />
-                    <Calendar v-model="form.start_date" />
-                    <InputError :message="form.errors.start_date" />
+                    <InputLabel value="Term" />
+                    <Dropdown :options="terms" option-value="id" option-label="year_name" v-model="form.term" filter />
+                    <InputError :message="form.errors.term" />
                 </div>
                 <div>
-                    <InputLabel value="End Date" />
-                    <Calendar v-model="form.end_date" />
-                    <InputError :message="form.errors.end_date" />
+                    <InputLabel value="Intakes" />
+                    <MultiSelect :options="intakes" option-value="id" option-label="name" v-model="form.intakes" filter />
+                    <InputError :message="form.errors.intakes" />
                 </div>
-            </div>
-            <div class="mb-3">
-                <InputLabel value="Name" />
-                <InputText v-model="form.name" readonly />
-                <InputError :message="form.errors.name" />
             </div>
             <div class="flex items-center justify-between mt-8">
                 <Button type="submit" label="Save" size="small" rounded />
@@ -186,7 +206,7 @@ const submit = () => {
         <div class="flex flex-col gap-2">
             <ListItem v-for="allocation in allocations.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
-                    <div v-text="`${allocation.term.year_name}: ${allocation.subject.name} by ${allocation.staff.name}`"
+                    <div v-text="`${allocation.term.year_name}: ${allocation.subject.name} by ${allocation.instructor.name}`"
                         class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-default">
                     </div>
                     <div class="flex gap-2 flex-col md:flex-row divide-x">
@@ -209,6 +229,5 @@ const submit = () => {
             </ListItem>
             <Paginator :items="allocations" />
         </div>
-        <pre v-text="instructors"></pre>
     </AuthenticatedLayout>
 </template>
