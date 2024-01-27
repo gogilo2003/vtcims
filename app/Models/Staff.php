@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -82,5 +83,15 @@ class Staff extends Model
     public function status(): BelongsTo
     {
         return $this->belongsTo(StaffStatus::class, 'status_id', 'id');
+    }
+
+    /**
+     * Get all of the allocations for the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(Allocation::class);
     }
 }

@@ -3,5 +3,5 @@ import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
 
 </script>
 <template>
-    <AuthenticatedLayout title="Staff Members"></AuthenticatedLayout>
+    <AuthenticatedLayout title="Attendances"></AuthenticatedLayout>
 </template>

@@ -16,10 +16,10 @@ class CreateStaffSubjectTable extends Migration
         Schema::create('staff_subject', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('staff_id')->unsigned();
-            $table->foreign('staff_id')->references('id')->on('staff');
             $table->integer('subject_id')->unsigned();
-            $table->foreign('subject_id')->references('id')->on('subjects');
             $table->timestamps();
+            $table->foreign('staff_id')->references('id')->on('staff');
+            $table->foreign('subject_id')->references('id')->on('subjects');
         });
     }
 

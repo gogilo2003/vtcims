@@ -151,3 +151,36 @@ export interface iSponsor {
     town: string
     address: string
 }
+
+export interface iAllocation {
+    id: number
+    staff_subject_id: number
+    staff: {
+        id: number,
+        name: string
+    }
+    subject: {
+        id: number,
+        code: string,
+        name: string
+    }
+    intake: {
+        id: number,
+        name: string
+    }
+}
+export interface iAllocations {
+    current_page: string
+    data: iAllocation[]
+    first_page_url: string
+    from: number
+    last_page: number
+    last_page_url: string
+    links: iLink[]
+    next_page_url: string
+    path: string
+    per_page: number
+    prev_page_url: string
+    to: number
+    total: number
+}

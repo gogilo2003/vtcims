@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 // Represents a class of students and is named according to course/year/intake series
 class Intake extends Model
@@ -30,5 +31,15 @@ class Intake extends Model
     public function examinations()
     {
         return $this->belongsToMany('App\Models\Examination')->withTimestamps();
+    }
+
+    /**
+     * Get all of the allocations for the Intake
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(Allocation::class);
     }
 }

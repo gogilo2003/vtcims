@@ -22,7 +22,7 @@ const gt = ref('Next &raquo;');
                         <Icon type="pi-angle-double-left" />
                     </component>
                     <component :is="link.url ? Link : 'span'" v-else-if="link.label == gt" :href="link.url"
-                        class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg rounded-r-full hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">
+                        class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg rounded-r-3xl hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white">
                         <span class="sr-only">Next</span>
                         <Icon type="pi-angle-double-right" />
                     </component>

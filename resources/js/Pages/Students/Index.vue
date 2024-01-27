@@ -94,7 +94,9 @@ watch(() => searchVal.value, debounce((value: string) => {
     }
 
     router.get(route('students'), data, {
-        only: ['students', 'search']
+        only: ['students', 'search'],
+        preserveScroll: true,
+        preserveState: true
     })
 }, 500))
 

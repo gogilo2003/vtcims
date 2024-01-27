@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Subject extends Model
 {
@@ -34,5 +35,15 @@ class Subject extends Model
     public function examinations()
     {
         return $this->hasMany('App\Models\Examination');
+    }
+
+    /**
+     * Get all of the allocations for the Subject
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function allocations(): HasMany
+    {
+        return $this->hasMany(Allocation::class,);
     }
 }
