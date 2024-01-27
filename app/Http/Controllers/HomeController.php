@@ -4,13 +4,8 @@ namespace App\Http\Controllers;
 
 use Img;
 use Validator;
-use App\Models\Page;
-use Inertia\Inertia;
-
-use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Student;
 
 /**
  *
@@ -20,27 +15,6 @@ class HomeController extends Controller
     public function __construct()
     {
         // $this->middleware('auth')->except('login');
-    }
-
-    function dashboard()
-    {
-        $students = [];
-        foreach (Student::selectRaw('gender, count(*) as count')
-            ->groupBy('gender')
-            ->get()->map(fn ($item) => [
-                ($item->gender ? 'female' : 'male') => $item->count
-            ]) as $item) {
-
-            if (isset($item['female'])) {
-                $students['female'] = $item['female'];
-            }
-            if (isset($item['male'])) {
-                $students['male'] = $item['male'];
-            }
-        }
-        $students['total'] = $students['male'] + $students['female'];
-
-        return Inertia::render('Dashboard', ['students' => $students]);
     }
 
     public function getDashboard()

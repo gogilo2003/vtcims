@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Controllers\HomeController;
-use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\V1\HomeController;
 use App\Http\Controllers\V1\TermController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\IntakeController;
