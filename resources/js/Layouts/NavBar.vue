@@ -25,6 +25,7 @@ const toggle = () => {
 onMounted(() => {
     toggleState.value = localStorage.getItem('toggleState') == "1" ? true : false
     emit('toggle', toggleState.value)
+    dark.value = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
 })
 
 watch(() => toggleState.value, value => {
@@ -42,9 +43,7 @@ watch(() => dark.value, (value) => {
         document.documentElement.classList.remove('dark')
     }
 })
-onMounted(() => {
-    dark.value = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-})
+
 </script>
 <template>
     <nav class="z-10 bg-white dark:bg-gray-600 border-b border-lime-500 dark:border-gray-800 sticky top-0">

@@ -1,102 +1,12 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import StatCard from '@/Components/StatCard.vue';
-import Chart from 'primevue/chart';
-import { ref, onMounted } from "vue";
+import CurrentChart from '@/Components/Stats/CurrentChart.vue'
+import StatusChart from '@/Components/Stats/StatusChart.vue'
+import AnnualChart from '@/Components/Stats/AnnualChart.vue'
 
-defineProps(['students'])
+defineProps(['students', 'current', 'status', 'annual'])
 
-onMounted(() => {
-    setTimeout(() => {
-        chartData.value = setChartData();
-    }, 3000);
-    chartOptions.value = setChartOptions();
-});
-
-const chartData = ref();
-const chartOptions = ref();
-
-const setChartData = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-
-    return {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-            {
-                label: 'Male',
-                data: genData(),
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--blue-500'),
-                tension: 0.4
-            },
-            {
-                label: 'Female',
-                data: genData(),
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--pink-500'),
-                tension: 0.4
-            },
-            {
-                label: 'Mean',
-                data: genData(),
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--green-500'),
-                tension: 0.4
-            }
-        ]
-    };
-};
-
-const genData = () => {
-    let randomNumbers = [];
-
-    // Generate seven random integer numbers
-    for (let i = 0; i < 7; i++) {
-        // Generate a random integer between 1 and 100 (you can adjust the range as needed)
-        let randomNumber = Math.floor(Math.random() * 100) + 1;
-
-        // Push the generated random number to the array
-        randomNumbers.push(randomNumber);
-    }
-
-    return randomNumbers
-}
-const setChartOptions = () => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-    const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-
-    return {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
-        }
-    };
-}
 </script>
 
 <template>
@@ -128,10 +38,18 @@ const setChartOptions = () => {
                     </div>
                 </StatCard>
             </div>
-            <div class="rounded-3xl p-6  h-full flex-1 max-w-full w-full bg-white/30 border">
-                <Chart type="line" :data="chartData" :options="chartOptions" :pt="{
-                    root: { class: 'w-[100%] h-full' }
-                }" />
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="rounded-3xl p-6  h-full max-w-full w-full bg-white dark:bg-gray-700 dark:text-gray-300 border">
+                    <CurrentChart :current="current" />
+                </div>
+                <div
+                    class="rounded-3xl p-6  h-full flex-1 max-w-full w-full bg-white dark:bg-gray-700 dark:text-gray-300 border">
+                    <StatusChart :data="status" />
+                </div>
+                <div
+                    class="rounded-3xl p-6  h-full flex-1 max-w-full w-full bg-white dark:bg-gray-700 dark:text-gray-300 border md:col-span-2 lg:col-span-2">
+                    <AnnualChart :data="annual" />
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>
