@@ -35,6 +35,10 @@ import Youtube from './Youtube.vue'
 import Picture from './Picture.vue'
 import PersonDetails from './PersonDetails.vue'
 import Person from './Person.vue'
+import Female from './Female.vue'
+import Male from './Male.vue'
+import Community from './Community.vue'
+import Team from './Team.vue'
 
 const props = defineProps({ type: String })
 
@@ -109,6 +113,14 @@ const icon = computed(() => {
         return PersonDetails;
     } else if (props.type == 'person') {
         return Person;
+    } else if (props.type == 'female') {
+        return Female;
+    } else if (props.type == 'male') {
+        return Male;
+    } else if (props.type == 'community') {
+        return Community;
+    } else if (props.type == 'team') {
+        return Team;
     }
     classes.value = `pi ${props.type}`
     return 'span';
