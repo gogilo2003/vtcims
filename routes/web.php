@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\V1\HomeController;
 use App\Http\Controllers\V1\TermController;
+use App\Http\Controllers\V1\StaffController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\IntakeController;
 use App\Http\Controllers\V1\ProgramController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\V1\SponsorController;
 use App\Http\Controllers\V1\StudentController;
 use App\Http\Controllers\V1\SubjectController;
 use App\Http\Controllers\V1\AllocationController;
+use App\Http\Controllers\V1\AttendanceController;
 use App\Http\Controllers\V1\DepartmentController;
 
 /*
@@ -46,11 +48,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('staff')->name('staff')->group(function () {
-        Route::get('', [StudentController::class, 'index']);
-        Route::post('', [StudentController::class, 'store'])->name('-store');
-        Route::patch('{student}', [StudentController::class, 'update'])->name('-update');
-        Route::delete('{student}', [StudentController::class, 'destroy'])->name('-destroy');
-        Route::post('photo/{student}', [StudentController::class, 'picture'])->name('-photo');
+        Route::get('', [StaffController::class, 'index']);
+        Route::post('', [StaffController::class, 'store'])->name('-store');
+        Route::patch('{staff}', [StaffController::class, 'update'])->name('-update');
+        Route::delete('{staff}', [StaffController::class, 'destroy'])->name('-destroy');
+        Route::post('photo/{staff}', [StaffController::class, 'picture'])->name('-photo');
+    });
+    Route::prefix('attendances')->name('attendances')->group(function () {
+        Route::get('', [AttendanceController::class, 'index']);
+        Route::post('', [AttendanceController::class, 'store'])->name('-store');
+        Route::patch('{staff}', [AttendanceController::class, 'update'])->name('-update');
+        Route::delete('{staff}', [AttendanceController::class, 'destroy'])->name('-destroy');
+        Route::post('photo/{staff}', [AttendanceController::class, 'picture'])->name('-photo');
     });
 
     Route::prefix('subjects')->name('subjects')->group(function () {

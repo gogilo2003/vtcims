@@ -8,10 +8,19 @@ export const links: iMenu[] = [
         items: null
     },
     {
-        name: 'students',
+        name: '',
         icon: 'people',
         caption: 'Students',
-        items: null
+        items: [
+            {
+                name: 'students',
+                caption: 'Students'
+            },
+            {
+                name: 'attendances',
+                caption: 'Attendances'
+            }
+        ]
     },
     {
         name: '',
