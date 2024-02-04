@@ -2,22 +2,21 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreAllocationRequest;
-use App\Http\Requests\UpdateAllocationRequest;
-use App\Models\Allocation;
-use App\Models\Attendance;
 use Inertia\Inertia;
+use App\Models\Lesson;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\StoreLessonRequest;
+use App\Http\Requests\V1\UpdateLessonRequest;
 
-class AttendanceController extends Controller
+class LessonController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $allocations = Allocation::with('attendances.students')->get();
-        return Inertia::render('Attendances/Index', ['allocations' => $allocations]);
+        $lessons = Lesson::with('attendances.allocation')->get();
+        return Inertia::render('Lessons/Index', ['lessons' => $lessons]);
     }
 
     /**
@@ -31,7 +30,7 @@ class AttendanceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAllocationRequest $request)
+    public function store(StoreLessonRequest $request)
     {
         //
     }
@@ -39,7 +38,7 @@ class AttendanceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Allocation $allocation)
+    public function show(Lesson $lesson)
     {
         //
     }
@@ -47,7 +46,7 @@ class AttendanceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Allocation $allocation)
+    public function edit(Lesson $lesson)
     {
         //
     }
@@ -55,7 +54,7 @@ class AttendanceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAllocationRequest $request, Allocation $allocation)
+    public function update(UpdateLessonRequest $request, Lesson $lesson)
     {
         //
     }
@@ -63,7 +62,7 @@ class AttendanceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Allocation $allocation)
+    public function destroy(Lesson $lesson)
     {
         //
     }

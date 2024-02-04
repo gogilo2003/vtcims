@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Student extends Model
 {
@@ -119,5 +120,15 @@ class Student extends Model
     public function leaveouts()
     {
         return $this->hasMany('App\Models\LeaveOut');
+    }
+
+    /**
+     * The attendances that belong to the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function attendances(): BelongsToMany
+    {
+        return $this->belongsToMany(Attendance::class);
     }
 }
