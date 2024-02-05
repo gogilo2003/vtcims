@@ -57,31 +57,31 @@ const form = useForm({
     intakes: new Array
 })
 
-const showAllocationDialog = ref(false)
+const showAttendanceDialog = ref(false)
 const edit = ref(false)
-const dialogTitle = ref('New Allocation')
+const dialogTitle = ref('New Attendance')
 
-const newAllocation = () => {
-    showAllocationDialog.value = true
+const newAttendance = () => {
+    showAttendanceDialog.value = true
     edit.value = false
 }
 
-const editAllocation = (allocation: iAllocation) => {
+const editAttendance = (attendance: iAttendance) => {
 
-    form.id = allocation.id
-    form.term = allocation.term.id
-    form.instructor = allocation.instructor.id
-    form.subject = allocation.subject.id
-    form.intakes = allocation.intakes.map(intake => intake.id)
+    form.id = attendance.id
+    form.term = attendance.term.id
+    form.instructor = attendance.instructor.id
+    form.subject = attendance.subject.id
+    form.intakes = attendance.intakes.map(intake => intake.id)
 
-    showAllocationDialog.value = true
+    showAttendanceDialog.value = true
     edit.value = true
 }
 
 const cancel = () => {
-    showAllocationDialog.value = false
+    showAttendanceDialog.value = false
     edit.value = false
-    dialogTitle.value = 'New Allocation'
+    dialogTitle.value = 'New Attendance'
     form.reset();
 }
 
@@ -95,8 +95,8 @@ watch(() => searchVal.value, debounce((value: string) => {
         data = { search: value }
     }
 
-    router.get(route('allocations'), data, {
-        only: ['allocations', 'search'],
+    router.get(route('attendances'), data, {
+        only: ['attendances', 'search'],
         preserveScroll: true,
         preserveState: true
     })
@@ -105,8 +105,8 @@ watch(() => searchVal.value, debounce((value: string) => {
 
 const submit = () => {
     if (edit.value) {
-        form.patch(route('allocations-update', form.id), {
-            only: ['notification', 'allocations', 'errors'],
+        form.patch(route('attendances-update', form.id), {
+            only: ['notification', 'attendances', 'errors'],
             onSuccess: () => {
                 toast.add({
                     severity: 'success',
@@ -115,7 +115,7 @@ const submit = () => {
                     life: 8000
                 })
                 form.reset()
-                showAllocationDialog.value = false
+                showAttendanceDialog.value = false
             },
             onError: () => {
                 toast.add({
@@ -128,8 +128,8 @@ const submit = () => {
         })
     } else {
 
-        form.post(route('allocations-store'), {
-            only: ['notification', 'allocations', 'errors'],
+        form.post(route('attendances-store'), {
+            only: ['notification', 'attendances', 'errors'],
             onSuccess: () => {
                 toast.add({
                     severity: 'success',
@@ -138,7 +138,7 @@ const submit = () => {
                     life: 8000
                 })
                 form.reset()
-                showAllocationDialog.value = false
+                showAttendanceDialog.value = false
             },
             onError: () => {
                 toast.add({
@@ -156,7 +156,7 @@ const submit = () => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog modal :header="dialogTitle" v-model:visible="showAllocationDialog" :pt="{
+    <Dialog modal :header="dialogTitle" v-model:visible="showAttendanceDialog" :pt="{
         root: { class: 'w-full md:w-72 lg:w-[48rem]' }
     }">
         <form @submit.prevent="submit">
@@ -189,11 +189,11 @@ const submit = () => {
             </div>
         </form>
     </Dialog>
-    <AuthenticatedLayout title="Allocations">
+    <AuthenticatedLayout title="Attendances">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
-            <SecondaryButton @click="newAllocation">
+            <SecondaryButton @click="newAttendance">
                 <Icon type="add" />
-                <span class="hidden md:inline-flex">New Allocation</span>
+                <span class="hidden md:inline-flex">New Attendance</span>
             </SecondaryButton>
             <div>
                 <span class="relative">
@@ -221,7 +221,7 @@ const submit = () => {
                     </div>
                 </div>
                 <div>
-                    <SecondaryButton @click="editAllocation(allocation)">
+                    <SecondaryButton @click="editAttendance(allocation)">
                         <Icon class="h-4" type="edit" />
                         <span class="hidden md:inline-block">Edit</span>
                     </SecondaryButton>

@@ -21,13 +21,13 @@ class Attendance extends Model
     }
 
     /**
-     * Get the lesson that owns the Attendance
+     * The lessons that belong to the Attendance
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function lesson(): BelongsTo
+    public function lessons(): BelongsToMany
     {
-        return $this->belongsTo(Lesson::class);
+        return $this->belongsToMany(Lesson::class);
     }
 
     /**

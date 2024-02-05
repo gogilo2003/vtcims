@@ -16,7 +16,37 @@ class AttendanceController extends Controller
      */
     public function index()
     {
-        $allocations = Allocation::with('attendances.students')->get();
+        $allocations = Allocation::with('attendances.students', 'attendances.lessons', 'term', 'subject', 'staff')
+            ->whereHas('term', function ($query) {
+                $query->whereDate('end_date', '>', now());
+            })
+            ->orderBy('created_at', 'DESC')
+            ->paginate(8)
+            ->through(fn ($item) => [
+                "id" => $item->id,
+                'attendances' => $item->attendances,
+                "term" => [
+                    "id" => $item->term->id,
+                    "name" => $item->term->name,
+                    "year" => $item->term->year,
+                    "start_date" => $item->term->start_date->isoFormat('lll'),
+                    "end_date" => $item->term->end_date->isoFormat('lll'),
+                    "year_name" => $item->term->year_name,
+                ],
+                "instructor" => [
+                    "id" => $item->staff->id,
+                    "name" => sprintf("%s %s %s", $item->staff->surname, $item->staff->first_name, $item->staff->middle_name),
+                ],
+                "subject" => [
+                    "id" => $item->subject->id,
+                    "code" => $item->subject->code,
+                    "name" => $item->subject->name,
+                ],
+                "intakes" => $item->intakes->map(fn ($intake) => [
+                    "id" => $intake->id,
+                    "name" => $intake->name,
+                ]),
+            ]);
         return Inertia::render('Attendances/Index', ['allocations' => $allocations]);
     }
 

@@ -3,20 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Lesson extends Model
 {
     use HasFactory;
 
     /**
-     * Get all of the attendances for the Lesson
+     * The attendances that belong to the Lesson
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function attendances(): HasMany
+    public function attendances(): BelongsToMany
     {
-        return $this->hasMany(Attendance::class);
+        return $this->belongsToMany(Attendance::class);
     }
 }
