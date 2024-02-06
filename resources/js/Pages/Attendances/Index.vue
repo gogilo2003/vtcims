@@ -13,11 +13,11 @@ import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown';
 import InputError from '../../Components/InputError.vue';
 import InputLabel from '../../Components/InputLabel.vue';
-import Calendar from 'primevue/calendar';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import MultiSelect from 'primevue/multiselect';
+import InputSwitch from 'primevue/inputswitch';
 
 
 const props = defineProps<{
@@ -43,6 +43,7 @@ const props = defineProps<{
         end_date: string
     }>,
     search: string,
+    current: string,
     notification: Object,
     errors: Object
 }>()
@@ -60,6 +61,7 @@ const form = useForm({
 const showAttendanceDialog = ref(false)
 const edit = ref(false)
 const dialogTitle = ref('New Attendance')
+const currentTerm = ref(props.current)
 
 const newAttendance = () => {
     showAttendanceDialog.value = true
@@ -96,7 +98,22 @@ watch(() => searchVal.value, debounce((value: string) => {
     }
 
     router.get(route('attendances'), data, {
-        only: ['attendances', 'search'],
+        only: ['allocations', 'search', 'current'],
+        preserveScroll: true,
+        preserveState: true
+    })
+}, 500))
+
+watch(() => currentTerm.value, debounce((value: boolean) => {
+
+    let data = {}
+
+    if (value) {
+        data = { current: value }
+    }
+
+    router.get(route('attendances'), data, {
+        only: ['allocations', 'search', 'current'],
         preserveScroll: true,
         preserveState: true
     })
@@ -191,10 +208,18 @@ const submit = () => {
     </Dialog>
     <AuthenticatedLayout title="Attendances">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
-            <SecondaryButton @click="newAttendance">
+            <div>
+                <!-- <SecondaryButton @click="newAttendance">
                 <Icon type="add" />
                 <span class="hidden md:inline-flex">New Attendance</span>
-            </SecondaryButton>
+            </SecondaryButton> -->
+
+                <label for="current_term" class="flex items-center gap-2">
+                    <InputSwitch id="current_term" v-model="currentTerm" />
+                    Current Term
+                </label>
+
+            </div>
             <div>
                 <span class="relative">
                     <i class="pi pi-search absolute -top-[40%] translate-y-[50%] left-2 opacity-50" />
@@ -206,8 +231,11 @@ const submit = () => {
         <div class="flex flex-col gap-2">
             <ListItem v-for="allocation in allocations.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
-                    <div v-text="`${allocation.term.year_name}: ${allocation.subject.name} by ${allocation.instructor.name}`"
-                        class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-default">
+                    <div class="flex flex-col">
+                        <span class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-default"
+                            v-text="`${allocation.term.year_name}: ${allocation.subject.name}`"></span>
+                        <span class="capitalize text-xs font-bold text-gray-600 dark:text-primary-300"
+                            v-html="`By <span class='italic'>${allocation.instructor.name}</span>`"></span>
                     </div>
                     <div class="flex gap-2 flex-col md:flex-row divide-x">
                         <div class="flex items-start gap-1">

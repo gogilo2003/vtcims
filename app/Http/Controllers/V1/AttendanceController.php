@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\V1;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreAllocationRequest;
-use App\Http\Requests\UpdateAllocationRequest;
+use Inertia\Inertia;
 use App\Models\Allocation;
 use App\Models\Attendance;
-use Inertia\Inertia;
+use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\StoreAllocationRequest;
+use App\Http\Requests\V1\UpdateAllocationRequest;
 
 class AttendanceController extends Controller
 {
@@ -16,9 +17,14 @@ class AttendanceController extends Controller
      */
     public function index()
     {
+        $search = request()->input('search');
+        $current = request()->input('current');
+
         $allocations = Allocation::with('attendances.students', 'attendances.lessons', 'term', 'subject', 'staff')
             ->whereHas('term', function ($query) {
-                $query->whereDate('end_date', '>', now());
+                if (request()->input('current')) {
+                    $query->whereDate('end_date', '>', now());
+                }
             })
             ->orderBy('created_at', 'DESC')
             ->paginate(8)
@@ -35,7 +41,7 @@ class AttendanceController extends Controller
                 ],
                 "instructor" => [
                     "id" => $item->staff->id,
-                    "name" => sprintf("%s %s %s", $item->staff->surname, $item->staff->first_name, $item->staff->middle_name),
+                    "name" => Str::lower(sprintf("%s %s %s", $item->staff->surname, $item->staff->first_name, $item->staff->middle_name)),
                 ],
                 "subject" => [
                     "id" => $item->subject->id,
@@ -47,7 +53,11 @@ class AttendanceController extends Controller
                     "name" => $intake->name,
                 ]),
             ]);
-        return Inertia::render('Attendances/Index', ['allocations' => $allocations]);
+        return Inertia::render('Attendances/Index', [
+            'allocations' => $allocations,
+            'search' => $search,
+            'current' => $current,
+        ]);
     }
 
     /**
