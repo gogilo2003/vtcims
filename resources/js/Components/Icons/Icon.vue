@@ -39,6 +39,8 @@ import Female from './Female.vue'
 import Male from './Male.vue'
 import Community from './Community.vue'
 import Team from './Team.vue'
+import Excel from './Excel.vue'
+import Pdf from './Pdf.vue'
 
 const props = defineProps({ type: String })
 
@@ -121,7 +123,12 @@ const icon = computed(() => {
         return Community;
     } else if (props.type == 'team') {
         return Team;
+    } else if (props.type == 'excel') {
+        return Excel;
+    } else if (props.type == 'pdf') {
+        return Pdf;
     }
+
     classes.value = `pi ${props.type}`
     return 'span';
 })

@@ -191,3 +191,19 @@ export interface iAllocations {
     to: number
     total: number
 }
+
+export interface iTerm {
+    id: number
+    name: string
+    year: string
+    year_name: string
+    start_date: string
+    end_date: string
+}
+export interface iAttendance {
+    id: number
+    term: iTerm
+    instructor: iInstructor
+    subject: iSubject
+    intakes: iIntake[]
+}

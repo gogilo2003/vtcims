@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Models\Term;
 use Inertia\Inertia;
+use App\Models\Staff;
+use App\Models\Intake;
+use App\Models\Subject;
 use App\Models\Allocation;
 use App\Models\Attendance;
 use Illuminate\Support\Str;
+use App\Exports\StudentExport;
 use App\Http\Controllers\Controller;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\V1\StoreAllocationRequest;
 use App\Http\Requests\V1\UpdateAllocationRequest;
 
@@ -53,6 +59,7 @@ class AttendanceController extends Controller
                     "name" => $intake->name,
                 ]),
             ]);
+
         return Inertia::render('Attendances/Index', [
             'allocations' => $allocations,
             'search' => $search,
@@ -106,5 +113,41 @@ class AttendanceController extends Controller
     public function destroy(Allocation $allocation)
     {
         //
+    }
+
+    /**
+     * Download
+     *
+     * Download attendance list for a particular class/allocation in excel or pdf
+     *
+     * @param String $type
+     * @return void
+     */
+    function download(Allocation $allocation, String $type)
+    {
+
+        $students = null;
+        $filename = "";
+        if ($allocation) {
+            $allocation->load('intakes.students');
+            $allocation->load('staff');
+            $allocation->load('term');
+            $filename = Str::upper(Str::lower(Str::replace(" ", "_", sprintf("%s %s %s", $allocation->subject->code, $allocation->term->year, $allocation->term->name))));
+            $students = $allocation->intakes->flatMap->students->map(function ($item) {
+                return [
+                    "admission_no" => $item->admission_no,
+                    "name" => $item->name, //Str::upper(Str::lower(sprintf("%s%s%s", $item->first_name, $item->middle_name, $item->surname)))
+                    "gender" => $item->gender ? 'Female' : 'Male'
+                ];
+            });
+        } else {
+            // Allocation not found
+        }
+
+        if ($type == 'excel') {
+            return Excel::download(new StudentExport($students, $allocation), $filename . '.xlsx');
+        } else {
+            // return pdf
+        }
     }
 }

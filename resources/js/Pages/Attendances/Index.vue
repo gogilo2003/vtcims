@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iCourse, iAllocation, iAllocations, iIntake } from '../../interfaces/index';
+import { iInstructor, iCourse, iAllocation, iAllocations, iIntake, iAttendance, iTerm, iSubject } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import { ref, watch, onMounted, computed } from 'vue';
@@ -22,26 +22,6 @@ import InputSwitch from 'primevue/inputswitch';
 
 const props = defineProps<{
     allocations: iAllocations,
-    instructors: Array<iInstructor>
-    subjects: Array<{
-        id: number,
-        code: string,
-        name: string,
-    }>
-    terms: Array<{
-        id: number
-        name: string
-        year: string
-        year_name: string
-        start_date: string
-        end_date: string
-    }>
-    intakes: Array<{
-        id: number,
-        name: string
-        start_date: string
-        end_date: string
-    }>,
     search: string,
     current: string,
     notification: Object,
@@ -170,62 +150,39 @@ const submit = () => {
 
 }
 
+const download = (id, TYPE = 'pdf') => {
+    let link = document.createElement('a');
+    link.href = route('attendances-download', { allocation: id, type: TYPE })
+
+    link.target = '_BLANK'
+    link.click()
+}
+
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog modal :header="dialogTitle" v-model:visible="showAttendanceDialog" :pt="{
-        root: { class: 'w-full md:w-72 lg:w-[48rem]' }
-    }">
-        <form @submit.prevent="submit">
-            <div class="mb-3 grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <InputLabel value="Subject" />
-                    <Dropdown :options="subjects" option-value="id" option-label="name" v-model="form.subject" filter />
-                    <InputError :message="form.errors.subject" />
-                </div>
-                <div>
-                    <InputLabel value="Instructor" />
-                    <Dropdown :options="instructors" option-value="id" option-label="name" v-model="form.instructor"
-                        filter />
-                    <InputError :message="form.errors.instructor" />
-                </div>
-                <div>
-                    <InputLabel value="Term" />
-                    <Dropdown :options="terms" option-value="id" option-label="year_name" v-model="form.term" filter />
-                    <InputError :message="form.errors.term" />
-                </div>
-                <div>
-                    <InputLabel value="Intakes" />
-                    <MultiSelect :options="intakes" option-value="id" option-label="name" v-model="form.intakes" filter />
-                    <InputError :message="form.errors.intakes" />
-                </div>
-            </div>
-            <div class="flex items-center justify-between mt-8">
-                <Button type="submit" label="Save" size="small" rounded />
-                <Button @click="cancel" label="Cancel" size="small" rounded outlined />
-            </div>
-        </form>
-    </Dialog>
     <AuthenticatedLayout title="Attendances">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
             <div>
-                <!-- <SecondaryButton @click="newAttendance">
-                <Icon type="add" />
-                <span class="hidden md:inline-flex">New Attendance</span>
-            </SecondaryButton> -->
+                <SecondaryButton @click="newAttendance">
+                    <Icon type="add" />
+                    <span class="hidden md:inline-flex">New Attendance</span>
+                </SecondaryButton>
+
+            </div>
+            <div class="flex flex-wrap gap-2 items-center relative">
 
                 <label for="current_term" class="flex items-center gap-2">
                     <InputSwitch id="current_term" v-model="currentTerm" />
                     Current Term
                 </label>
 
-            </div>
-            <div>
-                <span class="relative">
-                    <i class="pi pi-search absolute -top-[40%] translate-y-[50%] left-2 opacity-50" />
+                <span class="relative flex items-center">
+                    <i class="pi pi-search absolute bottom-[50%] translate-y-[50%] left-2 opacity-50" />
                     <InputText v-model="searchVal" placeholder="Search" class="px-8 w-full"
                         :pt="{ root: { class: 'rounded-full focus:ring-primary-500 text-surface-600 dark:text-surface-200 bg-surface-0 dark:bg-surface-700' } }" />
                 </span>
+
             </div>
         </div>
         <div class="flex flex-col gap-2">
@@ -248,11 +205,15 @@ const submit = () => {
                         </div>
                     </div>
                 </div>
-                <div>
-                    <SecondaryButton @click="editAttendance(allocation)">
-                        <Icon class="h-4" type="edit" />
-                        <span class="hidden md:inline-block">Edit</span>
-                    </SecondaryButton>
+                <div class="flex gap-1">
+                    <!-- <SecondaryButton @click="download(allocation.id)"> -->
+                    <Icon class="h-8 w-6 cursor-pointer" type="pdf" @click="download(allocation.id)" />
+                    <!-- <span class="hidden md:inline-block">Download</span> -->
+                    <!-- </SecondaryButton> -->
+                    <!-- <SecondaryButton @click="download(allocation.id, 'excel')"> -->
+                    <Icon class="h-8 w-6 cursor-pointer" type="excel" @click="download(allocation.id, 'excel')" />
+                    <!-- <span class="hidden md:inline-block">Download</span> -->
+                    <!-- </SecondaryButton> -->
                 </div>
             </ListItem>
             <Paginator :items="allocations" />

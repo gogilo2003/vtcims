@@ -30,9 +30,14 @@ class StudentController extends Controller
 
         $search = request()->input('search');
 
-        $students = Student::with(['intake.course', 'program', 'sponsor', 'intake.examinations' => function ($query) {
-            $query->with(['term', 'subject', 'tests.results'])->orderBy('term_id', 'DESC');
-        }])->orderBy('id', 'DESC')->when(
+        $students = Student::with([
+            'intake.course',
+            'program',
+            'sponsor',
+            'intake.examinations' => function ($query) {
+                $query->with(['term', 'subject', 'tests.results'])->orderBy('term_id', 'DESC');
+            }
+        ])->orderBy('id', 'DESC')->when(
             $search,
             function ($query) use ($search) {
                 $query->where('surname', 'LIKE', '%' . $search . '%')
@@ -41,44 +46,46 @@ class StudentController extends Controller
                     ->orWhere('id', 'LIKE', '%' . $search . '%')
                     ->orWhere('id', $search);
             }
-        )->paginate(10)->through(function ($student) {
-            $id = $student->id;
-            $examinations = $student->intake->examinations->map(function ($exam) use ($id) {
-                $exam->load(['term', 'subject', 'tests.results' => function ($query) use ($id) {
-                    $query->where('student_id', $id);
-                }]);
+        )->paginate(10)->through(
+            function ($student) {
+                $id = $student->id;
+                $examinations = $student->intake->examinations->map(function ($exam) use ($id) {
+                    $exam->load(['term', 'subject', 'tests.results' => function ($query) use ($id) {
+                        $query->where('student_id', $id);
+                    }]);
 
-                $score = 0;
+                    $score = 0;
 
-                foreach ($exam->tests as $test) {
-                    foreach ($test->results as $result) {
-                        $score += $result->score;
+                    foreach ($exam->tests as $test) {
+                        foreach ($test->results as $result) {
+                            $score += $result->score;
+                        }
                     }
-                }
 
-                $data = (object)[
-                    "subject" => sprintf(
-                        "%s/%s - %s",
-                        $exam->term->year,
-                        $exam->term->name,
-                        $exam->subject->name
-                    ),
-                    "score" => $score,
-                ];
+                    $data = (object)[
+                        "subject" => sprintf(
+                            "%s/%s - %s",
+                            $exam->term->year,
+                            $exam->term->name,
+                            $exam->subject->name
+                        ),
+                        "score" => $score,
+                    ];
 
-                return $data;
-            })->groupBy('subject')->map(function ($marks, $key) {
-                return [
-                    "subject" => $key,
-                    "score" => number_format($marks->avg('score'), 2),
-                    "total" => number_format($marks->sum('score'), 2),
-                    "max" => number_format($marks->max('score'), 2),
-                    "min" => number_format($marks->min('score'), 2),
-                ];
-            })->sortBy('subject')->values();
-            $student->examinations = $examinations;
-            return $student;
-        });
+                    return $data;
+                })->groupBy('subject')->map(function ($marks, $key) {
+                    return [
+                        "subject" => $key,
+                        "score" => number_format($marks->avg('score'), 2),
+                        "total" => number_format($marks->sum('score'), 2),
+                        "max" => number_format($marks->max('score'), 2),
+                        "min" => number_format($marks->min('score'), 2),
+                    ];
+                })->sortBy('subject')->values();
+                $student->examinations = $examinations;
+                return $student;
+            }
+        );
 
         $intakes = Intake::orderBy('name', 'DESC')->get()->map(fn ($item) => [
             "id" => $item->id,

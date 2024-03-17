@@ -55,6 +55,10 @@ export const links: iMenu[] = [
                 name: 'allocations',
                 caption: 'Allocations',
             },
+            {
+                name: 'lessons',
+                caption: 'Lessons',
+            },
         ]
     },
 ]

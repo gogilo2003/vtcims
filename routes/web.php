@@ -7,6 +7,7 @@ use App\Http\Controllers\V1\TermController;
 use App\Http\Controllers\V1\StaffController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\IntakeController;
+use App\Http\Controllers\V1\LessonController;
 use App\Http\Controllers\V1\ProgramController;
 use App\Http\Controllers\V1\SponsorController;
 use App\Http\Controllers\V1\StudentController;
@@ -54,12 +55,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('{staff}', [StaffController::class, 'destroy'])->name('-destroy');
         Route::post('photo/{staff}', [StaffController::class, 'picture'])->name('-photo');
     });
+
     Route::prefix('attendances')->name('attendances')->group(function () {
         Route::get('', [AttendanceController::class, 'index']);
+        Route::get('download/{allocation}/{type}', [AttendanceController::class, 'download'])->name('-download');
         Route::post('', [AttendanceController::class, 'store'])->name('-store');
         Route::patch('{staff}', [AttendanceController::class, 'update'])->name('-update');
         Route::delete('{staff}', [AttendanceController::class, 'destroy'])->name('-destroy');
         Route::post('photo/{staff}', [AttendanceController::class, 'picture'])->name('-photo');
+    });
+
+    Route::prefix('lessons')->name('lessons')->group(function () {
+        Route::get('', [LessonController::class, 'index']);
+        Route::post('', [LessonController::class, 'store'])->name('-store');
+        Route::patch('{lesson}', [LessonController::class, 'update'])->name('-update');
+        Route::delete('{lesson}', [LessonController::class, 'destroy'])->name('-destroy');
     });
 
     Route::prefix('subjects')->name('subjects')->group(function () {
