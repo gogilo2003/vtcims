@@ -175,6 +175,13 @@ export interface iAllocation {
         id: number
         name: string
     }> | []
+    lessons: Array<{
+        id: number
+        title: string
+        day: string
+        start_at: string
+        end_at: string
+    }> | []
 }
 export interface iAllocations {
     current_page: string
@@ -206,4 +213,12 @@ export interface iAttendance {
     instructor: iInstructor
     subject: iSubject
     intakes: iIntake[]
+}
+
+export interface iLesson {
+    id: number
+    title: string
+    day: string
+    start_at: any
+    end_at: any
 }

@@ -41,6 +41,8 @@ import Community from './Community.vue'
 import Team from './Team.vue'
 import Excel from './Excel.vue'
 import Pdf from './Pdf.vue'
+import Calendar from './Calendar.vue'
+import Checkmark from './Checkmark.vue'
 
 const props = defineProps({ type: String })
 
@@ -127,6 +129,10 @@ const icon = computed(() => {
         return Excel;
     } else if (props.type == 'pdf') {
         return Pdf;
+    } else if (props.type == 'calendar') {
+        return Calendar;
+    } else if (props.type == 'checkmark') {
+        return Checkmark;
     }
 
     classes.value = `pi ${props.type}`

@@ -5,13 +5,16 @@ namespace App\Http\Controllers\V1;
 use App\Models\Term;
 use Inertia\Inertia;
 use App\Models\Staff;
+use App\Models\Intake;
+use App\Models\Lesson;
 use App\Models\Subject;
 use App\Models\Allocation;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreAllocationRequest;
+use App\Http\Requests\V1\AllocationLessonRequest;
 use App\Http\Requests\V1\UpdateAllocationRequest;
-use App\Models\Intake;
 
 class AllocationController extends Controller
 {
@@ -36,7 +39,7 @@ class AllocationController extends Controller
                     ->orWhere('year', $search);
             });
         })->orderBy('created_at', 'DESC')
-            ->with('term', 'staff', 'subject', 'intakes')
+            ->with('term', 'staff', 'subject', 'intakes', 'lessons')
             ->paginate(10)
             ->through(fn ($item) => [
                 "id" => $item->id,
@@ -50,7 +53,7 @@ class AllocationController extends Controller
                 ],
                 "instructor" => [
                     "id" => $item->staff->id,
-                    "name" => sprintf("%s %s %s", $item->staff->surname, $item->staff->first_name, $item->staff->middle_name),
+                    "name" => Str::lower(sprintf("%s %s %s", $item->staff->surname, $item->staff->first_name, $item->staff->middle_name)),
                 ],
                 "subject" => [
                     "id" => $item->subject->id,
@@ -60,6 +63,13 @@ class AllocationController extends Controller
                 "intakes" => $item->intakes->map(fn ($intake) => [
                     "id" => $intake->id,
                     "name" => $intake->name,
+                ]),
+                "lessons" => $item->lessons->map(fn ($lesson) => [
+                    "id" => $lesson->id,
+                    "title" => $lesson->title,
+                    "day" => $lesson->day,
+                    "start_at" => $lesson->start_at,
+                    "end_at" => $lesson->end_at,
                 ]),
             ]);
 
@@ -94,12 +104,15 @@ class AllocationController extends Controller
             "end_date" => $item->end_date,
         ]);
 
+        $lessons = Lesson::all();
+
         return Inertia::render('Allocations/Index', [
             'allocations' => $allocations,
             'subjects' => $subjects,
             'instructors' => $instructors,
             'terms' => $terms,
             'intakes' => $intakes,
+            'lessons' => $lessons,
         ]);
     }
 
@@ -154,5 +167,11 @@ class AllocationController extends Controller
     public function destroy(Allocation $intakeStaffSubject)
     {
         //
+    }
+
+    function lessons(AllocationLessonRequest $request, Allocation $allocation)
+    {
+        $allocation->lessons()->sync($request->lessons);
+        return redirect()->back()->with('success', 'Lessons schedule updated');
     }
 }

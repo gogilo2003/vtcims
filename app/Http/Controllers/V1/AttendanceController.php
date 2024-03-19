@@ -11,6 +11,7 @@ use App\Models\Allocation;
 use App\Models\Attendance;
 use Illuminate\Support\Str;
 use App\Exports\StudentExport;
+use App\Models\AllocationLesson;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\V1\StoreAllocationRequest;
@@ -26,7 +27,8 @@ class AttendanceController extends Controller
         $search = request()->input('search');
         $current = request()->input('current');
 
-        $allocations = Allocation::with('attendances.students', 'attendances.lessons', 'term', 'subject', 'staff')
+        $allocations = Allocation::with('allocation_lessons', 'term', 'subject', 'staff')
+            ->whereHas('allocation_lessons')
             ->whereHas('term', function ($query) {
                 if (request()->input('current')) {
                     $query->whereDate('end_date', '>', now());
@@ -58,6 +60,13 @@ class AttendanceController extends Controller
                     "id" => $intake->id,
                     "name" => $intake->name,
                 ]),
+                "lessons" => $item->allocation_lessons->map(fn ($al) => [
+                    "id" => $al->id,
+                    "title" => $al->lesson->title,
+                    "day" => $al->lesson->day,
+                    "start_at" => $al->lesson->start_at,
+                    "end_at" => $al->lesson->end_at,
+                ]),
             ]);
 
         return Inertia::render('Attendances/Index', [
@@ -80,15 +89,44 @@ class AttendanceController extends Controller
      */
     public function store(StoreAllocationRequest $request)
     {
-        //
+        if ($request->hasFile('upload')) {
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Allocation $allocation)
+    public function showMark(AllocationLesson $allocation_lesson)
     {
-        //
+        // dd($allocation_lesson);
+        $allocation_lesson->load('allocation.intakes.students', 'allocation.term', 'allocation.staff', 'allocation.subject');
+
+        $students = collect();
+
+        foreach ($allocation_lesson->allocation->intakes as $intake) {
+            foreach ($intake->students as $student) {
+                $students->push([
+                    "id" => $student->id,
+                    "admission_no" => $student->admission_no,
+                    "name" => $student->name,
+                    "gender" => $student->gender ? "Female" : "Male",
+                ]);
+            }
+        }
+        return Inertia::render('Attendances/Mark', [
+            'lesson' => [
+                "id" => $allocation_lesson->id,
+                "term" => sprintf("%s-%s", $allocation_lesson->allocation->term->year, $allocation_lesson->allocation->term->name),
+                "instructor" => trim(sprintf(
+                    "%s%s%s",
+                    " " . $allocation_lesson->allocation->staff->first_name,
+                    " " . $allocation_lesson->allocation->staff->middle,
+                    " " . $allocation_lesson->allocation->staff->surname
+                )),
+                "subject" => $allocation_lesson->allocation->subject->name,
+                "students" => $students
+            ]
+        ]);
     }
 
     /**

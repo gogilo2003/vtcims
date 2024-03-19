@@ -21,7 +21,7 @@ import InputSwitch from 'primevue/inputswitch';
 
 
 const props = defineProps<{
-    allocations: iAllocations,
+    lesson: iLesson,
     search: string,
     current: string,
     notification: Object,
@@ -186,55 +186,12 @@ const download = (allocation: iAllocation, TYPE = 'pdf') => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <ListItem v-for="allocation in allocations.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
-                <div>
-                    <div class="flex flex-col">
-                        <span class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-default"
-                            v-text="`${allocation.term.year_name}: ${allocation.subject.name}`"></span>
-                        <div class="flex items-start gap-1">
-                            <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">Intakes:</span>
-                            <div class="flex flex-wrap gap-1">
-                                <span v-for="({ name }, index) in allocation.intakes"
-                                    v-text="`${name}${index < allocation.intakes.length - 1 ? ', ' : ''}`"
-                                    class="text-xs text-gray-500 dark:text-gray-300"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-col md:flex-row divide-x">
-                        <div class="text-xs flex gap-2 pr-3">
-                            <span class='font-semibold text-gray-800 dark:text-gray-200'>Instructor: </span>
-                            <span class="capitalize font-medium text-gray-400 dark:text-gray-50"
-                                v-text="allocation.instructor.name"></span>
-                        </div>
-                        <div class="flex gap-2 text-xs pl-3">
-                            <span class="font-semibold text-gray-800 dark:text-gray-200">Lessons</span>
-                            <span class="capitalize font-medium text-gray-400 dark:text-gray-50"
-                                v-text="allocation.lessons.length"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex gap-1">
-                    <SecondaryButton class="relative group">
-                        <Icon class="h-6 w-4 cursor-pointer" type="checkmark" />
-                        <span class="hidden md:inline-block">Mark</span>
-                        <div class="absolute hidden top-full group-hover:flex flex-col gap-2 p-2 shadow bg-white ">
-                            <Link class=" whitespace-nowrap" :href="route('attendances-show-mark', id)"
-                                v-for="{ id, title } in allocation.lessons">
-                            {{ title }}
-                            </Link>
-                        </div>
-                    </SecondaryButton>
-                    <SecondaryButton @click="download(allocation)">
-                        <Icon class="h-6 w-4 cursor-pointer" type="pdf" />
-                        <span class="hidden md:inline-block">Pdf Template</span>
-                    </SecondaryButton>
-                    <SecondaryButton @click="download(allocation, 'excel')">
-                        <Icon class="h-6 w-4 cursor-pointer" type="excel" />
-                        <span class="hidden md:inline-block">Excel Template</span>
-                    </SecondaryButton>
-                </div>
-            </ListItem>
-            <Paginator :items="allocations" />
+            <pre v-text="lesson"></pre>
+            <template v-for="intake in lesson.intakes">
+                <ListItem v-for="student in intake.students" class="px-4 py-2 rounded-lg shadow-lg bg-white">
+                    <pre v-text="student"></pre>
+                </ListItem>
+            </template>
         </div>
     </AuthenticatedLayout>
 </template>

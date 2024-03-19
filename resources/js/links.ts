@@ -52,12 +52,12 @@ export const links: iMenu[] = [
                 caption: 'Subjects',
             },
             {
-                name: 'allocations',
-                caption: 'Allocations',
-            },
-            {
                 name: 'lessons',
                 caption: 'Lessons',
+            },
+            {
+                name: 'allocations',
+                caption: 'Allocations',
             },
         ]
     },

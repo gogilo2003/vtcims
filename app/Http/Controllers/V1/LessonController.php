@@ -15,8 +15,17 @@ class LessonController extends Controller
      */
     public function index()
     {
-        $lessons = Lesson::with('attendances.allocation')->get();
-        return Inertia::render('Lessons/Index', ['lessons' => $lessons]);
+        $search = request()->input('search');
+        $lessons = Lesson::when($search, function ($query) use ($search) {
+            $query->where('title', 'LIKE', "%$search%");
+        })->with('allocations')->paginate(3)->through(fn ($item) => [
+            "id" => $item->id,
+            "title" => $item->title,
+            "day" => $item->day,
+            "start_at" => $item->start_at->format('H:i'),
+            "end_at" => $item->end_at->format('H:i'),
+        ]);
+        return Inertia::render('Lessons/Index', ['lessons' => $lessons, 'search' => $search]);
     }
 
     /**

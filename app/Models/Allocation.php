@@ -54,13 +54,34 @@ class Allocation extends Model
     {
         return $this->belongsTo(Term::class);
     }
+
     /**
      * Get all of the attendances for the Allocation
      *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function attendances(): HasManyThrough
+    {
+        return $this->hasManyThrough(Attendance::class, AllocationLesson::class);
+    }
+
+    /**
+     * The lessons that belong to the Allocation
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function lessons(): BelongsToMany
+    {
+        return $this->belongsToMany(Lesson::class);
+    }
+
+    /**
+     * Get all of the allocation_lessons for the Allocation
+     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function attendances(): HasMany
+    public function allocation_lessons(): HasMany
     {
-        return $this->hasMany(Attendance::class, 'allocation_id', 'id');
+        return $this->hasMany(AllocationLesson::class);
     }
 }

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iCourse, iAllocation, iAllocations, iIntake } from '../../interfaces/index';
+import { iInstructor, iCourse, iAllocation, iAllocations, iLesson } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import { ref, watch, onMounted, computed } from 'vue';
@@ -13,12 +13,12 @@ import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown';
 import InputError from '../../Components/InputError.vue';
 import InputLabel from '../../Components/InputLabel.vue';
-import Calendar from 'primevue/calendar';
+import InputSwitch from 'primevue/inputswitch';
 import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import MultiSelect from 'primevue/multiselect';
-
+import { getShortDayName } from '../../helpers'
 
 const props = defineProps<{
     allocations: iAllocations,
@@ -42,6 +42,7 @@ const props = defineProps<{
         start_date: string
         end_date: string
     }>,
+    lessons: Array<iLesson>
     search: string,
     notification: Object,
     errors: Object
@@ -55,6 +56,11 @@ const form = useForm({
     instructor: 0,
     subject: 0,
     intakes: new Array
+})
+
+const formLessons = useForm({
+    allocation: null,
+    lessons: new Array
 })
 
 const showAllocationDialog = ref(false)
@@ -153,9 +159,115 @@ const submit = () => {
 
 }
 
+const showLessonsDialog = ref(false)
+const selectedAllocation = ref()
+
+const editLessons = (allocation: iAllocation) => {
+    showLessonsDialog.value = true
+    selectedAllocation.value = allocation
+    formLessons.lessons = allocation.lessons.map((item) => item.id)
+    formLessons.allocation = allocation.id
+}
+
+const toggleLessonSelection = (lessonId: number) => {
+    const index = formLessons.lessons.indexOf(lessonId);
+    if (index === -1) {
+        // Lesson not selected, add it to the array
+        formLessons.lessons.push(lessonId);
+    } else {
+        // Lesson already selected, remove it from the array
+        formLessons.lessons.splice(index, 1);
+    }
+};
+
+const cancelLessons = () => {
+    formLessons.reset()
+    selectedAllocation.value = null
+    showLessonsDialog.value = false
+}
+const saveLessons = () => {
+    formLessons.patch(route('allocations-lessons', formLessons.allocation), {
+        only: ['notification', 'allocations'],
+        onSuccess: () => {
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: props?.notification?.success,
+                life: 8000
+            })
+            formLessons.reset()
+            showLessonsDialog.value = false
+        },
+        onError: () => {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: props?.notification?.danger ?? 'An error ocurred! Please try gain',
+                life: 8000
+            })
+        }
+    })
+}
 </script>
 <template>
     <Toast position="top-center" />
+    <Dialog modal header="Set Lessons" v-model:visible="showLessonsDialog" :pt="{
+        root: { class: 'max-h-full w-full max-w-[40rem] md:w-[35rem]' }
+    }">
+        <form @submit.prevent="saveLessons" class="flex flex-col">
+            <div class="dark:bg-gray-700 shadow p-3 rounded-lg my-3 flex flex-col gap-2 text-sm capitalize flex-none">
+                <div class="flex gap-2">
+                    <span class="font-medium dark:text-gray-300">Term:</span><span class="dark:text-gray-100"
+                        v-text="selectedAllocation.term.year_name"></span>
+                </div>
+                <div class="flex gap-2">
+                    <span class="font-medium dark:text-gray-300">Subject:</span><span class="dark:text-gray-100"
+                        v-text="selectedAllocation.subject.name"></span>
+                </div>
+                <div class="flex gap-2">
+                    <span class="font-medium dark:text-gray-300">Instructor:</span><span class="dark:text-gray-100"
+                        v-text="selectedAllocation.instructor.name"></span>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <div class="grid grid-cols-4">
+                    <div></div>
+                    <div
+                        class="font-medium uppercase border dark:border-gray-600 bg-primary-500 p-3 text-gray-100 text-center">
+                        <span class="hidden md:block">Lesson 1</span>
+                        <span class="md:hidden">L1</span>
+                    </div>
+                    <div
+                        class="font-medium uppercase border dark:border-gray-600 bg-primary-500 p-3 text-gray-100 text-center">
+                        <span class="hidden md:block">Lesson 2</span>
+                        <span class="md:hidden">L2</span>
+                    </div>
+                    <div
+                        class="font-medium uppercase border dark:border-gray-600 bg-primary-500 p-3 text-gray-100 text-center">
+                        <span class="hidden md:block">Lesson 3</span>
+                        <span class="md:hidden">L3</span>
+                    </div>
+                    <template :key="id" v-for="({ id, title, day }, index) in lessons">
+                        <div v-if="index % 3 == 0"
+                            class="font-semibold px-3 py-6 border dark:border-gray-600 bg-primary-500 text-gray-50 uppercase">
+                            <span class="hidden md:block" v-text="day"></span>
+                            <span class="md:hidden" v-text="getShortDayName(day)"></span>
+                        </div>
+                        <div class="border dark:border-gray-600 px-3 py-6 flex items-center justify-center"
+                            :class="{ 'bg-primary-300': formLessons.lessons.includes(id) }"
+                            @click="toggleLessonSelection(id)">
+                            <Icon v-if="formLessons.lessons.includes(id)" class="text-gray-800 h-6 w-6"
+                                type="checkmark" />
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div class="flex items-center justify-between mt-8 flex-none">
+                <Button type="submit" label="Save" size="small" rounded />
+                <Button @click="cancelLessons" label="Cancel" size="small" rounded outlined />
+            </div>
+        </form>
+    </Dialog>
     <Dialog modal :header="dialogTitle" v-model:visible="showAllocationDialog" :pt="{
         root: { class: 'w-full md:w-72 lg:w-[48rem]' }
     }">
@@ -179,7 +291,8 @@ const submit = () => {
                 </div>
                 <div>
                     <InputLabel value="Intakes" />
-                    <MultiSelect :options="intakes" option-value="id" option-label="name" v-model="form.intakes" filter />
+                    <MultiSelect :options="intakes" option-value="id" option-label="name" v-model="form.intakes"
+                        filter />
                     <InputError :message="form.errors.intakes" />
                 </div>
             </div>
@@ -206,11 +319,11 @@ const submit = () => {
         <div class="flex flex-col gap-2">
             <ListItem v-for="allocation in allocations.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
-                    <div v-text="`${allocation.term.year_name}: ${allocation.subject.name} by ${allocation.instructor.name}`"
+                    <div v-text="`${allocation.term.year_name}: ${allocation.subject.name}`"
                         class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-default">
                     </div>
-                    <div class="flex gap-2 flex-col md:flex-row divide-x">
-                        <div class="flex items-start gap-1">
+                    <div class="flex flex-col md:flex-row md:divide-x justify-start">
+                        <div class="flex items-start gap-1 md:pr-2">
                             <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">Intakes:</span>
                             <div class="flex flex-wrap gap-1">
                                 <span v-for="({ name }, index) in allocation.intakes"
@@ -219,8 +332,17 @@ const submit = () => {
                             </div>
                         </div>
                     </div>
+                    <div class="flex gap-2 items-start">
+                        <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">Instructor:</span>
+                        <span class="uppercase text-xs text-gray-500 dark:text-gray-300"
+                            v-text="allocation.instructor.name"></span>
+                    </div>
                 </div>
-                <div>
+                <div class="flex gap-2">
+                    <SecondaryButton @click="editLessons(allocation)">
+                        <Icon class="h-4 w-4" type="calendar" />
+                        <span class="hidden md:inline-block">Lessons</span>
+                    </SecondaryButton>
                     <SecondaryButton @click="editAllocation(allocation)">
                         <Icon class="h-4" type="edit" />
                         <span class="hidden md:inline-block">Edit</span>

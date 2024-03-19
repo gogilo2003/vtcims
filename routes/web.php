@@ -59,7 +59,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('attendances')->name('attendances')->group(function () {
         Route::get('', [AttendanceController::class, 'index']);
         Route::get('download/{allocation}/{type}', [AttendanceController::class, 'download'])->name('-download');
-        Route::post('', [AttendanceController::class, 'store'])->name('-store');
+        Route::get('show/{allocation_lesson}', [AttendanceController::class, 'showMark'])->name('-show-mark');
+        Route::post('mark/{allocation_lesson}', [AttendanceController::class, 'mark'])->name('-mark');
+        Route::post('upload/{allocation_lesson}', [AttendanceController::class, 'upload'])->name('-upload');
         Route::patch('{staff}', [AttendanceController::class, 'update'])->name('-update');
         Route::delete('{staff}', [AttendanceController::class, 'destroy'])->name('-destroy');
         Route::post('photo/{staff}', [AttendanceController::class, 'picture'])->name('-photo');
@@ -84,6 +86,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('', [AllocationController::class, 'store'])->name('-store');
         Route::patch('{allocation}', [AllocationController::class, 'update'])->name('-update');
         Route::delete('{allocation}', [AllocationController::class, 'destroy'])->name('-destroy');
+        Route::patch('lessons/{allocation}', [AllocationController::class, 'lessons'])->name('-lessons');
     });
 
     Route::prefix('departments')->name('departments')->group(function () {

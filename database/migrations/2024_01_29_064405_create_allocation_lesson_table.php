@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('attendances');
-        Schema::create('attendances', function (Blueprint $table) {
+        Schema::create('allocation_lesson', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('allocation_lesson_id');
-            $table->dateTime('attendance_date');
+            $table->unsignedInteger('allocation_id');
+            $table->foreignId('lesson_id');
             $table->timestamps();
-            $table->foreign('allocation_lesson_id')->references('id')->on('allocation_lesson');
+            $table->foreign('allocation_id')->references('id')->on('staff_subject');
+            $table->foreign('lesson_id')->references('id')->on('lessons');
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attendances');
+        Schema::dropIfExists('allocation_lesson');
     }
 };
