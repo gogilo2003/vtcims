@@ -194,7 +194,7 @@ class StudentController extends Controller
             if ($file->isValid()) {
                 if ($student->photo) {
                     if (Storage::disk('public')->exists($student->photo)) {
-                        Storage::dist('public')->unlink($student->photo);
+                        Storage::disk('public')->delete($student->photo);
                     }
                 }
 

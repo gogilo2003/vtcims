@@ -217,11 +217,15 @@ const download = (allocation: iAllocation, TYPE = 'pdf') => {
                     <SecondaryButton class="relative group">
                         <Icon class="h-6 w-4 cursor-pointer" type="checkmark" />
                         <span class="hidden md:inline-block">Mark</span>
-                        <div class="absolute hidden top-full group-hover:flex flex-col gap-2 p-2 shadow bg-white ">
-                            <Link class=" whitespace-nowrap" :href="route('attendances-show-mark', id)"
-                                v-for="{ id, title } in allocation.lessons">
-                            {{ title }}
-                            </Link>
+                        <div
+                            class="overflow-hidden absolute grid-rows-[0fr] top-full group-hover:grid-rows-[1fr] gap-2 p-2 shadow bg-white ">
+                            <div class="flex flex-col overflow-hidden">
+                                <Link class="px-3 py-2 hover:bg-gray-100 whitespace-nowrap"
+                                    :href="route('attendances-show-mark', id)"
+                                    v-for="{ id, title } in allocation.lessons">
+                                {{ title }}
+                                </Link>
+                            </div>
                         </div>
                     </SecondaryButton>
                     <SecondaryButton @click="download(allocation)">

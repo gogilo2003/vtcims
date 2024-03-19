@@ -164,10 +164,10 @@ const download = (allocation: iAllocation, TYPE = 'pdf') => {
     <AuthenticatedLayout title="Attendances">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
             <div>
-                <SecondaryButton @click="newAttendance">
-                    <Icon type="add" />
-                    <span class="hidden md:inline-flex">New Attendance</span>
-                </SecondaryButton>
+                <Link class="" :href="route('attendances')">
+                <Icon class="w-6 h-6 object-contain" type="chevron-circle-back" />
+                <span class="hidden md:inline-flex">Attendances</span>
+                </Link>
 
             </div>
             <div class="flex flex-wrap gap-2 items-center relative">
