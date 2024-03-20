@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\V1;
 
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use App\Models\Term;
 use Inertia\Inertia;
 use App\Models\Staff;
@@ -27,7 +29,9 @@ class AttendanceController extends Controller
         $search = request()->input('search');
         $current = request()->input('current');
 
-        $allocations = Allocation::with('allocation_lessons', 'term', 'subject', 'staff')
+        $allocations = Allocation::with(['allocation_lessons' => function ($query) {
+            $query->orderBy('lesson_id', 'ASC');
+        }, 'term', 'subject', 'staff'])
             ->whereHas('allocation_lessons')
             ->whereHas('term', function ($query) {
                 if (request()->input('current')) {
@@ -98,7 +102,6 @@ class AttendanceController extends Controller
      */
     public function showMark(AllocationLesson $allocation_lesson)
     {
-        // dd($allocation_lesson);
         $allocation_lesson->load('allocation.intakes.students', 'allocation.term', 'allocation.staff', 'allocation.subject');
 
         $students = collect();
@@ -116,6 +119,7 @@ class AttendanceController extends Controller
         return Inertia::render('Attendances/Mark', [
             'lesson' => [
                 "id" => $allocation_lesson->id,
+                "title" => $allocation_lesson->lesson->title,
                 "term" => sprintf("%s-%s", $allocation_lesson->allocation->term->year, $allocation_lesson->allocation->term->name),
                 "instructor" => trim(sprintf(
                     "%s%s%s",
@@ -124,6 +128,7 @@ class AttendanceController extends Controller
                     " " . $allocation_lesson->allocation->staff->surname
                 )),
                 "subject" => $allocation_lesson->allocation->subject->name,
+                "intakes" => implode(", ", $allocation_lesson->allocation->intakes->pluck('name')->toArray()),
                 "students" => $students
             ]
         ]);
@@ -172,20 +177,47 @@ class AttendanceController extends Controller
             $allocation->load('term');
             $filename = Str::upper(Str::lower(Str::replace(" ", "_", sprintf("%s %s %s", $allocation->subject->code, $allocation->term->year, $allocation->term->name))));
             $students = $allocation->intakes->flatMap->students->map(function ($item) {
-                return [
+                return (object)[
                     "admission_no" => $item->admission_no,
                     "name" => $item->name, //Str::upper(Str::lower(sprintf("%s%s%s", $item->first_name, $item->middle_name, $item->surname)))
                     "gender" => $item->gender ? 'Female' : 'Male'
                 ];
             });
-        } else {
-            // Allocation not found
-        }
 
-        if ($type == 'excel') {
-            return Excel::download(new StudentExport($students, $allocation), $filename . '.xlsx');
-        } else {
-            // return pdf
+            if ($type == 'excel') {
+                return Excel::download(new StudentExport($students, $allocation), $filename . '.xlsx');
+            } else {
+
+                // Fetch logo paths from the configuration
+                $logos = collect(config('eschool.logo'))->map(function($logo){
+                    return sprintf("data:image/png;base64,%s",base64_encode(file_get_contents(public_path($logo))));
+                });
+                
+                // Read the content of app.css
+                $styles = file_get_contents(public_path('css/pdf.css'));
+
+                // Generate PDF content
+                $pdfContent = view('pdf.students', [
+                    'students' => $students,
+                    'allocation' => $allocation,
+                    'logos' => $logos,
+                    'styles' => $styles,
+                ])->render();
+
+                $options = new Options();
+                $options->set('isPhpEnabled', true);
+
+                // Create PDF
+                $dompdf = new Dompdf($options);
+                $dompdf->loadHtml($pdfContent);
+                $dompdf->setPaper('A4','landscape');
+                // Render PDF
+                $dompdf->render();
+
+                // Output PDF
+                return $dompdf->stream($filename . '.pdf');
+            }
         }
+        return redirect()->back()->with('error', 'Allocation not found.');
     }
 }

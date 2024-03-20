@@ -18,6 +18,7 @@ import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import MultiSelect from 'primevue/multiselect';
 import InputSwitch from 'primevue/inputswitch';
+import VueClickAway from 'vue3-click-away';
 
 
 const props = defineProps<{
@@ -158,6 +159,8 @@ const download = (allocation: iAllocation, TYPE = 'pdf') => {
     link.click()
 }
 
+const showId = ref()
+
 </script>
 <template>
     <Toast position="top-center" />
@@ -214,13 +217,15 @@ const download = (allocation: iAllocation, TYPE = 'pdf') => {
                     </div>
                 </div>
                 <div class="flex gap-1">
-                    <SecondaryButton class="relative group">
+                    <SecondaryButton class="relative group"
+                        @click="showId = showId == allocation.id ? showId = null : allocation.id">
                         <Icon class="h-6 w-4 cursor-pointer" type="checkmark" />
                         <span class="hidden md:inline-block">Mark</span>
-                        <div
-                            class="overflow-hidden absolute grid-rows-[0fr] top-full group-hover:grid-rows-[1fr] gap-2 p-2 shadow bg-white ">
+                        <div class="absolute z-10 top-full grid md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] gap-2 bg-white shadow w-40 transition-[grid-template-rows] duration-300"
+                            :class="{ 'grid-rows-[0fr]': allocation.id !== showId, 'grid-rows-[1fr]': allocation.id == showId }">
                             <div class="flex flex-col overflow-hidden">
-                                <Link class="px-3 py-2 hover:bg-gray-100 whitespace-nowrap"
+                                <Link
+                                    class="px-3 py-2 hover:bg-gray-100 whitespace-nowrap transition-colors duration-150"
                                     :href="route('attendances-show-mark', id)"
                                     v-for="{ id, title } in allocation.lessons">
                                 {{ title }}
