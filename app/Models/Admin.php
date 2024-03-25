@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
-class Admin extends \Ogilo\AdminMd\Models\Admin
+use Illuminate\Database\Eloquent\Model;
+
+class Admin extends Model
 {
     public function staff()
     {
