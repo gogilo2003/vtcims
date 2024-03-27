@@ -16,8 +16,7 @@ use App\Exports\StudentExport;
 use App\Models\AllocationLesson;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Http\Requests\V1\StoreAllocationRequest;
-use App\Http\Requests\V1\UpdateAllocationRequest;
+use App\Http\Requests\V1\StoreAttendanceRequest;
 
 class AttendanceController extends Controller
 {
@@ -29,9 +28,14 @@ class AttendanceController extends Controller
         $search = request()->input('search');
         $current = request()->input('current');
 
-        $allocations = Allocation::with(['allocation_lessons' => function ($query) {
-            $query->orderBy('lesson_id', 'ASC');
-        }, 'term', 'subject', 'staff'])
+        $allocations = Allocation::with([
+            'allocation_lessons' => function ($query) {
+                $query->orderBy('lesson_id', 'ASC');
+            },
+            'term',
+            'subject',
+            'staff'
+        ])
             ->whereHas('allocation_lessons')
             ->whereHas('term', function ($query) {
                 if (request()->input('current')) {
@@ -40,7 +44,7 @@ class AttendanceController extends Controller
             })
             ->orderBy('created_at', 'DESC')
             ->paginate(8)
-            ->through(fn ($item) => [
+            ->through(fn($item) => [
                 "id" => $item->id,
                 'attendances' => $item->attendances,
                 "term" => [
@@ -60,11 +64,11 @@ class AttendanceController extends Controller
                     "code" => $item->subject->code,
                     "name" => $item->subject->name,
                 ],
-                "intakes" => $item->intakes->map(fn ($intake) => [
+                "intakes" => $item->intakes->map(fn($intake) => [
                     "id" => $intake->id,
                     "name" => $intake->name,
                 ]),
-                "lessons" => $item->allocation_lessons->map(fn ($al) => [
+                "lessons" => $item->allocation_lessons->map(fn($al) => [
                     "id" => $al->id,
                     "title" => $al->lesson->title,
                     "day" => $al->lesson->day,
@@ -91,10 +95,13 @@ class AttendanceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAllocationRequest $request)
+    public function store(StoreAttendanceRequest $request)
     {
         if ($request->hasFile('upload')) {
+
+            return redirect()->back()->with('success', 'Attendance uploaded');
         }
+        return redirect()->back()->with('success', 'Attendance uploaded');
     }
 
     /**
@@ -121,12 +128,14 @@ class AttendanceController extends Controller
                 "id" => $allocation_lesson->id,
                 "title" => $allocation_lesson->lesson->title,
                 "term" => sprintf("%s-%s", $allocation_lesson->allocation->term->year, $allocation_lesson->allocation->term->name),
-                "instructor" => trim(sprintf(
-                    "%s%s%s",
-                    " " . $allocation_lesson->allocation->staff->first_name,
-                    " " . $allocation_lesson->allocation->staff->middle,
-                    " " . $allocation_lesson->allocation->staff->surname
-                )),
+                "instructor" => trim(
+                    sprintf(
+                        "%s%s%s",
+                        " " . $allocation_lesson->allocation->staff->first_name,
+                        " " . $allocation_lesson->allocation->staff->middle,
+                        " " . $allocation_lesson->allocation->staff->surname
+                    )
+                ),
                 "subject" => $allocation_lesson->allocation->subject->name,
                 "intakes" => implode(", ", $allocation_lesson->allocation->intakes->pluck('name')->toArray()),
                 "students" => $students
@@ -166,7 +175,7 @@ class AttendanceController extends Controller
      * @param String $type
      * @return void
      */
-    function download(Allocation $allocation, String $type)
+    function download(Allocation $allocation, string $type)
     {
 
         $students = null;
@@ -177,7 +186,7 @@ class AttendanceController extends Controller
             $allocation->load('term');
             $filename = Str::upper(Str::lower(Str::replace(" ", "_", sprintf("%s %s %s", $allocation->subject->code, $allocation->term->year, $allocation->term->name))));
             $students = $allocation->intakes->flatMap->students->map(function ($item) {
-                return (object)[
+                return (object) [
                     "admission_no" => $item->admission_no,
                     "name" => $item->name, //Str::upper(Str::lower(sprintf("%s%s%s", $item->first_name, $item->middle_name, $item->surname)))
                     "gender" => $item->gender ? 'Female' : 'Male'
@@ -189,10 +198,10 @@ class AttendanceController extends Controller
             } else {
 
                 // Fetch logo paths from the configuration
-                $logos = collect(config('eschool.logo'))->map(function($logo){
-                    return sprintf("data:image/png;base64,%s",base64_encode(file_get_contents(public_path($logo))));
+                $logos = collect(config('eschool.logo'))->map(function ($logo) {
+                    return sprintf("data:image/png;base64,%s", base64_encode(file_get_contents(public_path($logo))));
                 });
-                
+
                 // Read the content of app.css
                 $styles = file_get_contents(public_path('css/pdf.css'));
 
@@ -210,7 +219,7 @@ class AttendanceController extends Controller
                 // Create PDF
                 $dompdf = new Dompdf($options);
                 $dompdf->loadHtml($pdfContent);
-                $dompdf->setPaper('A4','landscape');
+                $dompdf->setPaper('A4', 'landscape');
                 // Render PDF
                 $dompdf->render();
 
