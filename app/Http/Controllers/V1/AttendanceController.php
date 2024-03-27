@@ -17,6 +17,8 @@ use App\Models\AllocationLesson;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\V1\StoreAttendanceRequest;
+use App\Http\Requests\V1\UpdateAllocationRequest;
+use App\Http\Requests\V1\UpdateAttendanceRequest;
 
 class AttendanceController extends Controller
 {
@@ -158,7 +160,7 @@ class AttendanceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateAllocationRequest $request, Allocation $allocation)
+    public function update(UpdateAttendanceRequest $request, Allocation $allocation)
     {
         //
     }
@@ -176,7 +178,7 @@ class AttendanceController extends Controller
      *
      * Download attendance list for a particular class/allocation in excel or pdf
      *
-     * @param String $type
+     * @param string $type
      * @return void
      */
     function download(Allocation $allocation, string $type)

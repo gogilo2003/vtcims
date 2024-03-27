@@ -64,6 +64,30 @@ const submit = () => {
     })
 }
 
+const currentDate = new Date();
+const currentDayOfWeek = currentDate.getDay(); // 0 (Sunday) to 6 (Saturday)
+
+// Function to calculate the suggested date
+const calculateSuggestedDate = (lessonDay: number) => {
+
+    const currentDay = new Date(currentDate);
+
+    // Find the next scheduled day for the lesson
+    for (let i = 0; i < 7; i++) {
+        currentDay.setDate(currentDay.getDate() + 1); // Move to the next day
+        const dayOfWeek = currentDay.getDay();
+        if (lessonDay == dayOfWeek) {
+            // Calculate the date based on the current day and the scheduled day
+            const daysDifference = i + 1; // Add 1 to account for the current day
+            const suggestedDate = new Date(currentDate);
+            suggestedDate.setDate(suggestedDate.getDate() + daysDifference);
+            return suggestedDate.toDateString();
+        }
+    }
+
+    return null; // No lesson scheduled for today
+};
+
 </script>
 <template>
     <Toast position="top-center" />
