@@ -33,7 +33,7 @@ const toast = useToast()
 const form = useForm({
     id: 0,
     allocation_lesson_id: 0,
-    date: null,
+    mark_at: null,
     students: []
 })
 

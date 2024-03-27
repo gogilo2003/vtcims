@@ -101,6 +101,10 @@ class AttendanceController extends Controller
 
             return redirect()->back()->with('success', 'Attendance uploaded');
         }
+        $attendance = new Attendance();
+
+        $attendance->allocation_lesson_id = $request->allocation_lesson_id;
+
         return redirect()->back()->with('success', 'Attendance uploaded');
     }
 

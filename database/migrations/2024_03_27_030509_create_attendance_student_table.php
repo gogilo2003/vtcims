@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,7 +12,11 @@ return new class extends Migration
     {
         Schema::create('attendance_student', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('attendance_id');
+            $table->foreignId('student_id');
             $table->timestamps();
+            $table->foreign('attendance_id')->references('id')->on('attendances')->onDelete('cascade');
+            $table->foreign('student_id')->references('id')->on('students')->onDelete('cascade');
         });
     }
 
