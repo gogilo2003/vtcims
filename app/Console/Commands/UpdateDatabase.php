@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 
 class UpdateDatabase extends Command
 {
+    protected $output = "";
     /**
      * The name and signature of the console command.
      *
@@ -26,9 +27,22 @@ class UpdateDatabase extends Command
      */
     public function handle()
     {
-        Artisan::call('migrate');
-        Artisan::call('vtcims:copy-roles');
-        Artisan::call('vtcims:copy-users');
-        Artisan::call('vtcims:clean-tables');
+        $this->info('Starting migration...');
+        Artisan::call('migrate', ["--seed" => true], $this->output);
+        $this->info('Migration complete.');
+
+        $this->info('Copying roles...');
+        Artisan::call('vtcims:copy-roles', [], $this->output);
+        $this->info('Roles copied.');
+
+        $this->info('Copying users...');
+        Artisan::call('vtcims:copy-users', [], $this->output);
+        $this->info('Users copied.');
+
+        $this->info('Cleaning tables...');
+        Artisan::call('vtcims:clean-tables', [], $this->output);
+        $this->info('Tables cleaned.');
+
+        return 0;
     }
 }

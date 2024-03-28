@@ -40,5 +40,6 @@ class CopyUsers extends Command
             $role->users()->save($user);
             // \Illuminate\Support\Facades\DB::delete('delete admins where id = ?', $admin->id);
         });
+        return 0;
     }
 }

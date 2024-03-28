@@ -113,5 +113,6 @@ class CleanTables extends Command
         }
 
         Schema::enableForeignKeyConstraints();
+        return 0;
     }
 }

@@ -33,5 +33,6 @@ class CopyRoles extends Command
             // \Illuminate\Support\Facades\DB::delete('delete admin_roles where id = ?', $admin_role->id);
         });
         $this->info('Copy Admin Roles Done');
+        return 0;
     }
 }

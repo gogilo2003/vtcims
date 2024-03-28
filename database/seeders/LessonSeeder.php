@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Lesson;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class LessonSeeder extends Seeder
 {
@@ -22,22 +23,29 @@ class LessonSeeder extends Seeder
         ]);
 
         $lessons = collect([
-            (object)[
+            (object) [
                 'title' => 'Lesson 1',
                 'start_at' => new \DateTime('8:15 AM'),
                 'end_at' => new \DateTime('10:15 AM'),
             ],
-            (object)[
+            (object) [
                 'title' => 'Lesson 2',
                 'start_at' => new \DateTime('10:45 AM'),
                 'end_at' => new \DateTime('12:45 PM'),
             ],
-            (object)[
+            (object) [
                 'title' => 'Lesson 3',
                 'start_at' => new \DateTime('02:00 PM'),
                 'end_at' => new \DateTime('04:00 PM'),
             ],
         ]);
+
+        if (Lesson::all()->count() > 0) {
+            Schema::disableForeignKeyConstraints();
+            Lesson::truncate();
+            Schema::enableForeignKeyConstraints();
+        }
+
 
         foreach ($days as $day) {
             foreach ($lessons as $lesson) {
