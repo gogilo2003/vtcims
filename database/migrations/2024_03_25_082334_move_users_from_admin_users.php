@@ -12,15 +12,15 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Admin::all()->each(function (Admin $admin) {
-            if (!User::where("email", $admin->email)->exists()) {
-                $user = new User();
-                $user->name = $admin->name;
-                $user->email = $admin->email;
-                $user->password = $admin->password;
-                $user->save();
-            }
-        });
+        // Admin::all()->each(function (Admin $admin) {
+        //     if (!User::where("email", $admin->email)->exists()) {
+        //         $user = new User();
+        //         $user->name = $admin->name;
+        //         $user->email = $admin->email;
+        //         $user->password = $admin->password;
+        //         $user->save();
+        //     }
+        // });
     }
 
     /**
@@ -28,8 +28,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->truncate();
-        });
+        // Schema::table('users', function (Blueprint $table) {
+        //     $table->truncate();
+        // });
     }
 };

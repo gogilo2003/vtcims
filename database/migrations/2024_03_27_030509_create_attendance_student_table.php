@@ -10,6 +10,53 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        // Schema::disableForeignKeyConstraints();
+
+        // Drop foreign keys
+        Schema::table("examination_results", function (Blueprint $table) {
+            $table->dropForeign(["student_id"]);
+        });
+
+        Schema::table("fee_transactions", function (Blueprint $table) {
+            $table->dropForeign(["student_id"]);
+        });
+
+        Schema::table("leave_outs", function (Blueprint $table) {
+            $table->dropForeign(["student_id"]);
+        });
+
+        // Change data types
+        Schema::table("students", function (Blueprint $table) {
+            $table->unsignedBigInteger("id")->change();
+        });
+
+        Schema::table("examination_results", function (Blueprint $table) {
+            $table->unsignedBigInteger("student_id")->change();
+        });
+
+        Schema::table("fee_transactions", function (Blueprint $table) {
+            $table->unsignedBigInteger("student_id")->change();
+        });
+
+        Schema::table("leave_outs", function (Blueprint $table) {
+            $table->unsignedBigInteger("student_id")->change();
+        });
+
+        // Add foreign keys
+        Schema::table("examination_results", function (Blueprint $table) {
+            $table->foreign('student_id')->references('id')->on('students');
+        });
+
+        Schema::table("fee_transactions", function (Blueprint $table) {
+            $table->foreign('student_id')->references('id')->on('students');
+        });
+
+        Schema::table("leave_outs", function (Blueprint $table) {
+            $table->foreign('student_id')->references('id')->on('students');
+        });
+
+        // Schema::enableForeignKeyConstraints();
+
         Schema::create('attendance_student', function (Blueprint $table) {
             $table->id();
             $table->foreignId('attendance_id');
