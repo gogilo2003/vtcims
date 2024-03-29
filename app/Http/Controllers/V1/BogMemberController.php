@@ -35,9 +35,6 @@ class BogMemberController extends Controller
 
         $member->name = $request->name;
         $member->id_number = $request->id_number;
-        $member->position_id = $request->position_id;
-        $member->start_at = $request->start_at;
-        $member->end_at = $request->end_at;
 
         $member->save();
         return redirect()->back()->with("success", "Member created");
