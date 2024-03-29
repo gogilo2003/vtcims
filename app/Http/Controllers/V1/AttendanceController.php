@@ -4,11 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
-use App\Models\Term;
 use Inertia\Inertia;
-use App\Models\Staff;
-use App\Models\Intake;
-use App\Models\Subject;
 use App\Models\Allocation;
 use App\Models\Attendance;
 use Illuminate\Support\Str;
@@ -17,7 +13,6 @@ use App\Models\AllocationLesson;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\V1\StoreAttendanceRequest;
-use App\Http\Requests\V1\UpdateAllocationRequest;
 use App\Http\Requests\V1\UpdateAttendanceRequest;
 
 class AttendanceController extends Controller

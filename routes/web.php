@@ -12,9 +12,11 @@ use App\Http\Controllers\V1\ProgramController;
 use App\Http\Controllers\V1\SponsorController;
 use App\Http\Controllers\V1\StudentController;
 use App\Http\Controllers\V1\SubjectController;
+use App\Http\Controllers\V1\BogMemberController;
 use App\Http\Controllers\V1\AllocationController;
 use App\Http\Controllers\V1\AttendanceController;
 use App\Http\Controllers\V1\DepartmentController;
+use App\Http\Controllers\V1\BogPositionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,15 +30,6 @@ use App\Http\Controllers\V1\DepartmentController;
 */
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Route::get('/', function () {
-    //     // return Inertia::render('Welcome', [
-    //     //     'canLogin' => Route::has('login'),
-    //     //     'canRegister' => Route::has('register'),
-    //     //     'laravelVersion' => Application::VERSION,
-    //     //     'phpVersion' => PHP_VERSION,
-    //     // ]);
-    //     return Inertia::render('Dashboard');
-    // });
 
     Route::get('/', [HomeController::class, 'dashboard'])->name('dashboard');
 
@@ -54,6 +47,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('{staff}', [StaffController::class, 'update'])->name('-update');
         Route::delete('{staff}', [StaffController::class, 'destroy'])->name('-destroy');
         Route::post('photo/{staff}', [StaffController::class, 'picture'])->name('-photo');
+    });
+
+    Route::prefix('bog')->name('bog')->group(function () {
+        Route::prefix('roles')->name('-roles')->group(function () {
+            Route::get('', [BogPositionController::class, 'index']);
+            Route::post('', [BogPositionController::class, 'store'])->name('-store');
+            Route::patch('{bog_position}', [BogPositionController::class, 'update'])->name('-update');
+            Route::delete('{bog_position}', [BogPositionController::class, 'destroy'])->name('-destroy');
+        });
+        Route::prefix('members')->name('-members')->group(function () {
+            Route::get('', [BogMemberController::class, 'index']);
+            Route::post('', [BogMemberController::class, 'store'])->name('-store');
+            Route::patch('{bog_member}', [BogMemberController::class, 'update'])->name('-update');
+            Route::delete('{bog_member}', [BogMemberController::class, 'destroy'])->name('-destroy');
+            Route::post('photo/{bog_member}', [BogMemberController::class, 'picture'])->name('-photo');
+        });
     });
 
     Route::prefix('attendances')->name('attendances')->group(function () {
