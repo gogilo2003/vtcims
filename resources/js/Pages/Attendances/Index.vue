@@ -233,13 +233,40 @@ const showId = ref()
                             </div>
                         </div>
                     </SecondaryButton>
-                    <SecondaryButton @click="download(allocation)">
-                        <Icon class="h-6 w-4 cursor-pointer" type="pdf" />
-                        <span class="hidden md:inline-block">Pdf Template</span>
+                    <SecondaryButton class="relative group"
+                        @click="showId = showId == allocation.id ? showId = null : allocation.id">
+                        <Icon class="h-6 w-4 cursor-pointer" type="upload" />
+                        <span class="hidden md:inline-block">Upload</span>
+                        <div class="absolute z-10 top-full grid md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] gap-2 bg-white shadow w-40 transition-[grid-template-rows] duration-300"
+                            :class="{ 'grid-rows-[0fr]': allocation.id !== showId, 'grid-rows-[1fr]': allocation.id == showId }">
+                            <div class="flex flex-col overflow-hidden">
+                                <Link
+                                    class="px-3 py-2 hover:bg-gray-100 whitespace-nowrap transition-colors duration-150"
+                                    :href="route('attendances-show-mark', id)"
+                                    v-for="{ id, title } in allocation.lessons">
+                                {{ title }}
+                                </Link>
+                            </div>
+                        </div>
                     </SecondaryButton>
-                    <SecondaryButton @click="download(allocation, 'excel')">
-                        <Icon class="h-6 w-4 cursor-pointer" type="excel" />
-                        <span class="hidden md:inline-block">Excel Template</span>
+                    <SecondaryButton class="relative group">
+                        <Icon class="h-6 w-4 cursor-pointer" type="download" />
+                        <span class="hidden md:inline-block">Template</span>
+                        <div class="absolute z-10 top-full grid md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] gap-2 bg-white shadow w-40 transition-[grid-template-rows] duration-300"
+                            :class="{ 'grid-rows-[0fr]': allocation.id !== showId, 'grid-rows-[1fr]': allocation.id == showId }">
+                            <div class="flex flex-col overflow-hidden">
+                                <div @click="download(allocation)"
+                                    class="flex items-center w-full px-3 py-2 hover:bg-gray-100 whitespace-nowrap transition-colors duration-150 ">
+                                    <Icon class="h-6 w-4 cursor-pointer" type="pdf" />
+                                    <span class="hidden md:inline-block">Pdf</span>
+                                </div>
+                                <div @click="download(allocation, 'excel')"
+                                    class="block px-3 py-2 hover:bg-gray-100 whitespace-nowrap transition-colors duration-150">
+                                    <Icon class="h-6 w-4 cursor-pointer" type="excel" />
+                                    <span class="hidden md:inline-block">Excel</span>
+                                </div>
+                            </div>
+                        </div>
                     </SecondaryButton>
                 </div>
             </ListItem>

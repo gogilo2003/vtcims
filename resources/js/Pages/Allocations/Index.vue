@@ -228,6 +228,11 @@ const saveLessons = () => {
                     <span class="font-medium dark:text-gray-300">Instructor:</span><span class="dark:text-gray-100"
                         v-text="selectedAllocation.instructor.name"></span>
                 </div>
+                <div class="flex gap-2">
+                    <span class="font-medium dark:text-gray-300">Intakes:</span><span class="dark:text-gray-100"
+                        v-text="selectedAllocation.intakes.map(intake => intake.name).join(', ')"></span>
+
+                </div>
             </div>
             <div class="flex-1 overflow-y-auto">
                 <div class="grid grid-cols-4">

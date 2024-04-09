@@ -11,6 +11,7 @@ class Attendance extends Model
 {
     use HasFactory;
 
+    protected $casts = ['attendance_date' => 'date'];
     /**
      * The students that belong to the Attendance
      *

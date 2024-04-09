@@ -43,6 +43,9 @@ import Excel from './Excel.vue'
 import Pdf from './Pdf.vue'
 import Calendar from './Calendar.vue'
 import Checkmark from './Checkmark.vue'
+import Download from './Download.vue'
+import Upload from './Upload.vue'
+import Done from './Done.vue'
 
 const props = defineProps({ type: String })
 
@@ -133,8 +136,13 @@ const icon = computed(() => {
         return Calendar;
     } else if (props.type == 'checkmark') {
         return Checkmark;
+    } else if (props.type == 'download') {
+        return Download;
+    } else if (props.type == 'upload') {
+        return Upload;
+    } else if (props.type == 'done') {
+        return Done;
     }
-
     classes.value = `pi ${props.type}`
     return 'span';
 })

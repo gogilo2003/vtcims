@@ -9,6 +9,7 @@ use App\Models\Allocation;
 use App\Models\Attendance;
 use Illuminate\Support\Str;
 use App\Exports\StudentExport;
+use Illuminate\Support\Carbon;
 use App\Models\AllocationLesson;
 use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
@@ -92,15 +93,17 @@ class AttendanceController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreAttendanceRequest $request)
+    public function mark(StoreAttendanceRequest $request)
     {
-        if ($request->hasFile('upload')) {
-
-            return redirect()->back()->with('success', 'Attendance uploaded');
-        }
         $attendance = new Attendance();
 
-        $attendance->allocation_lesson_id = $request->allocation_lesson_id;
+        $attendance->allocation_lesson_id = $request->allocation;
+
+        $attendance->attendance_date = Carbon::parse($request->mark_at);
+
+        $attendance->save();
+
+        $attendance->students()->sync($request->students);
 
         return redirect()->back()->with('success', 'Attendance uploaded');
     }
@@ -124,10 +127,12 @@ class AttendanceController extends Controller
                 ]);
             }
         }
+        $day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         return Inertia::render('Attendances/Mark', [
             'lesson' => [
                 "id" => $allocation_lesson->id,
                 "title" => $allocation_lesson->lesson->title,
+                "day" => array_search($allocation_lesson->lesson->day, $day),
                 "term" => sprintf("%s-%s", $allocation_lesson->allocation->term->year, $allocation_lesson->allocation->term->name),
                 "instructor" => trim(
                     sprintf(

@@ -1,27 +1,27 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iCourse, iAllocation, iAllocations, iIntake, iAttendance, iTerm, iSubject } from '../../interfaces/index';
-import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
-import { ref, watch, onMounted, computed } from 'vue';
-import { router, useForm, Link } from '@inertiajs/vue3';
-import { debounce } from 'lodash';
+import { ref, onMounted, computed } from 'vue';
+import { useForm, Link } from '@inertiajs/vue3';
 import Icon from '../../Components/Icons/Icon.vue';
-import InputText from 'primevue/inputtext';
 import ListItem from '../../Components/ListItem.vue';
-import Dialog from 'primevue/dialog';
-import Dropdown from 'primevue/dropdown';
-import InputError from '../../Components/InputError.vue';
-import InputLabel from '../../Components/InputLabel.vue';
-import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
-import MultiSelect from 'primevue/multiselect';
-import InputSwitch from 'primevue/inputswitch';
+import Calendar from 'primevue/calendar';
+import InputError from '@/Components/InputError.vue';
 
 
 const props = defineProps<{
-    lesson: iLesson,
+    lesson: {
+        id: number,
+        title: string,
+        term: string,
+        day: number,
+        instructor: string,
+        subject: string,
+        intakes: string,
+        students: string,
+    },
     search: string,
     current: string,
     notification: Object,
@@ -32,7 +32,7 @@ const toast = useToast()
 
 const form = useForm({
     id: 0,
-    allocation_lesson_id: 0,
+    allocation: 0,
     mark_at: null,
     students: []
 })
@@ -41,7 +41,11 @@ const showAttendanceDialog = ref(false)
 const edit = ref(false)
 
 const submit = () => {
-    form.post(route('attendances-store'), {
+    form.transform((data) => ({
+        mark_at: data.mark_at,
+        allocation: props.lesson.id,
+        students: data.students
+    })).post(route('attendances-mark', props.lesson.id), {
         only: ['notification', 'attendances', 'errors'],
         onSuccess: () => {
             toast.add({
@@ -57,7 +61,7 @@ const submit = () => {
             toast.add({
                 severity: 'error',
                 summary: 'Error',
-                detail: props?.notification?.danger ?? 'An error ocurred! Please try gain',
+                detail: props?.notification?.danger ?? 'An error ocurred! Please check and try gain',
                 life: 8000
             })
         }
@@ -87,6 +91,10 @@ const calculateSuggestedDate = (lessonDay: number) => {
 
     return null; // No lesson scheduled for today
 };
+
+onMounted(() => {
+    form.mark_at = calculateSuggestedDate(props.lesson.day)
+})
 
 </script>
 <template>
@@ -119,6 +127,12 @@ const calculateSuggestedDate = (lessonDay: number) => {
                         <span class="font-semibold">Selected Students:</span>
                         <span v-text="form.students.length" class="text-gray-600 dark:text-gray-300"></span>
                     </div>
+                    <div class="flex flex-nowrap items-start md:items-center md:gap-1 uppercase text-xs md:text-sm">
+                        <span class="font-semibold">Date:</span>
+                        <div class="flex-none w-40">
+                            <Calendar v-model="form.mark_at" />
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <Link
@@ -128,6 +142,11 @@ const calculateSuggestedDate = (lessonDay: number) => {
                     <span class="inline-flex">Attendances</span>
                     </Link>
                 </div>
+            </div>
+            <div v-if="form.hasErrors" class="py-3">
+                <InputError :message="form.errors.allocation" />
+                <InputError :message="form.errors.mark_at" />
+                <InputError :message="form.errors.students" />
             </div>
             <div class="flex-1 overflow-auto">
                 <form @submit.prevent="submit">
@@ -155,6 +174,12 @@ const calculateSuggestedDate = (lessonDay: number) => {
                                 </label>
                             </div>
                         </ListItem>
+                    </div>
+                    <div class="py-3">
+                        <SecondaryButton type="submit">
+                            <Icon class="w-5 h-5" type="done" />
+                            <span>Done</span>
+                        </SecondaryButton>
                     </div>
                 </form>
             </div>

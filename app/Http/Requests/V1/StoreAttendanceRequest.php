@@ -24,8 +24,15 @@ class StoreAttendanceRequest extends FormRequest
         return [
             "allocation" => "required|integer|exists:staff_subject,id",
             "mark_at" => "required|date",
-            "students" => "required|array|min:1",
+            "students" => "nullable|array|min:1",
             "students.*" => "required|integer|exists:students,id",
+        ];
+    }
+
+    function messages(): array
+    {
+        return [
+            "students.min" => "You must Select at least one student"
         ];
     }
 }
