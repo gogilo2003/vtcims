@@ -249,7 +249,8 @@ class AttendanceController extends Controller
                 return (object) [
                     "admission_no" => $item->admission_no,
                     "name" => Str::upper(Str::lower($item->name)), //Str::upper(Str::lower(sprintf("%s%s%s", $item->first_name, $item->middle_name, $item->surname)))
-                    "gender" => $item->gender ? 'Female' : 'Male'
+                    "gender" => $item->gender ? 'Female' : 'Male',
+                    "plwd" => $item->plwd ? 'Yes' : 'No'
                 ];
             });
 
@@ -266,20 +267,21 @@ class AttendanceController extends Controller
             // Generate PDF content
             $pdfContent = "";
 
-            if (request()->input('duration') == 'day') {
-                $startOfWeek = (new DateTime('monday this week'))->format('Y-m-d');
-                $endOfWeek = date('Y-m-d', strtotime('friday this week'));
-                $pdfContent = view('students.download.attendance.daily', [
-                    'students' => $students,
-                    'allocation' => $allocationData,
-                    'logos' => $logos,
-                    'styles' => $styles,
-                    "start_date" => $startOfWeek,
-                    "end_date" => $endOfWeek,
-                ])->render();
-            } elseif (request()->input('duration') == 'week') {
-                $startOfWeek = (new DateTime('monday this week'))->format('Y-m-d');
-                $endOfWeek = date('Y-m-d', strtotime('friday this week'));
+            // if (request()->input('duration') == 'day') {
+            //     $startOfWeek = (new DateTime('monday this week'))->format('Y-m-d');
+            //     $endOfWeek = date('Y-m-d', strtotime('friday this week'));
+            //     $pdfContent = view('students.download.attendance.daily', [
+            //         'students' => $students,
+            //         'allocation' => $allocationData,
+            //         'logos' => $logos,
+            //         'styles' => $styles,
+            //         "start_date" => $startOfWeek,
+            //         "end_date" => $endOfWeek,
+            //     ])->render();
+            // } else
+            if (request()->input('duration') == 'week') {
+                $startOfWeek = Carbon::parse((new DateTime('monday this week'))->format('Y-m-d'))->isoFormat('ddd, D MMM Y');
+                $endOfWeek = Carbon::parse(date('Y-m-d', strtotime('friday this week')))->isoFormat('ddd, D MMM Y');
                 $pdfContent = view('students.download.attendance.daily', [
                     'students' => $students,
                     'allocation' => $allocationData,
@@ -290,8 +292,8 @@ class AttendanceController extends Controller
                 ])->render();
             } elseif (request()->input('duration') == 'month') {
                 $currentMonth = date('Y-m');
-                $startOfMonth = date('Y-m-01', strtotime($currentMonth));
-                $endOfMonth = date('Y-m-t', strtotime($currentMonth));
+                $startOfMonth = Carbon::parse(date('Y-m-01', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
+                $endOfMonth = Carbon::parse(date('Y-m-t', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
                 $pdfContent = view('students.download.attendance.daily', [
                     'students' => $students,
                     'allocation' => $allocationData,
@@ -302,8 +304,8 @@ class AttendanceController extends Controller
                 ])->render();
             } elseif (request()->input('duration') == 'term') {
                 $currentQuarter = ceil(date('n') / 3);
-                $startOfQuarter = date('Y-m-d', mktime(0, 0, 0, ($currentQuarter - 1) * 3 + 1, 1));
-                $endOfQuarter = date('Y-m-d', mktime(0, 0, 0, $currentQuarter * 3, 0));
+                $startOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, ($currentQuarter - 1) * 3 + 1, 1)))->isoFormat('ddd, D MMM Y');
+                $endOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, $currentQuarter * 3, 0)))->isoFormat('ddd, D MMM Y');
                 $pdfContent = view('students.download.attendance.daily', [
                     'students' => $students,
                     'allocation' => $allocationData,

@@ -30,27 +30,33 @@
         <table class="w-full border border-gray-800">
             <thead class="bg-gray-100">
                 <tr class="">
-                    <th rowspan="2" class="w-12 border border-gray-800"></th>
-                    <th rowspan="2" class="uppercase text-center border border-gray-800" style="width: 130px">Admission
+                    <th rowspan="2" class="text-sm w-12 border border-gray-800"></th>
+                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800" style="width: 130px">
+                        Admission
                         No
                     </th>
-                    <th rowspan="2" class="uppercase text-center border border-gray-800" style="width: 280px">Name</th>
-                    <th rowspan="2" class="uppercase text-center border border-gray-800" style="width: 280px">Gender</th>
-                    <th rowspan="2" class="uppercase text-center border border-gray-800" style="width: 280px">PWD</th>
+                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800" style="width: 280px">
+                        Name</th>
+                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800 w-16">
+                        Gender</th>
+                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800 w-16">PWD
+                    </th>
                     @foreach ($allocation->lessons as $lesson)
-                        <th colspan="{{ $lesson->lessons->count() }}" class="uppercase text-center border border-gray-800">
+                        <th colspan="{{ $lesson->lessons->count() }}"
+                            class="text-sm uppercase text-center border border-gray-800">
                             {!! strtoupper($lesson->date) !!}</th>
                     @endforeach
                 </tr>
                 <tr>
                     @foreach ($allocation->lessons as $lesson)
                         @foreach ($lesson->lessons as $item)
-                            <th class="uppercase text-center border border-gray-800 p-2">{{ $item->short_title }}</th>
+                            <th class="text-sm uppercase text-center border border-gray-800 p-2">{{ $item->short_title }}
+                            </th>
                         @endforeach
                     @endforeach
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="text-sm font-extralight">
                 @php
                     $cols = 5;
                 @endphp
