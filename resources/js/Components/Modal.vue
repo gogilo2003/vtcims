@@ -4,7 +4,7 @@ import { computed, onMounted, onUnmounted, watch } from 'vue';
 const props = withDefaults(
     defineProps<{
         show?: boolean;
-        maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+        maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
         closeable?: boolean;
     }>(),
     {
@@ -66,8 +66,8 @@ const maxWidthClass = computed(() => {
         <Transition leave-active-class="duration-200">
             <div v-show="show" class="fixed inset-0 overflow-y-auto px-4 py-6 sm:px-0 z-50" scroll-region>
                 <Transition enter-active-class="ease-out duration-300" enter-from-class="opacity-0"
-                    enter-to-class="opacity-100" leave-active-class="ease-in duration-200" leave-from-class="opacity-100"
-                    leave-to-class="opacity-0">
+                    enter-to-class="opacity-100" leave-active-class="ease-in duration-200"
+                    leave-from-class="opacity-100" leave-to-class="opacity-0">
                     <div v-show="show" class="fixed inset-0 transform transition-all" @click="close">
                         <div class="absolute inset-0 bg-gray-500 opacity-75" />
                     </div>
@@ -79,12 +79,15 @@ const maxWidthClass = computed(() => {
                     leave-from-class="opacity-100 translate-y-0 sm:scale-100"
                     leave-to-class="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
                     <div v-show="show"
-                        class="mb-6 bg-white rounded-lg shadow-xl transform transition-all sm:w-full sm:mx-auto"
+                        class="mb-6 mt-16 bg-transparent rounded-lg shadow-xl transform transition-all sm:w-full sm:mx-auto"
                         :class="maxWidthClass">
-                        <div class="px-3 md:px-6 py-3 flex items-center justify-between bg-lime-400">
+                        <div
+                            class="absolute w-full top-0 -translate-y-[50%] z-10 px-3 md:px-6 py-3 flex items-center justify-between bg-gradient-to-br from-lime-600 to-lime-500 rounded-3xl">
                             <slot name="header" />
                         </div>
-                        <slot v-if="show" />
+                        <div class="relative z-0 bg-white px-4 pt-8 pb-4 rounded-lg w-[calc(100%_+_2rem)] -ml-4">
+                            <slot v-if="show" />
+                        </div>
                     </div>
                 </Transition>
             </div>

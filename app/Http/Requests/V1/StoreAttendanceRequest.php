@@ -11,7 +11,7 @@ class StoreAttendanceRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return request()->user()->isAdmin() || request()->user()->hasPermission('attendance-store');
+        return request()->user()->isAdmin() || request()->user()->hasPermission('attendance-mark');
     }
 
     /**

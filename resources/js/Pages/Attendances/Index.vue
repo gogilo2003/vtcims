@@ -1,24 +1,20 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iCourse, iAllocation, iAllocations, iIntake, iAttendance, iTerm, iSubject } from '../../interfaces/index';
+import { iAllocation, iAllocations, iAttendance, iAllocationLesson } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
-import { ref, watch, onMounted, computed } from 'vue';
+import { ref, watch } from 'vue';
 import { router, useForm, Link } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import Icon from '../../Components/Icons/Icon.vue';
 import InputText from 'primevue/inputtext';
 import ListItem from '../../Components/ListItem.vue';
-import Dialog from 'primevue/dialog';
-import Dropdown from 'primevue/dropdown';
-import InputError from '../../Components/InputError.vue';
-import InputLabel from '../../Components/InputLabel.vue';
-import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
-import MultiSelect from 'primevue/multiselect';
 import InputSwitch from 'primevue/inputswitch';
 import VueClickAway from 'vue3-click-away';
+import Upload from './Upload.vue';
+import Download from './Download.vue';
 
 
 const props = defineProps<{
@@ -41,31 +37,11 @@ const form = useForm({
 
 const showAttendanceDialog = ref(false)
 const edit = ref(false)
-const dialogTitle = ref('New Attendance')
 const currentTerm = ref(props.current)
 
 const newAttendance = () => {
     showAttendanceDialog.value = true
     edit.value = false
-}
-
-const editAttendance = (attendance: iAttendance) => {
-
-    form.id = attendance.id
-    form.term = attendance.term.id
-    form.instructor = attendance.instructor.id
-    form.subject = attendance.subject.id
-    form.intakes = attendance.intakes.map(intake => intake.id)
-
-    showAttendanceDialog.value = true
-    edit.value = true
-}
-
-const cancel = () => {
-    showAttendanceDialog.value = false
-    edit.value = false
-    dialogTitle.value = 'New Attendance'
-    form.reset();
 }
 
 const searchVal = ref(props.search)
@@ -100,70 +76,43 @@ watch(() => currentTerm.value, debounce((value: boolean) => {
     })
 }, 500))
 
+const showId = ref()
 
-const submit = () => {
-    if (edit.value) {
-        form.patch(route('attendances-update', form.id), {
-            only: ['notification', 'attendances', 'errors'],
-            onSuccess: () => {
-                toast.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: props?.notification?.success,
-                    life: 8000
-                })
-                form.reset()
-                showAttendanceDialog.value = false
-            },
-            onError: () => {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: props?.notification?.danger ?? 'An error ocurred! Please try gain',
-                    life: 8000
-                })
-            }
-        })
-    } else {
+const showUploadDialog = ref(false)
 
-        form.post(route('attendances-store'), {
-            only: ['notification', 'attendances', 'errors'],
-            onSuccess: () => {
-                toast.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: props?.notification?.success,
-                    life: 8000
-                })
-                form.reset()
-                showAttendanceDialog.value = false
-            },
-            onError: () => {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: props?.notification?.danger ?? 'An error ocurred! Please try gain',
-                    life: 8000
-                })
-            }
-        })
-    }
-
+const closeUploadDialog = (value: boolean) => {
+    showUploadDialog.value = value
 }
 
-const download = (allocation: iAllocation, TYPE = 'pdf') => {
-    let link = document.createElement('a');
-    link.href = route('attendances-download', { allocation: allocation.id, type: TYPE })
+const selectedAllocationLesson = ref()
+const openUploadDialog = (allocationLesson: iAllocationLesson) => {
+    showUploadDialog.value = true
+    selectedAllocationLesson.value = allocationLesson
+}
 
+const selectedAllocation = ref()
+const showDownloadDialog = ref(false)
+
+const closeDownloadDialog = (value: boolean) => {
+    showDownloadDialog.value = value
+}
+
+const openDownloadDialog = (allocation: iAllocation) => {
+    showDownloadDialog.value = true
+    selectedAllocation.value = allocation
+}
+
+const download = (allocation: iAllocation) => {
+    let link = document.createElement('a');
+    link.href = route('attendances-download-excel', { allocation: allocation.id })
     link.target = '_BLANK'
     link.click()
 }
-
-const showId = ref()
-
 </script>
 <template>
     <Toast position="top-center" />
+    <Upload :show="showUploadDialog" @closed="closeUploadDialog" :lesson="selectedAllocationLesson" />
+    <Download :show="showDownloadDialog" @closed="closeDownloadDialog" :allocation="selectedAllocation" />
     <AuthenticatedLayout title="Attendances">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
             <div>
@@ -240,28 +189,27 @@ const showId = ref()
                         <div class="absolute z-10 top-full grid md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] gap-2 bg-white shadow w-40 transition-[grid-template-rows] duration-300"
                             :class="{ 'grid-rows-[0fr]': allocation.id !== showId, 'grid-rows-[1fr]': allocation.id == showId }">
                             <div class="flex flex-col overflow-hidden">
-                                <Link
+                                <span
                                     class="px-3 py-2 hover:bg-gray-100 whitespace-nowrap transition-colors duration-150"
-                                    :href="route('attendances-show-mark', id)"
-                                    v-for="{ id, title } in allocation.lessons">
-                                {{ title }}
-                                </Link>
+                                    @click="openUploadDialog(lesson)" v-for="lesson in allocation.lessons">
+                                    {{ lesson.title }}
+                                </span>
                             </div>
                         </div>
                     </SecondaryButton>
                     <SecondaryButton class="relative group">
                         <Icon class="h-6 w-4 cursor-pointer" type="download" />
                         <span class="hidden md:inline-block">Template</span>
-                        <div class="absolute z-10 top-full grid md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] gap-2 bg-white shadow w-40 transition-[grid-template-rows] duration-300"
+                        <div class="absolute z-10 top-full grid md:grid-rows-[0fr] md:group-hover:grid-rows-[1fr] gap-2 bg-white shadow w-28 transition-[grid-template-rows] duration-300"
                             :class="{ 'grid-rows-[0fr]': allocation.id !== showId, 'grid-rows-[1fr]': allocation.id == showId }">
                             <div class="flex flex-col overflow-hidden">
-                                <div @click="download(allocation)"
-                                    class="flex items-center w-full px-3 py-2 hover:bg-gray-100 whitespace-nowrap transition-colors duration-150 ">
+                                <div @click="openDownloadDialog(allocation)"
+                                    class="flex items-center w-full gap-2 px-3 py-2 hover:bg-gray-100 whitespace-nowrap transition-colors duration-150 ">
                                     <Icon class="h-6 w-4 cursor-pointer" type="pdf" />
                                     <span class="hidden md:inline-block">Pdf</span>
                                 </div>
                                 <div @click="download(allocation, 'excel')"
-                                    class="block px-3 py-2 hover:bg-gray-100 whitespace-nowrap transition-colors duration-150">
+                                    class="flex items-center w-full gap-2 px-3 py-2 hover:bg-gray-100 whitespace-nowrap transition-colors duration-150">
                                     <Icon class="h-6 w-4 cursor-pointer" type="excel" />
                                     <span class="hidden md:inline-block">Excel</span>
                                 </div>

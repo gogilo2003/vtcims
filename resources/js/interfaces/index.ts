@@ -222,3 +222,14 @@ export interface iLesson {
     start_at: any
     end_at: any
 }
+
+export interface iAllocationLesson {
+    id: number,
+    title: string,
+    term: string,
+    day: number | string,
+    instructor: string,
+    subject: string,
+    intakes: [],
+    students: [],
+}

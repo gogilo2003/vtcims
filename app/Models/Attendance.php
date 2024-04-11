@@ -21,4 +21,14 @@ class Attendance extends Model
     {
         return $this->belongsToMany(Student::class);
     }
+
+    /**
+     * Get the allocation_lesson that owns the Attendance
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function allocation_lesson(): BelongsTo
+    {
+        return $this->belongsTo(AllocationLesson::class);
+    }
 }

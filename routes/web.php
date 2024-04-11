@@ -67,10 +67,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('attendances')->name('attendances')->group(function () {
         Route::get('', [AttendanceController::class, 'index']);
-        Route::get('download/{allocation}/{type}', [AttendanceController::class, 'download'])->name('-download');
+        Route::get('download/{allocation}/excel', [AttendanceController::class, 'downloadExcel'])->name('-download-excel');
+        Route::get('download/{allocation}/pdf', [AttendanceController::class, 'downloadPdf'])->name('-download-pdf');
         Route::get('show/{allocation_lesson}', [AttendanceController::class, 'showMark'])->name('-show-mark');
-        Route::post('mark/{allocation_lesson}', [AttendanceController::class, 'mark'])->name('-mark');
-        Route::post('upload/{allocation_lesson}', [AttendanceController::class, 'upload'])->name('-upload');
+        Route::post('mark', [AttendanceController::class, 'mark'])->name('-mark');
+        Route::post('upload', [AttendanceController::class, 'upload'])->name('-upload');
         Route::patch('{staff}', [AttendanceController::class, 'update'])->name('-update');
         Route::delete('{staff}', [AttendanceController::class, 'destroy'])->name('-destroy');
         Route::post('photo/{staff}', [AttendanceController::class, 'picture'])->name('-photo');

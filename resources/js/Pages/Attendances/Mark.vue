@@ -9,19 +9,12 @@ import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import Calendar from 'primevue/calendar';
 import InputError from '@/Components/InputError.vue';
+import { calculateSuggestedDate } from '../../helpers.js';
+import { iAllocationLesson } from '../../interfaces/index';
 
 
 const props = defineProps<{
-    lesson: {
-        id: number,
-        title: string,
-        term: string,
-        day: number,
-        instructor: string,
-        subject: string,
-        intakes: string,
-        students: string,
-    },
+    lesson: iAllocationLesson,
     search: string,
     current: string,
     notification: Object,
@@ -45,7 +38,7 @@ const submit = () => {
         mark_at: data.mark_at,
         allocation: props.lesson.id,
         students: data.students
-    })).post(route('attendances-mark', props.lesson.id), {
+    })).post(route('attendances-mark'), {
         only: ['notification', 'attendances', 'errors'],
         onSuccess: () => {
             toast.add({
@@ -67,30 +60,6 @@ const submit = () => {
         }
     })
 }
-
-const currentDate = new Date();
-const currentDayOfWeek = currentDate.getDay(); // 0 (Sunday) to 6 (Saturday)
-
-// Function to calculate the suggested date
-const calculateSuggestedDate = (lessonDay: number) => {
-
-    const currentDay = new Date(currentDate);
-
-    // Find the next scheduled day for the lesson
-    for (let i = 0; i < 7; i++) {
-        currentDay.setDate(currentDay.getDate() + 1); // Move to the next day
-        const dayOfWeek = currentDay.getDay();
-        if (lessonDay == dayOfWeek) {
-            // Calculate the date based on the current day and the scheduled day
-            const daysDifference = i + 1; // Add 1 to account for the current day
-            const suggestedDate = new Date(currentDate);
-            suggestedDate.setDate(suggestedDate.getDate() + daysDifference);
-            return suggestedDate.toDateString();
-        }
-    }
-
-    return null; // No lesson scheduled for today
-};
 
 onMounted(() => {
     form.mark_at = calculateSuggestedDate(props.lesson.day)

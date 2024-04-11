@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <title>Students for Allocation {{ $allocation->id }}</title>
     <style>
-        {!! $styles !!}
+        {!! $styles !!} body {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 300;
+            font-size: 14pt;
+        }
     </style>
 </head>
 
@@ -13,11 +17,13 @@
     <header>
         <div class="h-24 max-w">
             <img src="{{ $logos['logo1'] }}" class="w-24 h-auto" style="float:left">
+            <div>
+                <div>{{ config('eschool.name') }}</div>
+            </div>
 
             <img src="{{ $logos['logo2'] }}" class="ml-auto w-24 h-auto" style="float:right">
         </div>
     </header>
-    <h1>Allocation ID: {{ $allocation->id }}</h1>
     <table class="w-full text-sm">
         <thead>
             <tr>
@@ -31,7 +37,7 @@
             @foreach ($students as $student)
                 <tr class="odd:bg-gray-100">
                     <td class="px-2 py-1 border">{{ $student->admission_no }}</td>
-                    <td class="px-2 py-1 border">{{ $student->name }}</td>
+                    <td class="px-2 py-1 border uppercase">{{ $student->name }}</td>
                     <td class="px-2 py-1 border">{{ $student->gender }}</td>
                     <td class="px-2 py-1 border"></td>
                 </tr>
