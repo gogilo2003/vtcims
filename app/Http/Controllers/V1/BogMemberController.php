@@ -15,7 +15,7 @@ class BogMemberController extends Controller
      */
     public function index()
     {
-        return Inertia::render("Bog/Positions");
+        return Inertia::render("Bog/Index");
     }
 
     /**

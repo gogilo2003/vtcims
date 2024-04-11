@@ -3,7 +3,6 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useForm, usePage } from '@inertiajs/vue3';
 import Dialog from 'primevue/dialog';
 import InputText from "primevue/inputtext";
-import Checkbox from "primevue/checkbox";
 import { useToast } from 'primevue/usetoast';
 import Toast from "primevue/toast";
 import Button from 'primevue/button';
@@ -40,8 +39,6 @@ const form = useForm({
     sponsor: null,
     student_role: null,
     status: "",
-    plwd: "",
-    plwd_details: "",
 })
 
 const page = usePage()
@@ -78,8 +75,6 @@ watch(() => props.student, value => {
     form.sponsor = value.sponsor_id
     form.student_role = value.student_role_id
     form.status = value.status
-    form.plwd = value.plwd
-    form.plwd_details = value.plwd_details
 })
 
 const submit = async () => {
@@ -129,8 +124,6 @@ const submit = async () => {
                 form.sponsor = null
                 form.student_role = null
                 form.status = ""
-                form.plwd = ""
-                form.plwd_details = ""
 
                 toast.add({
                     severity: 'success',
@@ -232,8 +225,7 @@ watch(() => props.show, (value) => {
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.town }">
                             <label :class="{ 'text-red-400': page.props.errors.town }" for="town">Town</label>
                             <InputText id="town" v-model="form.town" />
-                            <span class="text-red-400" v-if="page.props.errors.town"
-                                v-text="page.props.errors.town"></span>
+                            <span class="text-red-400" v-if="page.props.errors.town" v-text="page.props.errors.town"></span>
                         </div>
                         <div class="relative z-0 md:col-span-3"
                             :class="{ 'has-error': page.props.errors.physical_address }">
@@ -244,8 +236,7 @@ watch(() => props.show, (value) => {
                                 v-text="page.props.errors.physical_address"></span>
                         </div>
                         <div class="relative z-0">
-                            <label :class="{ 'text-red-400': page.props.errors.date_of_birth }" for="date_of_birth">Date
-                                of
+                            <label :class="{ 'text-red-400': page.props.errors.date_of_birth }" for="date_of_birth">Date of
                                 Birth</label>
                             <!-- <Calendar v-model="form.date_of_birth" /> -->
                             <Calendar v-model="form.date_of_birth" showIcon iconDisplay="input" />
@@ -253,8 +244,7 @@ watch(() => props.show, (value) => {
                                 v-text="page.props.errors.date_of_birth"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.birth_cert_no }">
-                            <label :class="{ 'text-red-400': page.props.errors.birth_cert_no }"
-                                for="birth_cert_no">Birth
+                            <label :class="{ 'text-red-400': page.props.errors.birth_cert_no }" for="birth_cert_no">Birth
                                 Certificate No</label>
                             <InputText id="birth_cert_no" v-model="form.birth_cert_no" />
                             <span class="text-red-400" v-if="page.props.errors.birth_cert_no"
@@ -263,11 +253,9 @@ watch(() => props.show, (value) => {
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.idno }">
                             <label :class="{ 'text-red-400': page.props.errors.idno }" for="idno">IDNo</label>
                             <InputText id="idno" v-model="form.idno" />
-                            <span class="text-red-400" v-if="page.props.errors.idno"
-                                v-text="page.props.errors.idno"></span>
+                            <span class="text-red-400" v-if="page.props.errors.idno" v-text="page.props.errors.idno"></span>
                         </div>
-                        <div class="relative z-0 is-filled is-focused"
-                            :class="{ 'has-error': page.props.errors.gender }">
+                        <div class="relative z-0 is-filled is-focused" :class="{ 'has-error': page.props.errors.gender }">
                             <label :class="{ 'text-red-400': page.props.errors.gender }" for="gender">Gender</label>
                             <Dropdown :options="genderOptions" option-label="name" option-value="id"
                                 v-model="form.gender" />
@@ -288,16 +276,14 @@ watch(() => props.show, (value) => {
                             <span class="text-red-400" v-if="page.props.errors.intake"
                                 v-text="page.props.errors.intake"></span>
                         </div>
-                        <div class="relative z-0 is-filled is-focused"
-                            :class="{ 'has-error': page.props.errors.program }">
+                        <div class="relative z-0 is-filled is-focused" :class="{ 'has-error': page.props.errors.program }">
                             <label :class="{ 'text-red-400': page.props.errors.program }" for="program">Program</label>
                             <Dropdown id="program" option-label="name" option-value="id" :options="programs"
                                 v-model="form.program" />
                             <span class="text-red-400" v-if="page.props.errors.program"
                                 v-text="page.props.errors.program"></span>
                         </div>
-                        <div class="relative z-0 is-filled is-focused"
-                            :class="{ 'has-error': page.props.errors.sponsor }">
+                        <div class="relative z-0 is-filled is-focused" :class="{ 'has-error': page.props.errors.sponsor }">
                             <label :class="{ 'text-red-400': page.props.errors.sponsor }" for="sponsor">Sponsor</label>
                             <Dropdown id="sponsor" option-label="name" option-value="id" :options="sponsors"
                                 v-model="form.sponsor" />
@@ -306,27 +292,16 @@ watch(() => props.show, (value) => {
                         </div>
                         <div class="relative z-0 is-filled is-focused"
                             :class="{ 'has-error': page.props.errors.student_role }">
-                            <label :class="{ 'text-red-400': page.props.errors.student_role }"
-                                for="student_role">Student
+                            <label :class="{ 'text-red-400': page.props.errors.student_role }" for="student_role">Student
                                 Role</label>
                             <Dropdown id="student_role" option-label="name" option-value="id" :options="student_roles"
                                 v-model="form.student_role" />
                             <span class="text-red-400" v-if="page.props.errors.student_role"
                                 v-text="page.props.errors.student_role"></span>
                         </div>
-                        <div class="relative z-0 is-filled is-focused"
-                            :class="{ 'has-error': page.props.errors.status }">
+                        <div class="relative z-0 is-filled is-focused" :class="{ 'has-error': page.props.errors.status }">
                             <label :class="{ 'text-red-400': page.props.errors.status }" for="status">Status</label>
                             <Dropdown id="status" :options="states" v-model="form.status" />
-                            <span class="text-red-400" v-if="page.props.errors.status"
-                                v-text="page.props.errors.status"></span>
-                        </div>
-                        <div class="relative z-0 is-filled is-focused"
-                            :class="{ 'has-error': page.props.errors.status }">
-                            <label :class="{ 'text-red-400': page.props.errors.status }" for="status">Status</label>
-                            <div>
-                                <Checkbox v-model="form.plwd" label="Person Living With Disability" />
-                            </div>
                             <span class="text-red-400" v-if="page.props.errors.status"
                                 v-text="page.props.errors.status"></span>
                         </div>

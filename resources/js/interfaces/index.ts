@@ -233,3 +233,32 @@ export interface iAllocationLesson {
     intakes: [],
     students: [],
 }
+
+export interface iBogMember {
+    id: number
+    idno: number | null
+    surname: string
+    first_name: string
+    middle_name: string | null
+    phone: string | null
+    email: string | null
+    box_no: string | null
+    post_code: string | null
+    town: string | null
+}
+
+export interface iBogMembers {
+    data: Array<iBogMember>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}

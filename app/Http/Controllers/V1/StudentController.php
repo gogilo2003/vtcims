@@ -21,7 +21,7 @@ class StudentController extends Controller
      * Fetch students' records from the database based on search value provided or all students
      * sorted by date
      *
-     * @return void
+     * @return \Inertia\Response
      */
     function index()
     {
@@ -38,68 +38,72 @@ class StudentController extends Controller
                 $query->with(['term', 'subject', 'tests.results'])->orderBy('term_id', 'DESC');
             }
         ])->orderBy('id', 'DESC')->when(
-            $search,
-            function ($query) use ($search) {
-                $query->where('surname', 'LIKE', '%' . $search . '%')
-                    ->orWhere('middle_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('first_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('id', $search);
-            }
-        )->paginate(10)->through(
-            function ($student) {
-                $id = $student->id;
-                $examinations = $student->intake->examinations->map(function ($exam) use ($id) {
-                    $exam->load(['term', 'subject', 'tests.results' => function ($query) use ($id) {
-                        $query->where('student_id', $id);
-                    }]);
+                $search,
+                function ($query) use ($search) {
+                    $query->where('surname', 'LIKE', '%' . $search . '%')
+                        ->orWhere('middle_name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('first_name', 'LIKE', '%' . $search . '%')
+                        ->orWhere('id', 'LIKE', '%' . $search . '%')
+                        ->orWhere('id', $search);
+                }
+            )->paginate(10)->through(
+                function ($student) {
+                    $id = $student->id;
+                    $examinations = $student->intake->examinations->map(function ($exam) use ($id) {
+                        $exam->load([
+                            'term',
+                            'subject',
+                            'tests.results' => function ($query) use ($id) {
+                                $query->where('student_id', $id);
+                            }
+                        ]);
 
-                    $score = 0;
+                        $score = 0;
 
-                    foreach ($exam->tests as $test) {
-                        foreach ($test->results as $result) {
-                            $score += $result->score;
+                        foreach ($exam->tests as $test) {
+                            foreach ($test->results as $result) {
+                                $score += $result->score;
+                            }
                         }
-                    }
 
-                    $data = (object)[
-                        "subject" => sprintf(
-                            "%s/%s - %s",
-                            $exam->term->year,
-                            $exam->term->name,
-                            $exam->subject->name
-                        ),
-                        "score" => $score,
-                    ];
+                        $data = (object) [
+                            "subject" => sprintf(
+                                "%s/%s - %s",
+                                $exam->term->year,
+                                $exam->term->name,
+                                $exam->subject->name
+                            ),
+                            "score" => $score,
+                        ];
 
-                    return $data;
-                })->groupBy('subject')->map(function ($marks, $key) {
-                    return [
-                        "subject" => $key,
-                        "score" => number_format($marks->avg('score'), 2),
-                        "total" => number_format($marks->sum('score'), 2),
-                        "max" => number_format($marks->max('score'), 2),
-                        "min" => number_format($marks->min('score'), 2),
-                    ];
-                })->sortBy('subject')->values();
-                $student->examinations = $examinations;
-                return $student;
-            }
-        );
+                        return $data;
+                    })->groupBy('subject')->map(function ($marks, $key) {
+                        return [
+                            "subject" => $key,
+                            "score" => number_format($marks->avg('score'), 2),
+                            "total" => number_format($marks->sum('score'), 2),
+                            "max" => number_format($marks->max('score'), 2),
+                            "min" => number_format($marks->min('score'), 2),
+                        ];
+                    })->sortBy('subject')->values();
+                    $student->examinations = $examinations;
+                    return $student;
+                }
+            );
 
-        $intakes = Intake::orderBy('name', 'DESC')->get()->map(fn ($item) => [
+        $intakes = Intake::orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name
         ]);
-        $programs = Program::orderBy('name', 'DESC')->get()->map(fn ($item) => [
+        $programs = Program::orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name
         ]);
-        $sponsors = Sponsor::orderBy('name', 'DESC')->get()->map(fn ($item) => [
+        $sponsors = Sponsor::orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name
         ]);
-        $student_roles = StudentRole::orderBy('name', 'DESC')->get()->map(fn ($item) => [
+        $student_roles = StudentRole::orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name
         ]);
@@ -118,7 +122,7 @@ class StudentController extends Controller
      * Store a new student details
      *
      * @param StoreStudentRequest $request
-     * @return void
+     * @return \Illuminate\Http\RedirectResponse
      */
     function store(StoreStudentRequest $request)
     {
@@ -142,6 +146,8 @@ class StudentController extends Controller
         $student->sponsor_id = $request->sponsor;
         $student->student_role_id = $request->student_role;
         $student->status = $request->status;
+        $student->plwd = $request->plwd;
+        $student->plwd_details = $request->plwd_details;
 
         $student->save();
         return redirect()->back()->with('success', 'Student created');
@@ -151,7 +157,7 @@ class StudentController extends Controller
      *
      * @param UpdateStudentRequest $request
      * @param Student $student
-     * @return void
+     * @return \Illuminate\Http\RedirectResponse
      */
     function update(UpdateStudentRequest $request, Student $student)
     {
@@ -173,6 +179,8 @@ class StudentController extends Controller
         $student->sponsor_id = $request->sponsor;
         $student->student_role_id = $request->student_role;
         $student->status = $request->status;
+        $student->plwd = $request->plwd;
+        $student->plwd_details = $request->plwd_details;
 
         $student->save();
 
@@ -184,7 +192,7 @@ class StudentController extends Controller
      *
      * @param UploadPictureRequest $request
      * @param Student $student
-     * @return void
+     * @return \Illuminate\Http\RedirectResponse
      */
     function picture(UploadPictureRequest $request, Student $student)
     {
@@ -206,6 +214,8 @@ class StudentController extends Controller
                     ->back()
                     ->with('success', 'Picture uploaded');
             }
+            return redirect()->back()->with('error', 'An invalid picture file detected');
         }
+        return redirect()->back()->with('error', 'No File has been uploaded');
     }
 }

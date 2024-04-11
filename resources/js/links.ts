@@ -23,6 +23,27 @@ export const links: iMenu[] = [
         ]
     },
     {
+        name: 'staff',
+        icon: 'people',
+        caption: 'Staff Members',
+        items: null
+    },
+    {
+        name: '',
+        icon: 'people',
+        caption: 'BOG',
+        items: [
+            {
+                name: "bog-members",
+                caption: "Members"
+            },
+            {
+                name: "bog-roles",
+                caption: "Roles"
+            },
+        ]
+    },
+    {
         name: '',
         icon: 'settings',
         caption: 'Setup',
