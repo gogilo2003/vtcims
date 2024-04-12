@@ -45,6 +45,22 @@ class StudentController extends Controller
                         ->orWhere('first_name', 'LIKE', '%' . $search . '%')
                         ->orWhere('id', 'LIKE', '%' . $search . '%')
                         ->orWhere('id', $search);
+
+                    $ar = explode(' ', $search);
+
+                    if (count($ar) > 1) {
+                        $query->orWhere(function ($query) use ($ar) {
+                            if (isset ($ar[0])) {
+                                $query->where('surname', 'LIKE', $ar[0] . '%');
+                            }
+                            if (isset ($ar[1])) {
+                                $query->where('first_name', 'LIKE', $ar[1] . '%');
+                            }
+                            if (isset ($ar[2])) {
+                                $query->where('middle_name', 'LIKE', $ar[2] . '%');
+                            }
+                        });
+                    }
                 }
             )->paginate(10)->through(
                 function ($student) {

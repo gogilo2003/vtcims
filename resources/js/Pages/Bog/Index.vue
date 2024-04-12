@@ -4,7 +4,7 @@ import { iBogMember, iBogMembers, iItem, iPhoto } from '../../interfaces/index';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import Icon from '../../Components/Icons/Icon.vue'
 import { ref, watch } from 'vue';
-import Member from './Member.vue';
+import BogMember from './BogMember.vue';
 import View from './View.vue';
 import Picture from './Picture.vue';
 import { router } from '@inertiajs/vue3';
@@ -14,56 +14,51 @@ import InputText from 'primevue/inputtext';
 import ListItem from '../../Components/ListItem.vue';
 
 const props = defineProps<{
-    students: iBogMembers,
-    intakes: Array<iItem>,
-    programs: Array<iItem>,
-    sponsors: Array<iItem>,
-    student_roles: Array<iItem>,
+    members: iBogMembers,
+    positions: Array<iItem>,
     errors: Object,
     search: String
 }>()
 
 const edit = ref(false)
 const show = ref(false)
-const student = ref<iBogMember>()
+const bogMember = ref<iBogMember>()
 const photo = ref<iPhoto>()
 
-const newStudent = () => {
-    student.value = {
+const newBogMember = () => {
+    bogMember.value = {
         id: null,
+        photo: null,
+        photo_url: null,
+        idno: null,
+        gender: null,
+        plwd: false,
+        surname: "",
         first_name: "",
         middle_name: "",
-        surname: "",
         phone: "",
         email: "",
         box_no: "",
         post_code: "",
         town: "",
-        physical_address: "",
-        date_of_birth: new Date(),
-        birth_cert_no: "",
-        idno: null,
-        gender: "",
-        date_of_admission: null,
-        intake_id: null,
-        program_id: null,
-        sponsor_id: null,
-        student_role_id: null,
-        status: "",
+        position: null,
+        active: false,
+        term_start_at: null,
+        term_end_at: null,
+        term_count: 0,
     }
     show.value = true
+    edit.value = false
 }
 
-const editStudent = (STUDENT: iBogMember) => {
-    student.value = STUDENT
+const editBogMember = (BOG_MEMBER: iBogMember) => {
+    bogMember.value = BOG_MEMBER
     show.value = true
     edit.value = true
 }
 
-const viewStudent = (STUDENT: iBogMember) => {
-    console.log('here');
-
-    student.value = STUDENT
+const viewBogMember = (BOG_MEMBER: iBogMember) => {
+    bogMember.value = BOG_MEMBER
     showView.value = true
 }
 
@@ -93,18 +88,18 @@ watch(() => searchVal.value, debounce((value: string) => {
         data = { search: value }
     }
 
-    router.get(route('students'), data, {
-        only: ['students', 'search'],
+    router.get(route('members'), data, {
+        only: ['members', 'search'],
         preserveScroll: true,
         preserveState: true
     })
 }, 500))
 
-const uploadPic = (student: iBogMember) => {
+const uploadPic = (member: iBogMember) => {
     photo.value = {
-        id: student.id,
-        url: student.photo_url,
-        photo: student.photo
+        id: bogMember.id,
+        url: bogMember.photo_url,
+        photo: bogMember.photo
     }
 
     showPic.value = true
@@ -114,15 +109,15 @@ const uploadPic = (student: iBogMember) => {
 </script>
 
 <template>
-    <Student :show="show" :edit="edit" @closed="onClose" :student="student" />
+    <BogMember :show="show" :edit="edit" @closed="onClose" :member="member" />
     <Picture :show="showPic" @closed="onClosePic" :photo="photo" />
-    <View :show="showView" @closed="onCloseView" :student="student" />
+    <View :show="showView" @closed="onCloseView" :member="member" />
 
-    <AuthenticatedLayout title="Students">
+    <AuthenticatedLayout title="Bog Members">
         <div class="pb-3 md:pb-8 flex gap-3 justify-between">
-            <SecondaryButton @click="newStudent">
+            <SecondaryButton @click="newBogMember">
                 <Icon type="add" />
-                <span class="hidden md:inline-flex">New Student</span>
+                <span class="hidden md:inline-flex">New Bog Member</span>
             </SecondaryButton>
             <div>
                 <span class="relative">
@@ -133,28 +128,30 @@ const uploadPic = (student: iBogMember) => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <ListItem v-for="student in students.data">
+            <ListItem v-for="member in members.data">
                 <div>
-                    <div class="text-sm font-semibold uppercase" v-text="student.name"></div>
+                    <div class="text-sm font-semibold uppercase"
+                        v-text="`${bogMember.first_name} ${bogMember.middle_name} ${bogMember.surname}`"></div>
                     <div
                         class="flex flex-col md:flex-row md:items-center text-xs capitalize text-gray-600 dark:text-gray-400 divide-x">
                         <div class="flex gap-2 md:pr-2">
-                            <span class="md:hidden font-semibold uppercase">Admission Number:</span>
-                            <span v-text="student.admission_no" class="text-lime-700 dark:text-lime-500"></span>
+                            <span class="md:hidden font-semibold uppercase">ID Number:</span>
+                            <span v-text="bogMember.idno" class="text-lime-700 dark:text-lime-500"></span>
                         </div>
-                        <span class="md:px-2" v-text="student.course_name"></span>
-                        <span class="md:px-2" v-text="student.program_name"></span>
-                        <span class="md:px-2" v-text="student.sponsor_name"></span>
+                        <span class="md:px-2" v-text="bogMember.phone"></span>
+                        <span class="md:px-2" v-text="bogMember.email"></span>
+                        <span class="md:px-2"
+                            v-text="`P.O. Box ${bogMember.box_no}${bogMember.post_code ? ' - ' + bogMember.post_code : ''}${bogMember.town ? ', ' + bogMember.town : ''}`"></span>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-1">
-                    <SecondaryButton @click="editStudent(student)">
+                    <SecondaryButton @click="editBogMember(member)">
                         <Icon class="h-4 w-4" type="edit" /><span class="hidden md:block">edit</span>
                     </SecondaryButton>
-                    <SecondaryButton @click="uploadPic(student)">
+                    <SecondaryButton @click="uploadPic(member)">
                         <Icon class="h-4 w-4" type="picture" /><span class="hidden md:block">Picture</span>
                     </SecondaryButton>
-                    <SecondaryButton @click="viewStudent(student)">
+                    <SecondaryButton @click="viewBogMember(member)">
                         <Icon class="h-4 w-4" type="person-details" /><span class="hidden md:block">Details</span>
                     </SecondaryButton>
                     <SecondaryButton>
@@ -162,7 +159,7 @@ const uploadPic = (student: iBogMember) => {
                     </SecondaryButton>
                 </div>
             </ListItem>
-            <Paginator :items="students" />
+            <Paginator :items="members" />
         </div>
     </AuthenticatedLayout>
 </template>

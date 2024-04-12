@@ -235,8 +235,12 @@ export interface iAllocationLesson {
 }
 
 export interface iBogMember {
-    id: number
+    id: number | null
+    photo: string | "" | null
+    photo_url: string | "" | null
     idno: number | null
+    gender: string | null
+    plwd: boolean | false
     surname: string
     first_name: string
     middle_name: string | null
@@ -245,6 +249,11 @@ export interface iBogMember {
     box_no: string | null
     post_code: string | null
     town: string | null
+    position: { id: number, name: string | null } | null | number
+    active: boolean | null
+    term_start_at: Date | null
+    term_end_at: Date | null
+    term_count: number | 0
 }
 
 export interface iBogMembers {

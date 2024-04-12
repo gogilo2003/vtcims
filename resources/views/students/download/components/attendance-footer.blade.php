@@ -31,7 +31,7 @@
         </tr>
         <tr>
             <td class="p-2 border border-gray-800">
-                {{ sprintf('%s%s', $instructor->first_name, $instructor->surname ?? $instructor->middle_name) }}
+                {{ sprintf('%s %s', $instructor->first_name, $instructor->surname ?? $instructor->middle_name) }}
             </td>
             <td class="p-2 border border-gray-800"></td>
             <td class="p-2 border border-gray-800"></td>

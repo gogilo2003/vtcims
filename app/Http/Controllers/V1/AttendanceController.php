@@ -270,7 +270,7 @@ class AttendanceController extends Controller
             // if (request()->input('duration') == 'day') {
             //     $startOfWeek = (new DateTime('monday this week'))->format('Y-m-d');
             //     $endOfWeek = date('Y-m-d', strtotime('friday this week'));
-            //     $pdfContent = view('students.download.attendance.daily', [
+            //     $pdfContent = view('students.download.attendance', [
             //         'students' => $students,
             //         'allocation' => $allocationData,
             //         'logos' => $logos,
@@ -282,7 +282,7 @@ class AttendanceController extends Controller
             if (request()->input('duration') == 'week') {
                 $startOfWeek = Carbon::parse((new DateTime('monday this week'))->format('Y-m-d'))->isoFormat('ddd, D MMM Y');
                 $endOfWeek = Carbon::parse(date('Y-m-d', strtotime('friday this week')))->isoFormat('ddd, D MMM Y');
-                $pdfContent = view('students.download.attendance.daily', [
+                $pdfContent = view('students.download.attendance', [
                     'students' => $students,
                     'allocation' => $allocationData,
                     'logos' => $logos,
@@ -294,7 +294,7 @@ class AttendanceController extends Controller
                 $currentMonth = date('Y-m');
                 $startOfMonth = Carbon::parse(date('Y-m-01', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
                 $endOfMonth = Carbon::parse(date('Y-m-t', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
-                $pdfContent = view('students.download.attendance.daily', [
+                $pdfContent = view('students.download.attendance', [
                     'students' => $students,
                     'allocation' => $allocationData,
                     'logos' => $logos,
@@ -306,7 +306,7 @@ class AttendanceController extends Controller
                 $currentQuarter = ceil(date('n') / 3);
                 $startOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, ($currentQuarter - 1) * 3 + 1, 1)))->isoFormat('ddd, D MMM Y');
                 $endOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, $currentQuarter * 3, 0)))->isoFormat('ddd, D MMM Y');
-                $pdfContent = view('students.download.attendance.daily', [
+                $pdfContent = view('students.download.attendance', [
                     'students' => $students,
                     'allocation' => $allocationData,
                     'logos' => $logos,

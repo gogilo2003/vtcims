@@ -61,12 +61,12 @@
                     $cols = 5;
                 @endphp
                 @foreach ($students as $student)
-                    <tr class="odd:bg-gray-50">
-                        <td class="p-2 text-right border border-gray-800">{{ $loop->iteration }}.</td>
-                        <td class="p-2  border border-gray-800">{{ $student->admission_no }}</td>
-                        <td class="p-2 uppercase border border-gray-800">{{ $student->name }}</td>
-                        <td class="p-2 uppercase border border-gray-800">{{ $student->gender }}</td>
-                        <td class="p-2 uppercase border border-gray-800">{{ $student->plwd }}</td>
+                    <tr class="even:bg-gray-50 odd:bg-white">
+                        <td class="p-2 text-right border-r border-gray-800">{{ $loop->iteration }}.</td>
+                        <td class="p-2  border-r border-gray-800">{{ $student->admission_no }}</td>
+                        <td class="p-2 uppercase border-r border-gray-800">{{ $student->name }}</td>
+                        <td class="p-2 uppercase border-r border-gray-800">{{ $student->gender }}</td>
+                        <td class="p-2 uppercase border-r border-gray-800">{{ $student->plwd }}</td>
                         @foreach ($allocation->lessons as $lesson)
                             @foreach ($lesson->lessons as $item)
                                 <td class="border border-gray-800"></td>

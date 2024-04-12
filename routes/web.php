@@ -13,6 +13,7 @@ use App\Http\Controllers\V1\SponsorController;
 use App\Http\Controllers\V1\StudentController;
 use App\Http\Controllers\V1\SubjectController;
 use App\Http\Controllers\V1\BogMemberController;
+use App\Http\Controllers\StaffPositionController;
 use App\Http\Controllers\V1\AllocationController;
 use App\Http\Controllers\V1\AttendanceController;
 use App\Http\Controllers\V1\DepartmentController;
@@ -42,15 +43,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('staff')->name('staff')->group(function () {
-        Route::get('', [StaffController::class, 'index']);
-        Route::post('', [StaffController::class, 'store'])->name('-store');
-        Route::patch('{staff}', [StaffController::class, 'update'])->name('-update');
-        Route::delete('{staff}', [StaffController::class, 'destroy'])->name('-destroy');
-        Route::post('photo/{staff}', [StaffController::class, 'picture'])->name('-photo');
+        Route::prefix('positions')->name('-positions')->group(function () {
+            Route::get('', [StaffPositionController::class, 'index']);
+            Route::post('', [StaffPositionController::class, 'store'])->name('-store');
+            Route::patch('{bog_position}', [StaffPositionController::class, 'update'])->name('-update');
+            Route::delete('{bog_position}', [StaffPositionController::class, 'destroy'])->name('-destroy');
+        });
+        Route::prefix('members')->name('-members')->group(function () {
+            Route::get('', [StaffController::class, 'index']);
+            Route::post('', [StaffController::class, 'store'])->name('-store');
+            Route::patch('{staff}', [StaffController::class, 'update'])->name('-update');
+            Route::delete('{staff}', [StaffController::class, 'destroy'])->name('-destroy');
+            Route::post('photo/{staff}', [StaffController::class, 'picture'])->name('-photo');
+        });
     });
 
     Route::prefix('bog')->name('bog')->group(function () {
-        Route::prefix('roles')->name('-roles')->group(function () {
+        Route::prefix('positions')->name('-positions')->group(function () {
             Route::get('', [BogPositionController::class, 'index']);
             Route::post('', [BogPositionController::class, 'store'])->name('-store');
             Route::patch('{bog_position}', [BogPositionController::class, 'update'])->name('-update');
