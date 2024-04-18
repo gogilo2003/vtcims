@@ -37,28 +37,16 @@ class StudentController extends Controller
             'intake.examinations' => function ($query) {
                 $query->with(['term', 'subject', 'tests.results'])->orderBy('term_id', 'DESC');
             }
-        ])->orderBy('id', 'DESC')->when(
+        ])->orderBy('id', 'DESC')
+            ->when(
                 $search,
                 function ($query) use ($search) {
-                    $query->where('surname', 'LIKE', '%' . $search . '%')
-                        ->orWhere('middle_name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('first_name', 'LIKE', '%' . $search . '%')
-                        ->orWhere('id', 'LIKE', '%' . $search . '%')
-                        ->orWhere('id', $search);
-
-                    $ar = explode(' ', $search);
-
-                    if (count($ar) > 1) {
-                        $query->orWhere(function ($query) use ($ar) {
-                            if (isset ($ar[0])) {
-                                $query->where('surname', 'LIKE', $ar[0] . '%');
-                            }
-                            if (isset ($ar[1])) {
-                                $query->where('first_name', 'LIKE', $ar[1] . '%');
-                            }
-                            if (isset ($ar[2])) {
-                                $query->where('middle_name', 'LIKE', $ar[2] . '%');
-                            }
+                    $names = explode(" ", $search);
+                    foreach ($names as $name) {
+                        $query->where(function ($query) use ($name) {
+                            $query->where('surname', 'like', '%' . $name . '%')
+                                ->orWhere('first_name', 'like', '%' . $name . '%')
+                                ->orWhere('middle_name', 'like', '%' . $name . '%');
                         });
                     }
                 }

@@ -22,22 +22,12 @@ class BogMemberController extends Controller
         $search = request()->input("search");
 
         $members = BogMember::when($search, function ($query) use ($search) {
-            $query->where('surname', 'LIKE', '%' . $search . '%')
-                ->orWhere('first_name', '%' . $search . '%')
-                ->orWhere('middle_name', '%' . $search . '%');
-
-            $ar = explode(' ', $search);
-            if (count($ar) > 1) {
-                $query->orWhere(function ($query) use ($ar) {
-                    if (isset ($ar[0])) {
-                        $query->where('surname', 'LIKE', $ar[0] . '%');
-                    }
-                    if (isset ($ar[1])) {
-                        $query->where('first_name', 'LIKE', $ar[1] . '%');
-                    }
-                    if (isset ($ar[2])) {
-                        $query->where('middle_name', 'LIKE', $ar[2] . '%');
-                    }
+            $names = explode(" ", $search);
+            foreach ($names as $name) {
+                $query->where(function ($query) use ($name) {
+                    $query->where('surname', 'like', '%' . $name . '%')
+                        ->orWhere('first_name', 'like', '%' . $name . '%')
+                        ->orWhere('middle_name', 'like', '%' . $name . '%');
                 });
             }
         })->paginate()->through(fn($member) => [
@@ -69,7 +59,7 @@ class BogMemberController extends Controller
             "name" => $position->name,
         ]);
 
-        return Inertia::render("Bog/Index", ["members" => $members, "positions" => $positions]);
+        return Inertia::render("Bog/Index", ["members" => $members, "positions" => $positions, "search" => $search]);
     }
 
     /**

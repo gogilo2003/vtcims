@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
-import { iBogMember, iBogMembers, iItem, iPhoto } from '../../interfaces/index';
+import { iStaffMember, iStaffMembers, iItem, iPhoto } from '../../interfaces/index';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import Icon from '../../Components/Icons/Icon.vue'
 import { ref, watch } from 'vue';
-import BogMember from './BogMember.vue';
+import StaffMember from './StaffMember.vue';
 import View from './View.vue';
 import Picture from './Picture.vue';
 import { router } from '@inertiajs/vue3';
@@ -14,7 +14,7 @@ import InputText from 'primevue/inputtext';
 import ListItem from '../../Components/ListItem.vue';
 
 const props = defineProps<{
-    members: iBogMembers,
+    members: iStaffMembers,
     positions: Array<iItem>,
     errors: Object,
     search?: string | null,
@@ -26,10 +26,10 @@ const props = defineProps<{
 
 const edit = ref(false)
 const show = ref(false)
-const bogMember = ref<iBogMember | null>()
+const bogMember = ref<iStaffMember | null>()
 const photo = ref<iPhoto | undefined>()
 
-const newBogMember = () => {
+const newStaffMember = () => {
     bogMember.value = {
         id: null,
         photo: null,
@@ -55,14 +55,14 @@ const newBogMember = () => {
     edit.value = false
 }
 
-const editBogMember = (BOG_MEMBER: iBogMember) => {
-    bogMember.value = BOG_MEMBER
+const editStaffMember = (STAFF_MEMBER: iStaffMember) => {
+    bogMember.value = STAFF_MEMBER
     show.value = true
     edit.value = true
 }
 
-const viewBogMember = (BOG_MEMBER: iBogMember) => {
-    bogMember.value = BOG_MEMBER
+const viewStaffMember = (STAFF_MEMBER: iStaffMember) => {
+    bogMember.value = STAFF_MEMBER
     showView.value = true
 }
 
@@ -92,14 +92,14 @@ watch(() => searchVal.value, debounce((value: string) => {
         data = { search: value }
     }
 
-    router.get(route('bog-members'), data, {
+    router.get(route('staff-members'), data, {
         only: ['members', 'search'],
         preserveScroll: true,
         preserveState: true
     })
 }, 500))
 
-const uploadPic = (member: iBogMember) => {
+const uploadPic = (member: iStaffMember) => {
     photo.value = {
         id: member.id,
         url: member.photo_url,
@@ -113,13 +113,13 @@ const uploadPic = (member: iBogMember) => {
 </script>
 
 <template>
-    <BogMember :show="show" :edit="edit" @closed="onClose" :member="bogMember" />
+    <StaffMember :show="show" :edit="edit" @closed="onClose" :member="bogMember" />
     <Picture :show="showPic" @closed="onClosePic" :photo="photo" />
     <View :show="showView" @closed="onCloseView" :member="bogMember" />
 
     <AuthenticatedLayout title="Bog Members">
         <div class="pb-3 md:pb-8 flex gap-3 justify-between">
-            <SecondaryButton @click="newBogMember">
+            <SecondaryButton @click="newStaffMember">
                 <Icon type="add" />
                 <span class="hidden md:inline-flex">New Bog Member</span>
             </SecondaryButton>
@@ -156,13 +156,13 @@ const uploadPic = (member: iBogMember) => {
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-1 justify-end">
-                    <SecondaryButton @click="editBogMember(member)">
+                    <SecondaryButton @click="editStaffMember(member)">
                         <Icon class="h-4 w-4" type="edit" /><span class="hidden md:block">edit</span>
                     </SecondaryButton>
                     <SecondaryButton @click="uploadPic(member)">
                         <Icon class="h-4 w-4" type="picture" /><span class="hidden md:block">Picture</span>
                     </SecondaryButton>
-                    <SecondaryButton @click="viewBogMember(member)">
+                    <SecondaryButton @click="viewStaffMember(member)">
                         <Icon class="h-4 w-4" type="person-details" /><span class="hidden md:block">Details</span>
                     </SecondaryButton>
                     <SecondaryButton>
