@@ -11,7 +11,7 @@ class UpdateStaffRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return request()->user()->isAdmin() || request()->user()->hasPermission('staff-members-update');
     }
 
     /**

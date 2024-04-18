@@ -13,7 +13,7 @@ use App\Http\Controllers\V1\SponsorController;
 use App\Http\Controllers\V1\StudentController;
 use App\Http\Controllers\V1\SubjectController;
 use App\Http\Controllers\V1\BogMemberController;
-use App\Http\Controllers\StaffPositionController;
+use App\Http\Controllers\V1\StaffPositionController;
 use App\Http\Controllers\V1\AllocationController;
 use App\Http\Controllers\V1\AttendanceController;
 use App\Http\Controllers\V1\DepartmentController;
@@ -46,8 +46,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('positions')->name('-positions')->group(function () {
             Route::get('', [StaffPositionController::class, 'index']);
             Route::post('', [StaffPositionController::class, 'store'])->name('-store');
-            Route::patch('{bog_position}', [StaffPositionController::class, 'update'])->name('-update');
-            Route::delete('{bog_position}', [StaffPositionController::class, 'destroy'])->name('-destroy');
+            Route::patch('{staff_position}', [StaffPositionController::class, 'update'])->name('-update');
+            Route::delete('{staff_position}', [StaffPositionController::class, 'destroy'])->name('-destroy');
         });
         Route::prefix('members')->name('-members')->group(function () {
             Route::get('', [StaffController::class, 'index']);

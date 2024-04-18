@@ -3,6 +3,7 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useForm, usePage } from '@inertiajs/vue3';
 import Dialog from 'primevue/dialog';
 import InputText from "primevue/inputtext";
+import InputNumber from "primevue/inputnumber";
 import { useToast } from 'primevue/usetoast';
 import Toast from "primevue/toast";
 import Button from 'primevue/button';
@@ -13,11 +14,11 @@ import { iBogMember } from '../../interfaces/index';
 const props = defineProps<{
     show: boolean,
     edit: Boolean,
-    member: iBogMember
+    member?: iBogMember | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
-const form = useForm({
+const form = useForm<iBogMember>({
     id: null,
     idno: null,
     gender: null,
@@ -27,11 +28,11 @@ const form = useForm({
     middle_name: "",
     phone: "",
     email: "",
-    box_no: null,
-    post_code: null,
-    town: null,
+    box_no: "",
+    post_code: "",
+    town: "",
     position: null,
-    active: null,
+    active: true,
     term_start_at: null,
     term_end_at: null,
     term_count: 0,
@@ -43,11 +44,11 @@ const toast = useToast()
 const positions = computed(() => page?.props?.positions)
 const states = ref([
     {
-        value: 0,
+        value: 1,
         text: "Active"
     },
     {
-        value: 1,
+        value: 0,
         text: "Inactive"
     },
 ])
@@ -62,23 +63,23 @@ const plwdOptions = ref([
 ]);
 
 watch(() => props.member, value => {
-    form.id = value.id
-    form.idno = value.idno
-    form.gender = value.gender
-    form.plwd = value.plwd
-    form.surname = value.surname
-    form.first_name = value.first_name
-    form.middle_name = value.middle_name
-    form.phone = value.phone
-    form.email = value.email
-    form.box_no = value.box_no
-    form.post_code = value.post_code
-    form.town = value.town
-    form.position = value.position
-    form.active = value.active
-    form.term_start_at = value.term_start_at
-    form.term_end_at = value.term_end_at
-    form.term_count = value.term_count
+    form.id = value?.id
+    form.idno = value?.idno
+    form.gender = value?.gender
+    form.plwd = value?.plwd
+    form.surname = value?.surname
+    form.first_name = value?.first_name
+    form.middle_name = value?.middle_name
+    form.phone = value?.phone
+    form.email = value?.email
+    form.box_no = value?.box_no
+    form.post_code = value?.post_code
+    form.town = value?.town
+    form.position = value?.position?.id
+    form.active = value?.active
+    form.term_start_at = value?.term_start_at
+    form.term_end_at = value?.term_end_at
+    form.term_count = value?.term_count
 })
 
 const submit = async () => {
@@ -118,11 +119,11 @@ const submit = async () => {
                 form.middle_name = ""
                 form.phone = ""
                 form.email = ""
-                form.box_no = null
-                form.post_code = null
-                form.town = null
+                form.box_no = ""
+                form.post_code = ""
+                form.town = ""
                 form.position = null
-                form.active = null
+                form.active = true
                 form.term_start_at = null
                 form.term_end_at = null
                 form.term_count = 0
@@ -232,7 +233,7 @@ watch(() => props.show, (value) => {
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.idno }">
                             <label :class="{ 'text-red-400': page.props.errors.idno }" for="idno">IDNo</label>
-                            <InputText id="idno" v-model="form.idno" />
+                            <InputNumber :useGrouping="false" id="idno" v-model="form.idno" />
                             <span class="text-red-400" v-if="page.props.errors.idno"
                                 v-text="page.props.errors.idno"></span>
                         </div>
@@ -254,21 +255,21 @@ watch(() => props.show, (value) => {
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.term_start_at }">
                             <label :class="{ 'text-red-400': page.props.errors.term_start_at }" for="term_start_at">Term
                                 Start Date</label>
-                            <Calendar id="term_start_at" v-model="form.term_start_at" />
+                            <Calendar :manualInput="false" id="term_start_at" v-model="form.term_start_at" />
                             <span class="text-red-400" v-if="page.props.errors.term_start_at"
                                 v-text="page.props.errors.term_start_at"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.term_end_at }">
                             <label :class="{ 'text-red-400': page.props.errors.term_end_at }" for="term_end_at">Term End
                                 Date</label>
-                            <Calendar id="term_end_at" v-model="form.term_end_at" />
+                            <Calendar :manualInput="false" id="term_end_at" v-model="form.term_end_at" />
                             <span class="text-red-400" v-if="page.props.errors.term_end_at"
                                 v-text="page.props.errors.term_end_at"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.term_count }">
                             <label :class="{ 'text-red-400': page.props.errors.term_count }" for="term_count">Term
                                 Count</label>
-                            <InputText id="term_count" v-model="form.term_count" />
+                            <InputNumber :useGrouping="false" id="term_count" v-model="form.term_count" />
                             <span class="text-red-400" v-if="page.props.errors.term_count"
                                 v-text="page.props.errors.term_count"></span>
                         </div>
@@ -292,7 +293,8 @@ watch(() => props.show, (value) => {
                     </div>
                 </div>
                 <div class="flex gap-2 items-center justify-between">
-                    <Button type="submit" label="Save" rounded />
+                    <Button :class="{ 'opacity-30': form.processing }" :disabled="form.processing" type="submit"
+                        label="Save" rounded />
                     <Button type="reset" @click="close(false)" label="Cancel" rounded outlined severity="danger" />
                 </div>
             </form>

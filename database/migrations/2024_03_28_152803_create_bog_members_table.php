@@ -27,7 +27,7 @@ return new class extends Migration {
             $table->boolean('active')->default(true);
             $table->date('term_start_at')->nullable();
             $table->date('term_end_at')->nullable();
-            $table->date('term_count')->nullable();
+            $table->smallInteger('term_count')->nullable();
             $table->foreignId('bog_position_id');
             $table->timestamps();
             $table->foreign('bog_position_id')->references('id')->on('bog_positions')->onDelete('cascade');

@@ -17,19 +17,23 @@ const props = defineProps<{
     members: iBogMembers,
     positions: Array<iItem>,
     errors: Object,
-    search: String
+    search?: string | null,
+    notification: {
+        success?: string | null
+        danger?: string | null
+    }
 }>()
 
 const edit = ref(false)
 const show = ref(false)
-const bogMember = ref<iBogMember>()
-const photo = ref<iPhoto>()
+const bogMember = ref<iBogMember | null>()
+const photo = ref<iPhoto | undefined>()
 
 const newBogMember = () => {
     bogMember.value = {
         id: null,
         photo: null,
-        photo_url: null,
+        photo_url: "",
         idno: null,
         gender: null,
         plwd: false,
@@ -78,7 +82,7 @@ const onCloseView = (value: boolean) => {
 const showPic = ref(false)
 const showView = ref(false)
 
-const searchVal = ref(props.search)
+const searchVal = ref<string | null | undefined>(props.search)
 
 watch(() => searchVal.value, debounce((value: string) => {
 
@@ -97,9 +101,9 @@ watch(() => searchVal.value, debounce((value: string) => {
 
 const uploadPic = (member: iBogMember) => {
     photo.value = {
-        id: bogMember.id,
-        url: bogMember.photo_url,
-        photo: bogMember.photo
+        id: member.id,
+        url: member.photo_url,
+        photo: member.photo
     }
 
     showPic.value = true
@@ -109,9 +113,9 @@ const uploadPic = (member: iBogMember) => {
 </script>
 
 <template>
-    <BogMember :show="show" :edit="edit" @closed="onClose" :member="member" />
+    <BogMember :show="show" :edit="edit" @closed="onClose" :member="bogMember" />
     <Picture :show="showPic" @closed="onClosePic" :photo="photo" />
-    <View :show="showView" @closed="onCloseView" :member="member" />
+    <View :show="showView" @closed="onCloseView" :member="bogMember" />
 
     <AuthenticatedLayout title="Bog Members">
         <div class="pb-3 md:pb-8 flex gap-3 justify-between">
@@ -128,23 +132,30 @@ const uploadPic = (member: iBogMember) => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <ListItem v-for="member in members.data">
-                <div>
-                    <div class="text-sm font-semibold uppercase"
-                        v-text="`${bogMember.first_name} ${bogMember.middle_name} ${bogMember.surname}`"></div>
-                    <div
-                        class="flex flex-col md:flex-row md:items-center text-xs capitalize text-gray-600 dark:text-gray-400 divide-x">
-                        <div class="flex gap-2 md:pr-2">
-                            <span class="md:hidden font-semibold uppercase">ID Number:</span>
-                            <span v-text="bogMember.idno" class="text-lime-700 dark:text-lime-500"></span>
+            <ListItem v-for="(member) in   members.data">
+                <div class="flex items-center gap-2">
+                    <div class="flex-none h-20 w-20">
+                        <img class="h-full w-full object-cover rounded-full shadow border p-1" :src="member.photo_url"
+                            alt="">
+                    </div>
+                    <div>
+                        <div class="text-sm font-semibold uppercase"
+                            v-text="`${member.first_name} ${member.middle_name} ${member.surname}`">
                         </div>
-                        <span class="md:px-2" v-text="bogMember.phone"></span>
-                        <span class="md:px-2" v-text="bogMember.email"></span>
-                        <span class="md:px-2"
-                            v-text="`P.O. Box ${bogMember.box_no}${bogMember.post_code ? ' - ' + bogMember.post_code : ''}${bogMember.town ? ', ' + bogMember.town : ''}`"></span>
+                        <div
+                            class="flex flex-col md:flex-row md:items-center text-xs text-gray-600 dark:text-gray-400 divide-x">
+                            <div v-if="member.idno" class="flex gap-2 md:pr-2">
+                                <span class="md:hidden font-semibold uppercase">ID Number:</span>
+                                <span v-text="member.idno" class="text-lime-700 dark:text-lime-500"></span>
+                            </div>
+                            <span v-if="member.phone" class="md:px-2" v-text="member.phone"></span>
+                            <span v-if="member.email" class="md:px-2" v-text="member.email"></span>
+                            <span v-if="member.box_no || member.post_code || member.town" class="md:px-2"
+                                v-text="`P.O. Box ${member.box_no}${member.post_code ? ' - ' + member.post_code : ''}${member.town ? ', ' + member.town : ''}`"></span>
+                        </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-1">
+                <div class="flex flex-wrap gap-1 justify-end">
                     <SecondaryButton @click="editBogMember(member)">
                         <Icon class="h-4 w-4" type="edit" /><span class="hidden md:block">edit</span>
                     </SecondaryButton>

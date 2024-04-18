@@ -11,7 +11,7 @@ class UpdateBogPositionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return request()->user()->isAdmin() || request()->user()->hasPermission('bog-positions-update');
     }
 
     /**
@@ -22,7 +22,8 @@ class UpdateBogPositionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "id" => "required|numeric|integer|exists:bog_positions,id",
+            "name" => "required|string|unique:bog_positions,name," . $this->id . ",id",
         ];
     }
 }

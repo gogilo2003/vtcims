@@ -15,6 +15,7 @@ const toggleState = (value: boolean) => {
 </script>
 
 <template>
+
     <Head :title="title" />
     <div class="transition ease-in-out duration-500">
         <div class="min-h-screen bg-gray-100 dark:bg-gray-600 transition ease-in-out duration-500">
@@ -23,7 +24,7 @@ const toggleState = (value: boolean) => {
             <div class="flex transition ease-in-out duration-500">
                 <SideBar class="flex-none" :show="showSidebar" />
                 <!-- Page Content -->
-                <main class="flex-1 transition ease-in-out duration-500 p-3 sm:p-6 lg:p-8">
+                <main class="flex-1 transition ease-in-out duration-500 p-3 sm:p-6 lg:p-8 overflow-x-hidden">
                     <slot />
                 </main>
             </div>

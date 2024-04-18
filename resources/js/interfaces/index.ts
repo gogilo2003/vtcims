@@ -55,9 +55,9 @@ export interface iItem {
 }
 
 export interface iPhoto {
-    id: Number | null,
-    url: string,
-    photo: string
+    id: number | null,
+    url?: string | null,
+    photo?: string | null
 }
 
 export interface iMenu {
@@ -236,24 +236,24 @@ export interface iAllocationLesson {
 
 export interface iBogMember {
     id: number | null
-    photo: string | "" | null
-    photo_url: string | "" | null
-    idno: number | null
+    photo?: string | "" | null
+    photo_url?: string | ""
+    idno?: number | null
     gender: string | null
     plwd: boolean | false
     surname: string
     first_name: string
-    middle_name: string | null
-    phone: string | null
-    email: string | null
-    box_no: string | null
-    post_code: string | null
-    town: string | null
-    position: { id: number, name: string | null } | null | number
-    active: boolean | null
+    middle_name?: string | ""
+    phone?: string | ""
+    email?: string | ""
+    box_no?: string | ""
+    post_code?: string | ""
+    town?: string | ""
+    position: { id: number, name: string | "" } | null | number
+    active: boolean
     term_start_at: Date | null
     term_end_at: Date | null
-    term_count: number | 0
+    term_count?: number | 0
 }
 
 export interface iBogMembers {
@@ -270,4 +270,32 @@ export interface iBogMembers {
     prev_page_url: string | null,
     to: number,
     total: number,
+}
+
+export interface iBogPosition {
+    id?: number | null
+    name?: string | ""
+    members?: number | Array<iBogMember> | null
+}
+export interface iBogPositions {
+    data: Array<iBogPosition>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
+
+export interface iNotification {
+    success?: string | null
+    danger?: string | null
+    info?: string | null
+    warning?: string | null
 }

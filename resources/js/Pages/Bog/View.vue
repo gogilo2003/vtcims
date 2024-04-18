@@ -2,11 +2,11 @@
 import { ref, watch } from "vue";
 import Dialog from 'primevue/dialog';
 import Toast from "primevue/toast";
-import { iStudent } from "@/interfaces/index";
+import { iBogMember } from '../../interfaces/index';
 
 const props = defineProps<{
     show: boolean,
-    student: iStudent
+    member?: iBogMember | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
@@ -23,67 +23,59 @@ watch(() => props.show, (value) => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog v-model:visible="visible" :closeable="true" @update:visible="close" modal :style="{ width: '50rem' }"
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }" header="Student Details">
+    <Dialog v-model:visible="visible" :closeable="true" @update:visible="close" modal
+        :pt="{ root: { class: ['w-full md:w-[50rem] lg:w-[60rem]'] } }" header="Student Details">
         <div>
             <div class="shadow border border-stone-100 dark:border-gray-500 rounded-lg">
-                <div class="relative flex flex-col md:flex-row items-center">
-                    <div class="absolute right-4 top-2 rounded-full" :class="{
-                        'bg-lime-600': student.status.toLowerCase() == 'completed',
-                        'bg-blue-700': student.status.toLowerCase() == 'in session',
-                        'bg-red-600': student.status.toLowerCase() == 'dropout',
-                        'bg-orange-600': student.status.toLowerCase() == 'on attachment'
-                    }">
-                        <div class="text-gray-300 px-3 py-2 uppercase font-semibold" v-text="student.status"></div>
-                    </div>
-                    <div class="p-4 flex-none w-40 h-40">
-                        <img :src="student.photo_url" alt="" class="w-full h-full object-cover">
+                <div class="relative flex flex-col md:flex-row items-start">
+                    <div class="p-4 flex-none w-full md:w-48 h-64 md:h-48 relative">
+                        <img :src="member?.photo_url" alt=""
+                            class="w-full h-full object-cover border p-1 shadow rounded-xl relative">
+                        <div class="absolute left-[50%] -translate-x-[50%] bottom-0 rounded-full"
+                            :class="{ 'bg-lime-600': member?.active, 'bg-orange-600': !member?.active }">
+                            <div class="text-gray-300 px-3 py-2 uppercase font-semibold"
+                                v-text="member?.active ? 'Current' : 'Former'"></div>
+                        </div>
                     </div>
                     <div class="relative flex-1 py-2 md:pr-3 w-full px-4 md:pl-0">
-                        <h3 v-text="student.name"
-                            class="text-lg font-semibold my-1 border-b uppercase text-center md:text-left dark:text-gray-300">
+                        <h3 v-text="`${member?.first_name} ${member?.middle_name} ${member?.surname}`"
+                            class="text-lg font-semibold pb-2 mb-2 border-b uppercase text-center md:text-left dark:text-gray-300">
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div class="flex flex-col p-3 rounded border">
-                                <span class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Admission
+                                <span class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">ID
                                     No</span>
-                                <span v-text="student.admission_no" class="text-stone-700 dark:text-stone-200"></span>
+                                <span v-text="member?.idno" class="text-stone-700 dark:text-stone-200"></span>
                             </div>
                             <div class="flex flex-col p-3 rounded border">
                                 <span
-                                    class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Course</span>
-                                <span v-text="student.course_name" class="text-stone-700 dark:text-stone-200"></span>
+                                    class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Position</span>
+                                <span v-text="member?.position?.name" class="text-stone-700 dark:text-stone-200"></span>
                             </div>
                             <div class="flex flex-col p-3 rounded border">
                                 <span
-                                    class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Intake</span>
-                                <span v-text="student.intake_name" class="text-stone-700 dark:text-stone-200"></span>
+                                    class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Gender</span>
+                                <span v-text="member?.gender" class="text-stone-700 dark:text-stone-200"></span>
+                            </div>
+                            <div class="flex flex-col p-3 rounded border">
+                                <span
+                                    class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Phone</span>
+                                <span v-text="member?.phone" class="text-stone-700 dark:text-stone-200"></span>
+                            </div>
+                            <div class="flex flex-col p-3 rounded border col-span-1 lg:col-span-1 md:col-span-2">
+                                <span
+                                    class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Email</span>
+                                <span v-text="member?.email" class="text-stone-700 dark:text-stone-200"></span>
+                            </div>
+                            <div class="flex flex-col p-3 rounded border col-span-1 lg:col-span-1 md:col-span-2">
+                                <span class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Postal
+                                    Address</span>
+                                <span
+                                    v-text="`P.O. Box ${member?.box_no}${member?.post_code ? ' - ' + member?.post_code : ''} ${member?.town}`"
+                                    class="text-stone-700 dark:text-stone-200"></span>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="mt-6 grid grid-cols-1 lg:grid-cols-2">
-                <div class="shadow rounded-lg overflow-hidden border border-primary-default dark:border-gray-500">
-                    <div
-                        class="text-base font-semibold px-3 py-2 border-b border-gray-700 dark:border-gray-500 text-gray-700 dark:text-gray-400">
-                        Examinations
-                        Summary</div>
-                    <table class="table table-striped text-gray-700 dark:text-gray-400">
-                        <thead>
-                            <tr class="text-left border-b border-gray-200 dark:border-gray-500">
-                                <th class="py-2 px-3">Subject</th>
-                                <th class="py-2 px-3 text-right">Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="border-b border-gray-200 dark:border-gray-500"
-                                v-for="examination in student.examinations">
-                                <td class="py-2 px-3" v-text="examination.subject"></td>
-                                <td class="text-right py-2 px-3" v-text="examination.score"></td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>

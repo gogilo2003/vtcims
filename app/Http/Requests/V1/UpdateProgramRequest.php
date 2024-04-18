@@ -11,7 +11,7 @@ class UpdateProgramRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return request()->user()->hasPermission();
+        return request()->user()->isAdmin() || request()->user()->hasPermission('bprograms-update');
     }
 
     /**

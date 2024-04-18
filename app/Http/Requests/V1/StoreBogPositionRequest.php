@@ -11,7 +11,7 @@ class StoreBogPositionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return request()->user()->isAdmin() || request()->user()->hasPermission('bog-positions-store');
     }
 
     /**
@@ -22,7 +22,7 @@ class StoreBogPositionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "name" => "required|string|unique:bog_positions,name",
         ];
     }
 }

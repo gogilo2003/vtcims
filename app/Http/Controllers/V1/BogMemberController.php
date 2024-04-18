@@ -5,8 +5,10 @@ namespace App\Http\Controllers\V1;
 use Inertia\Inertia;
 use App\Models\BogMember;
 use App\Models\BogPosition;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\V1\UploadBogMemberPictureRequest;
 use App\Http\Requests\V1\StoreBogMemberRequest;
 use App\Http\Requests\V1\UpdateBogMemberRequest;
 
@@ -44,7 +46,7 @@ class BogMemberController extends Controller
                 "photo_url" => Storage::disk('public')->url($member->photo),
                 "idno" => $member->idno,
                 "gender" => $member->gender,
-                "plwd" => $member->plwd ? 'Yes' : 'No',
+                "plwd" => $member->plwd,
                 "surname" => $member->surname,
                 "first_name" => $member->first_name,
                 "middle_name" => $member->middle_name,
@@ -71,14 +73,6 @@ class BogMemberController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreBogMemberRequest $request)
@@ -96,31 +90,15 @@ class BogMemberController extends Controller
         $member->box_no = $request->box_no;
         $member->post_code = $request->post_code;
         $member->town = $request->town;
-        $member->position_id = $request->position;
+        $member->bog_position_id = $request->position;
         $member->active = $request->active;
-        $member->term_start_at = $request->term_start_at;
-        $member->term_end_at = $request->term_end_at;
+        $member->term_start_at = Carbon::parse($request->term_start_at);
+        $member->term_end_at = Carbon::parse($request->term_end_at);
         $member->term_count = $request->term_count;
 
         $member->save();
 
         return redirect()->back()->with("success", "Member created");
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(BogMember $bogMember)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BogMember $bogMember)
-    {
-        //
     }
 
     /**
@@ -139,7 +117,7 @@ class BogMemberController extends Controller
         $bogMember->box_no = $request->box_no;
         $bogMember->post_code = $request->post_code;
         $bogMember->town = $request->town;
-        $bogMember->position_id = $request->position;
+        $bogMember->bog_position_id = $request->position;
         $bogMember->active = $request->active;
         $bogMember->term_start_at = $request->term_start_at;
         $bogMember->term_end_at = $request->term_end_at;
@@ -155,6 +133,33 @@ class BogMemberController extends Controller
      */
     public function destroy(BogMember $bogMember)
     {
-        //
+        $bogMember->delete();
+        return redirect()->back()->with('success', 'Bog Member Deleted');
     }
+
+    function picture(UploadBogMemberPictureRequest $request, BogMember $bogMember)
+    {
+        if ($request->hasFile('photo')) {
+            $file = $request->photo;
+
+            if ($file->isValid()) {
+                if ($bogMember->photo) {
+                    if (Storage::disk('public')->exists($bogMember->photo)) {
+                        Storage::disk('public')->delete($bogMember->photo);
+                    }
+                }
+
+                $bogMember->photo = $file->storePublicly('bog_members', ["disk" => "public"]);
+
+                $bogMember->save();
+
+                return redirect()
+                    ->back()
+                    ->with('success', 'Picture uploaded');
+            }
+            return redirect()->back()->with('error', 'An invalid picture file detected');
+        }
+        return redirect()->back()->with('error', 'No File has been uploaded');
+    }
+
 }

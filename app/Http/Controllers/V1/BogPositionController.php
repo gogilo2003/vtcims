@@ -4,8 +4,9 @@ namespace App\Http\Controllers\V1;
 
 use App\Models\BogPosition;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreBogPositionRequest;
-use App\Http\Requests\UpdateBogPositionRequest;
+use App\Http\Requests\V1\StoreBogPositionRequest;
+use App\Http\Requests\V1\UpdateBogPositionRequest;
+use Inertia\Inertia;
 
 class BogPositionController extends Controller
 {
@@ -14,15 +15,17 @@ class BogPositionController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $search = request()->input("search");
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $positions = BogPosition::with('members')->when($search, function ($query) use ($search) {
+            $query->where('name', 'LIKE', '%' . $search . '%');
+        })->paginate()->through(fn($position) => [
+                "id" => $position->id,
+                "name" => $position->name,
+                "members" => $position->members->count(),
+            ]);
+
+        return Inertia::render("Bog/BogPositions", ["positions" => $positions]);
     }
 
     /**
@@ -30,23 +33,11 @@ class BogPositionController extends Controller
      */
     public function store(StoreBogPositionRequest $request)
     {
-        //
-    }
+        $position = new BogPosition();
+        $position->name = $request->input("name");
+        $position->save();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(BogPosition $bogPosition)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BogPosition $bogPosition)
-    {
-        //
+        return redirect()->back()->with('success', 'Position Created');
     }
 
     /**
@@ -54,7 +45,10 @@ class BogPositionController extends Controller
      */
     public function update(UpdateBogPositionRequest $request, BogPosition $bogPosition)
     {
-        //
+        $bogPosition->name = $request->input("name");
+        $bogPosition->save();
+
+        return redirect()->back()->with('success', 'Position updated');
     }
 
     /**
@@ -62,6 +56,7 @@ class BogPositionController extends Controller
      */
     public function destroy(BogPosition $bogPosition)
     {
-        //
+        $bogPosition->delete();
+        return redirect()->back()->with('success', 'BOG Position Deleted');
     }
 }
