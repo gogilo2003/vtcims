@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests\V1;
 
+use App\Rules\PhoneNumber;
+use App\Support\PhoneTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateBogMemberRequest extends FormRequest
 {
+    use PhoneTrait;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -23,13 +26,13 @@ class UpdateBogMemberRequest extends FormRequest
     {
         return [
             "id" => "required|numeric|integer|exists:bog_members,id",
-            "idno" => "nullable|numeric|integer|unique:bog_members,idno,'.$this->id.',id",
+            "idno" => "nullable|numeric|integer|unique:bog_members,idno," . $this->id . ",id",
             "gender" => "nullable|string",
             "plwd" => "nullable|numeric|integer",
             "surname" => "required|string",
             "first_name" => "required|string",
             "middle_name" => "nullable|string",
-            "phone" => "nullable|string",
+            "phone" => ["nullable", "string", new PhoneNumber()],
             "email" => "nullable|string|email",
             "box_no" => "nullable|string",
             "post_code" => "nullable|string",

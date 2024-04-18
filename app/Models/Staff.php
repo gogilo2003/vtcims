@@ -3,37 +3,64 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Staff extends Model
 {
     use HasFactory;
 
-    public function department()
+    /**
+     * Get the department associated with the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function department(): HasOne
     {
-        return $this->hasOne('App\Models\Department');
+        return $this->hasOne(Department::class);
     }
 
-    public function course()
+    /**
+     * Get the course associated with the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function course(): HasOne
     {
-        return $this->hasOne('App\Models\Course');
+        return $this->hasOne(Course::class);
     }
 
-    public function intake()
+    /**
+     * Get the intake associated with the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function intake(): HasOne
     {
-        return $this->hasOne('App\Models\Intake');
+        return $this->hasOne(Intake::class);
     }
 
-    public function subject()
+    /**
+     * The subjects that belong to the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function subjects(): BelongsToMany
     {
-        return $this->belongsToMany('App\Models\Subject');
+        return $this->belongsToMany(Subject::class)->withTimestamps();
     }
 
-    public function role()
+    /**
+     * Get the role that owns the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function role(): BelongsTo
     {
-        return $this->belongsTo('App\Models\StaffRole', 'staff_role_id');
+        return $this->belongsTo(StaffRole::class, 'staff_role_id', 'id');
     }
 
     public function getNameAttribute()
@@ -46,19 +73,19 @@ class Staff extends Model
         return $this->first_name . ' ' . ($this->middle_name ? $this->middle_name : $this->surname);
     }
 
-    public function subjects()
-    {
-        return $this->belongsToMany('App\Models\Subject')->withTimestamps();
-    }
-
     public function getSubjectIdsAttribute()
     {
         return $this->subjects->pluck('id');
     }
 
-    public function intake_subjects()
+    /**
+     * Get all of the intake_subjects for the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function intake_subjects(): HasMany
     {
-        return $this->hasMany('App\Models\IntakeStaffSubject', 'subject_id');
+        return $this->hasMany(IntakeStaffSubject::class, 'subject_id', 'id');
     }
 
     public function getAddressAttribute()
@@ -66,14 +93,34 @@ class Staff extends Model
         return 'P.O. Box ' . $this->box_no . ($this->post_code ? ' - ' . $this->post_code . ', ' : ', ') . $this->town;
     }
 
-    public function leaveouts()
+    /**
+     * Get all of the leavouts for the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function leavouts(): HasMany
     {
-        return $this->hasMany('App\Models\LeaveOut');
+        return $this->hasMany(LeaveOut::class);
     }
 
-    public function admin()
+    /**
+     * Get the admin that owns the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function admin(): BelongsTo
     {
-        return $this->belongsTo('App\Models\Admin');
+        return $this->belongsTo(Admin::class);
+    }
+
+    /**
+     * Get the user that owns the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
     /**
      * Get the status that owns the Staff
@@ -82,7 +129,7 @@ class Staff extends Model
      */
     public function status(): BelongsTo
     {
-        return $this->belongsTo(StaffStatus::class, 'status_id', 'id');
+        return $this->belongsTo(StaffStatus::class, 'staff_status_id', 'id');
     }
 
     /**

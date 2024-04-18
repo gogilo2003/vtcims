@@ -98,7 +98,7 @@ const submit = async () => {
             },
             onError: () => {
                 toast.add({
-                    severity: 'success',
+                    severity: 'error',
                     summary: 'Success',
                     detail: "An error ocurred! Please check the values you provided and try again.",
                     life: 3000

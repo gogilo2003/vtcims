@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests\V1;
 
+use App\Rules\PhoneNumber;
+use App\Support\PhoneTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreStudentRequest extends FormRequest
 {
+    use PhoneTrait;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -35,6 +38,7 @@ class StoreStudentRequest extends FormRequest
             'sponsor' => 'required|exists:sponsors,id',
             'student_role' => 'required|exists:student_roles,id',
             'status' => 'required',
+            'phone' => ['nullable', 'string', new PhoneNumber()],
         ];
     }
 }

@@ -114,7 +114,7 @@ export interface iStaff {
     employer: string,
     gender: string,
     staff_role_id: string,
-    status_id: string,
+    status?: { id: number, name: string } | number | null,
     teach: string,
     admin_id: string,
 }

@@ -140,18 +140,37 @@ const uploadPic = (member: iStaffMember) => {
                     </div>
                     <div>
                         <div class="text-sm font-semibold uppercase"
-                            v-text="`${member.first_name} ${member.middle_name} ${member.surname}`">
+                            v-text="`${member.first_name}${member.middle_name ? member.middle_name : ''} ${member.surname}`">
                         </div>
                         <div
                             class="flex flex-col md:flex-row md:items-center text-xs text-gray-600 dark:text-gray-400 divide-x">
-                            <div v-if="member.idno" class="flex gap-2 md:pr-2">
-                                <span class="md:hidden font-semibold uppercase">ID Number:</span>
-                                <span v-text="member.idno" class="text-lime-700 dark:text-lime-500"></span>
+                            <div v-if="member.role" class="flex gap-2 md:pr-2">
+                                <span class="md:hidden font-semibold uppercase">Position:</span>
+                                <span v-text="member.role.name" class="text-lime-700 dark:text-lime-500"></span>
+                                <span v-text="member.role.teach ? '(Teach)' : ''"
+                                    class="text-lime-700 dark:text-lime-500"></span>
                             </div>
-                            <span v-if="member.phone" class="md:px-2" v-text="member.phone"></span>
-                            <span v-if="member.email" class="md:px-2" v-text="member.email"></span>
-                            <span v-if="member.box_no || member.post_code || member.town" class="md:px-2"
-                                v-text="`P.O. Box ${member.box_no}${member.post_code ? ' - ' + member.post_code : ''}${member.town ? ', ' + member.town : ''}`"></span>
+                            <div v-if="member.phone" class="flex gap-2">
+                                <span class="md:hidden font-semibold uppercase">Phone:</span>
+                                <span v-if="member.phone" class="md:px-2" v-text="member.phone"></span>
+                            </div>
+                            <div v-if="member.email" class="flex gap-2">
+                                <span class="md:hidden font-semibold uppercase">Email:</span>
+                                <span v-if="member.email" class="md:px-2" v-text="member.email"></span>
+                            </div>
+                            <div v-if="member.box_no || member.post_code || member.town" class="flex gap-2">
+                                <span class="md:hidden font-semibold uppercase">Postal Address:</span>
+                                <span v-if="member.box_no || member.post_code || member.town" class="md:px-2"
+                                    v-text="`P.O. Box ${member.box_no}${member.post_code ? ' - ' + member.post_code : ''}${member.town ? ', ' + member.town : ''}`"></span>
+                            </div>
+                            <div v-if="member.gender" class="flex gap-2">
+                                <span class="md:hidden font-semibold uppercase">Gender:</span>
+                                <span v-if="member.gender" class="md:px-2" v-text="member.gender"></span>
+                            </div>
+                            <div v-if="member.employer" class="flex gap-2">
+                                <span class="md:hidden font-semibold uppercase">Employer:</span>
+                                <span v-if="member.employer" class="md:px-2" v-text="member.employer"></span>
+                            </div>
                         </div>
                     </div>
                 </div>

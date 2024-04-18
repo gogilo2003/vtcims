@@ -30,7 +30,7 @@ watch(() => props.student, value => {
 
 const submit = () => {
 
-    form.post(route('bog-members-photo', form.id), {
+    form.post(route('staff-members-photo', form.id), {
         onSuccess: () => {
             toast.add({
                 severity: 'success',
@@ -50,7 +50,7 @@ const submit = () => {
             })
 
         },
-        only: ['errors', 'notification', 'students']
+        only: ['errors', 'notification', 'members']
     })
 
 }

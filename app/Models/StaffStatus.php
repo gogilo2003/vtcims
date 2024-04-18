@@ -16,6 +16,6 @@ class StaffStatus extends Model
      */
     public function staff(): HasMany
     {
-        return $this->hasMany(Staff::class, 'status_id', 'id');
+        return $this->hasMany(Staff::class, 'staff_status_id', 'id');
     }
 }

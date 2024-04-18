@@ -50,7 +50,7 @@ const submit = () => {
             })
 
         },
-        only: ['errors', 'notification', 'students']
+        only: ['errors', 'notification', 'members']
     })
 
 }

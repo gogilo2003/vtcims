@@ -18,7 +18,9 @@ class AlterStaffTableAddStatusColumn extends Migration
         if (is_null($status)) {
             DB::table('staff_statuses')->insert([
                 'name' => 'current',
-                'description' => 'Staff currently stationed at ' . config('app.name')
+                'description' => 'Staff currently stationed at ' . config('app.name'),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
         Schema::table('staff', function (Blueprint $table) {
