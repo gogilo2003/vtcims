@@ -10,10 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('staff', function (Blueprint $table) {
-            $table->dropForeign(['status_id']);
-            $table->dropColumn('status_id');
-        });
+        try {
+            Schema::table('staff', function (Blueprint $table) {
+                $table->dropForeign(['status_id']);
+                $table->dropColumn('status_id');
+            });
+        } catch (Exception $e) {
+        }
     }
 
     /**
