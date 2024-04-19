@@ -10,9 +10,14 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        try {
+            Schema::table('staff', function (Blueprint $table) {
+                $table->dropForeign('staff_admin_id_foreign');
+                $table->dropColumn('admin_id');
+            });
+        } catch (Exception $e) {
+        }
         Schema::table('staff', function (Blueprint $table) {
-            $table->dropForeign('staff_admin_id_foreign');
-            $table->dropColumn('admin_id');
             $table->foreignId('user_id')->nullable()->after('teach');
             $table->foreign('user_id')->references('id')->on('users');
         });
@@ -26,8 +31,13 @@ return new class extends Migration {
         Schema::table('staff', function (Blueprint $table) {
             $table->dropForeign('staff_user_id_foreign');
             $table->dropColumn('user_id');
-            $table->unsignedInteger('admin_id')->nullable()->after('teach');
-            $table->foreign('admin_id')->references('id')->on('admins');
         });
+        try {
+            Schema::table('staff', function (Blueprint $table) {
+                $table->unsignedInteger('admin_id')->nullable()->after('teach');
+                $table->foreign('admin_id')->references('id')->on('admins');
+            });
+        } catch (Exception $e) {
+        }
     }
 };

@@ -13,12 +13,16 @@ class AlterTableStaffAddColumnAdminId extends Migration
      */
     public function up()
     {
-        Schema::table('staff', function (Blueprint $table) {
-            if(!Schema::hasColumn('staff','admin_id')){
-                $table->integer('admin_id')->unsigned()->nullable()->after('staff_role_id');
-                $table->foreign('admin_id')->references('id')->on('admins');
-            }
-        });
+        try {
+            Schema::table('staff', function (Blueprint $table) {
+                if (!Schema::hasColumn('staff', 'admin_id')) {
+                    $table->integer('admin_id')->unsigned()->nullable()->after('staff_role_id');
+                    $table->foreign('admin_id')->references('id')->on('admins');
+                }
+            });
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
 
     }
 
@@ -30,7 +34,7 @@ class AlterTableStaffAddColumnAdminId extends Migration
     public function down()
     {
         Schema::table('staff', function (Blueprint $table) {
-            if(Schema::hasColumn('staff','admin_id')){
+            if (Schema::hasColumn('staff', 'admin_id')) {
                 $table->dropForeign(['admin_id']);
                 $table->dropColumn('admin_id');
             }
