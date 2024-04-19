@@ -12,13 +12,9 @@ class HomeController extends Controller
 {
     function dashboard()
     {
-        $overallStudents = [];
-        foreach (Student::selectRaw('gender, count(*) as count')
-            ->where('status', 'In Session')
-            ->groupBy('gender')
-            ->get()->map(fn ($item) => [
-                ($item->gender ? 'female' : 'male') => $item->count
-            ]) as $item) {
+        $overallStudents = ["male" => 0, "female" => 0];
+        foreach (Student::selectRaw('gender, count(*) as count')->where('status', 'In Session')->groupBy('gender')->get()->map(fn($item) => [($item->gender ? 'female' : 'male') => $item->count
+        ]) as $item) {
 
             if (isset($item['female'])) {
                 $overallStudents['female'] = $item['female'];
