@@ -13,18 +13,24 @@ return new class extends Migration {
         // Schema::disableForeignKeyConstraints();
 
         // Drop foreign keys
-        Schema::table("examination_results", function (Blueprint $table) {
-            $table->dropForeign(["student_id"]);
-        });
-
-        Schema::table("fee_transactions", function (Blueprint $table) {
-            $table->dropForeign(["student_id"]);
-        });
-
-        Schema::table("leave_outs", function (Blueprint $table) {
-            $table->dropForeign(["student_id"]);
-        });
-
+        try {
+            Schema::table("examination_results", function (Blueprint $table) {
+                $table->dropForeign(["student_id"]);
+            });
+        } catch (Exception $e) {
+        }
+        try {
+            Schema::table("fee_transactions", function (Blueprint $table) {
+                $table->dropForeign(["student_id"]);
+            });
+        } catch (Exception $e) {
+        }
+        try {
+            Schema::table("leave_outs", function (Blueprint $table) {
+                $table->dropForeign(["student_id"]);
+            });
+        } catch (Exception $e) {
+        }
         // Change data types
         Schema::table("students", function (Blueprint $table) {
             $table->unsignedBigInteger("id")->change();
