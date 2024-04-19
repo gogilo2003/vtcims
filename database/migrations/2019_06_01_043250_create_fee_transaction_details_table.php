@@ -23,13 +23,13 @@ class CreateFeeTransactionDetailsTable extends Migration
             $table->foreign('fee_vote_head_id')->references('id')->on('fee_vote_heads')->onDelete('cascade');
         });
 
-        Schema::table('fee_transactions', function (Blueprint $table) {
-            try {
+        try {
+            Schema::table('fee_transactions', function (Blueprint $table) {
                 $table->dropForeign(['fee_vote_head_id']);
                 $table->dropColumn('fee_vote_head_id');
-            } catch (Exception $e) {
-            }
-        });
+            });
+        } catch (Exception $e) {
+        }
     }
 
     /**
