@@ -24,8 +24,11 @@ class CreateFeeTransactionDetailsTable extends Migration
         });
 
         Schema::table('fee_transactions', function (Blueprint $table) {
-            $table->dropForeign(['fee_vote_head_id']);
-            $table->dropColumn('fee_vote_head_id');
+            try {
+                $table->dropForeign(['fee_vote_head_id']);
+                $table->dropColumn('fee_vote_head_id');
+            } catch (Exception $e) {
+            }
         });
     }
 
