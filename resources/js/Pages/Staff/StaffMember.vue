@@ -8,50 +8,42 @@ import { useToast } from 'primevue/usetoast';
 import Toast from "primevue/toast";
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
-import Calendar from 'primevue/calendar';
-import { iBogMember } from '../../interfaces/index';
+import { iStaff, iItem } from '../../interfaces/index';
 
 const props = defineProps<{
     show: boolean,
     edit: Boolean,
-    member?: iBogMember | null
+    member?: iStaff | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
-const form = useForm<iBogMember>({
+const form = useForm<iStaff>({
     id: null,
     idno: null,
-    gender: null,
-    plwd: false,
+    pfno: null,
+    manno: null,
     surname: "",
     first_name: "",
     middle_name: "",
-    phone: "",
-    email: "",
     box_no: "",
     post_code: "",
     town: "",
-    position: null,
-    active: true,
-    term_start_at: null,
-    term_end_at: null,
-    term_count: 0,
+    email: "",
+    phone: "",
+    employer: "",
+    gender: null,
+    plwd: false,
+    role: null,
+    status: null,
+    teach: null,
 })
 
 const page = usePage()
 const toast = useToast()
 
-const positions = computed(() => page?.props?.positions)
-const states = ref([
-    {
-        value: 1,
-        text: "Active"
-    },
-    {
-        value: 0,
-        text: "Inactive"
-    },
-])
+const roles = computed<iItem[]>((): Array<iItem> => page?.props?.roles)
+const statuses = computed<iItem[]>((): Array<iItem> => page?.props?.statuses)
+const employers = computed<iItem[]>((): Array<iItem> => page?.props?.employers)
 
 const genderOptions = ref([
     { value: "Male", text: 'Male' },
@@ -62,30 +54,30 @@ const plwdOptions = ref([
     { value: 1, text: 'Yes' },
 ]);
 
-watch(() => props.member, value => {
-    form.id = value?.id
-    form.idno = value?.idno
-    form.gender = value?.gender
-    form.plwd = value?.plwd
-    form.surname = value?.surname
-    form.first_name = value?.first_name
-    form.middle_name = value?.middle_name
-    form.phone = value?.phone
-    form.email = value?.email
-    form.box_no = value?.box_no
-    form.post_code = value?.post_code
-    form.town = value?.town
-    form.position = value?.position?.id
-    form.active = value?.active
-    form.term_start_at = value?.term_start_at
-    form.term_end_at = value?.term_end_at
-    form.term_count = value?.term_count
+watch((): iStaff => props.member, (value: iStaff) => {
+    form.idno = value.idno
+    form.pfno = value.pfno
+    form.manno = value.manno
+    form.surname = value.surname
+    form.first_name = value.first_name
+    form.middle_name = value.middle_name
+    form.box_no = value.box_no
+    form.post_code = value.post_code
+    form.town = value.town
+    form.email = value.email
+    form.phone = value.phone
+    form.employer = value.employer
+    form.gender = value.gender
+    form.plwd = value.plwd
+    form.role = value.role
+    form.status = value.status
+    form.teach = value.teach
 })
 
 const submit = async () => {
 
     if (props.edit) {
-        form.patch(route('bog-members-update', form.id), {
+        form.patch(route('staff-members-update', form.id), {
             onSuccess: () => {
                 toast.add({
                     severity: 'success',
@@ -107,26 +99,10 @@ const submit = async () => {
             }
         })
     } else {
-        form.post(route('bog-members-store'), {
+        form.post(route('staff-members-store'), {
             only: ['members', 'notification', 'errors'],
             onSuccess: () => {
-                form.id = null
-                form.idno = null
-                form.gender = null
-                form.plwd = false
-                form.surname = ""
-                form.first_name = ""
-                form.middle_name = ""
-                form.phone = ""
-                form.email = ""
-                form.box_no = ""
-                form.post_code = ""
-                form.town = ""
-                form.position = null
-                form.active = true
-                form.term_start_at = null
-                form.term_end_at = null
-                form.term_count = 0
+                form.reset()
 
                 toast.add({
                     severity: 'success',
@@ -165,7 +141,7 @@ const close = (value: boolean) => {
 }
 
 const visible = ref(false)
-const dialogTitle = computed(() => props.edit ? 'Edit BOG Member' : 'New BOG Member')
+const dialogTitle = computed(() => props.edit ? 'Edit Staff Member' : 'New Staff Member')
 
 watch(() => props.show, (value) => {
     visible.value = value
@@ -237,6 +213,18 @@ watch(() => props.show, (value) => {
                             <span class="text-red-400" v-if="page.props.errors.idno"
                                 v-text="page.props.errors.idno"></span>
                         </div>
+                        <div class="relative z-0" :class="{ 'has-error': page.props.errors.pfno }">
+                            <label :class="{ 'text-red-400': page.props.errors.pfno }" for="pfno">PF No.</label>
+                            <InputNumber :useGrouping="false" id="pfno" v-model="form.pfno" />
+                            <span class="text-red-400" v-if="page.props.errors.pfno"
+                                v-text="page.props.errors.pfno"></span>
+                        </div>
+                        <div class="relative z-0" :class="{ 'has-error': page.props.errors.manno }">
+                            <label :class="{ 'text-red-400': page.props.errors.manno }" for="manno">Man No.</label>
+                            <InputNumber :useGrouping="false" id="manno" v-model="form.manno" />
+                            <span class="text-red-400" v-if="page.props.errors.manno"
+                                v-text="page.props.errors.manno"></span>
+                        </div>
                         <div class="relative z-0 is-filled is-focused"
                             :class="{ 'has-error': page.props.errors.gender }">
                             <label :class="{ 'text-red-400': page.props.errors.gender }" for="gender">Gender</label>
@@ -252,42 +240,38 @@ watch(() => props.show, (value) => {
                             <span class="text-red-400" v-if="page.props.errors.plwd"
                                 v-text="page.props.errors.plwd"></span>
                         </div>
-                        <div class="relative z-0" :class="{ 'has-error': page.props.errors.term_start_at }">
-                            <label :class="{ 'text-red-400': page.props.errors.term_start_at }" for="term_start_at">Term
-                                Start Date</label>
-                            <Calendar :manualInput="false" id="term_start_at" v-model="form.term_start_at" />
-                            <span class="text-red-400" v-if="page.props.errors.term_start_at"
-                                v-text="page.props.errors.term_start_at"></span>
-                        </div>
-                        <div class="relative z-0" :class="{ 'has-error': page.props.errors.term_end_at }">
-                            <label :class="{ 'text-red-400': page.props.errors.term_end_at }" for="term_end_at">Term End
-                                Date</label>
-                            <Calendar :manualInput="false" id="term_end_at" v-model="form.term_end_at" />
-                            <span class="text-red-400" v-if="page.props.errors.term_end_at"
-                                v-text="page.props.errors.term_end_at"></span>
-                        </div>
-                        <div class="relative z-0" :class="{ 'has-error': page.props.errors.term_count }">
-                            <label :class="{ 'text-red-400': page.props.errors.term_count }" for="term_count">Term
-                                Count</label>
-                            <InputNumber :useGrouping="false" id="term_count" v-model="form.term_count" />
-                            <span class="text-red-400" v-if="page.props.errors.term_count"
-                                v-text="page.props.errors.term_count"></span>
-                        </div>
-                        <div class="relative z-0 is-filled is-focused"
-                            :class="{ 'has-error': page.props.errors.student_role }">
-                            <label :class="{ 'text-red-400': page.props.errors.student_role }" for="position">Member
-                                Position</label>
-                            <Dropdown id="position" option-label="name" option-value="id" :options="positions"
-                                v-model="form.position" />
-                            <span class="text-red-400" v-if="page.props.errors.position"
-                                v-text="page.props.errors.position"></span>
+                        <div class="relative z-0 is-filled is-focused" :class="{ 'has-error': page.props.errors.role }">
+                            <label :class="{ 'text-red-400': page.props.errors.role }" for="role">Staff
+                                Role</label>
+                            <Dropdown id="role" option-label="name" option-value="id" :options="roles"
+                                v-model="form.role" />
+                            <span class="text-red-400" v-if="page.props.errors.role"
+                                v-text="page.props.errors.role"></span>
                         </div>
                         <div class="relative z-0 is-filled is-focused"
                             :class="{ 'has-error': page.props.errors.status }">
-                            <label :class="{ 'text-red-400': page.props.errors.status }" for="active">Status</label>
-                            <Dropdown id="active" :options="states" v-model="form.active" option-value="value"
+                            <label :class="{ 'text-red-400': page.props.errors.status }" for="status">Staff
+                                Status</label>
+                            <Dropdown id="status" option-label="name" option-value="id" :options="statuses"
+                                v-model="form.status" />
+                            <span class="text-red-400" v-if="page.props.errors.status"
+                                v-text="page.props.errors.status"></span>
+                        </div>
+                        <div class="relative z-0 is-filled is-focused"
+                            :class="{ 'has-error': page.props.errors.employer }">
+                            <label :class="{ 'text-red-400': page.props.errors.employer }"
+                                for="employer">Employer</label>
+                            <Dropdown id="employer" :options="employers" v-model="form.employer" option-value="value"
                                 option-label="text" />
-                            <span class="text-red-400" v-if="page.props.errors.active"
+                            <span class="text-red-400" v-if="page.props.errors.employer"
+                                v-text="page.props.errors.active"></span>
+                        </div>
+                        <div class="relative z-0 is-filled is-focused"
+                            :class="{ 'has-error': page.props.errors.teach }">
+                            <label :class="{ 'text-red-400': page.props.errors.teach }" for="teach">Teaches</label>
+                            <Dropdown id="teach" :options="[{ value: 1, text: 'Yes' }, { value: 1, text: 'No' }]"
+                                v-model="form.teach" option-value="value" option-label="text" />
+                            <span class="text-red-400" v-if="page.props.errors.teach"
                                 v-text="page.props.errors.active"></span>
                         </div>
                     </div>

@@ -25,7 +25,7 @@ class Student extends Model
 
     public function getPhotoUrlAttribute()
     {
-        return $this->photo ? Storage::disk('public')->url($this->photo) : \Laravolt\Avatar\Facade::create($this->name)->toBase64();
+        return $this->photo ? Storage::disk('public')->url($this->photo) : asset('img/person_8x10.png');
     }
 
     public function getIntakeNameAttribute()

@@ -98,25 +98,27 @@ export interface iInstructor {
 }
 
 export interface iStaff {
-    id: number,
-    idno: number,
-    pfno: number,
-    manno: number,
-    photo: string,
-    surname: string,
-    first_name: string,
-    last_name: string,
-    box_no: string,
-    post_code: string,
-    town: string,
-    email: string,
-    phone: string,
-    employer: string,
-    gender: string,
-    staff_role_id: string,
+    id: number | null,
+    idno?: number | null,
+    pfno?: number | null,
+    manno?: number | null,
+    photo?: string | "",
+    photo_url?: string | "",
+    surname?: string | "",
+    first_name?: string | "",
+    middle_name?: string | "",
+    box_no?: string | "",
+    post_code?: string | "",
+    town?: string | "",
+    email?: string | "",
+    phone?: string | "",
+    employer?: { id: number, name: string } | number | "",
+    gender?: boolean | null,
+    plwd?: boolean | null,
+    role?: { id: number, name: string } | number | null,
     status?: { id: number, name: string } | number | null,
-    teach: string,
-    admin_id: string,
+    teach?: boolean | null,
+    user?: { id: number, name: string, email: string } | number | null,
 }
 export interface iDepartment {
     id: number,
@@ -272,6 +274,22 @@ export interface iBogMembers {
     total: number,
 }
 
+export interface iStaffMembers {
+    data: Array<iStaff>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
+
 export interface iBogPosition {
     id?: number | null
     name?: string | ""
@@ -298,4 +316,67 @@ export interface iNotification {
     danger?: string | null
     info?: string | null
     warning?: string | null
+}
+
+
+export interface iStaffRole {
+    id?: number | null
+    name?: string | ""
+    members?: number | Array<iStaff> | null
+}
+export interface iStaffRoles {
+    data: Array<iStaffRole>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
+export interface iStaffStatus {
+    id?: number | null
+    name?: string | ""
+    description?: string | ""
+    members?: number | Array<iStaff> | null
+}
+export interface iStaffStatuses {
+    data: Array<iStaffStatus>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
+export interface iEmployer {
+    id?: number | null
+    name?: string | ""
+    members?: number | Array<iStaff> | null
+}
+export interface iEmployers {
+    data: Array<iEmployer>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
 }

@@ -12,12 +12,14 @@ use App\Http\Controllers\V1\ProgramController;
 use App\Http\Controllers\V1\SponsorController;
 use App\Http\Controllers\V1\StudentController;
 use App\Http\Controllers\V1\SubjectController;
+use App\Http\Controllers\V1\EmployerController;
 use App\Http\Controllers\V1\BogMemberController;
-use App\Http\Controllers\V1\StaffPositionController;
+use App\Http\Controllers\V1\StaffRoleController;
 use App\Http\Controllers\V1\AllocationController;
 use App\Http\Controllers\V1\AttendanceController;
 use App\Http\Controllers\V1\DepartmentController;
 use App\Http\Controllers\V1\BogPositionController;
+use App\Http\Controllers\V1\StaffStatusController;
 
 /*
 |--------------------------------------------------------------------------
@@ -43,11 +45,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('staff')->name('staff')->group(function () {
-        Route::prefix('positions')->name('-positions')->group(function () {
-            Route::get('', [StaffPositionController::class, 'index']);
-            Route::post('', [StaffPositionController::class, 'store'])->name('-store');
-            Route::patch('{staff_position}', [StaffPositionController::class, 'update'])->name('-update');
-            Route::delete('{staff_position}', [StaffPositionController::class, 'destroy'])->name('-destroy');
+        Route::prefix('roles')->name('-roles')->group(function () {
+            Route::get('', [StaffRoleController::class, 'index']);
+            Route::post('', [StaffRoleController::class, 'store'])->name('-store');
+            Route::patch('{staff_role}', [StaffRoleController::class, 'update'])->name('-update');
+            Route::delete('{staff_role}', [StaffRoleController::class, 'destroy'])->name('-destroy');
+        });
+        Route::prefix('status')->name('-status')->group(function () {
+            Route::get('', [StaffStatusController::class, 'index']);
+            Route::post('', [StaffStatusController::class, 'store'])->name('-store');
+            Route::patch('{staff_role}', [StaffStatusController::class, 'update'])->name('-update');
+            Route::delete('{staff_role}', [StaffStatusController::class, 'destroy'])->name('-destroy');
+        });
+        Route::prefix('employers')->name('-employers')->group(function () {
+            Route::get('', [EmployerController::class, 'index']);
+            Route::post('', [EmployerController::class, 'store'])->name('-store');
+            Route::patch('{employer}', [EmployerController::class, 'update'])->name('-update');
+            Route::delete('{employer}', [EmployerController::class, 'destroy'])->name('-destroy');
         });
         Route::prefix('members')->name('-members')->group(function () {
             Route::get('', [StaffController::class, 'index']);

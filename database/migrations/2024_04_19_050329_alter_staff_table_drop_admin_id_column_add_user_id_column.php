@@ -11,7 +11,10 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('staff', function (Blueprint $table) {
-            $table->boolean('plwd')->default(false)->after('gender');
+            $table->dropForeign('staff_admin_id_foreign');
+            $table->dropColumn('admin_id');
+            $table->foreignId('user_id')->nullable()->after('teach');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
@@ -21,7 +24,10 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('staff', function (Blueprint $table) {
-            $table->dropColumn('plwd');
+            $table->dropForeign('staff_user_id_foreign');
+            $table->dropColumn('user_id');
+            $table->unsignedInteger('admin_id')->nullable()->after('teach');
+            $table->foreign('admin_id')->references('id')->on('admins');
         });
     }
 };

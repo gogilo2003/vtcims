@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
-import { iStaffMember, iStaffMembers, iItem, iPhoto } from '../../interfaces/index';
+import { iStaff, iStaffMembers, iItem, iPhoto } from '../../interfaces/index';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import Icon from '../../Components/Icons/Icon.vue'
 import { ref, watch } from 'vue';
@@ -15,7 +15,9 @@ import ListItem from '../../Components/ListItem.vue';
 
 const props = defineProps<{
     members: iStaffMembers,
-    positions: Array<iItem>,
+    roles: Array<iItem>,
+    statuses: Array<iItem>,
+    employers: Array<iItem>,
     errors: Object,
     search?: string | null,
     notification: {
@@ -26,43 +28,45 @@ const props = defineProps<{
 
 const edit = ref(false)
 const show = ref(false)
-const bogMember = ref<iStaffMember | null>()
+const staffMember = ref<iStaff | null>()
 const photo = ref<iPhoto | undefined>()
 
 const newStaffMember = () => {
-    bogMember.value = {
+    staffMember.value = {
         id: null,
-        photo: null,
-        photo_url: "",
         idno: null,
-        gender: null,
-        plwd: false,
+        pfno: null,
+        manno: null,
+        photo: "",
+        photo_url: "",
         surname: "",
         first_name: "",
         middle_name: "",
-        phone: "",
-        email: "",
         box_no: "",
         post_code: "",
         town: "",
-        position: null,
-        active: false,
-        term_start_at: null,
-        term_end_at: null,
-        term_count: 0,
+        email: "",
+        phone: "",
+        employer: "",
+        gender: null,
+        plwd: false,
+        role: null,
+        status: null,
+        teach: null,
+        user: null,
     }
     show.value = true
     edit.value = false
 }
 
-const editStaffMember = (STAFF_MEMBER: iStaffMember) => {
-    bogMember.value = STAFF_MEMBER
+const editStaffMember = (STAFF_MEMBER: iStaff) => {
+    staffMember.value = STAFF_MEMBER
     show.value = true
     edit.value = true
 }
 
-const viewStaffMember = (STAFF_MEMBER: iStaffMember) => {
-    bogMember.value = STAFF_MEMBER
+const viewStaffMember = (STAFF_MEMBER: iStaff) => {
+    staffMember.value = STAFF_MEMBER
     showView.value = true
 }
 
@@ -99,7 +103,7 @@ watch(() => searchVal.value, debounce((value: string) => {
     })
 }, 500))
 
-const uploadPic = (member: iStaffMember) => {
+const uploadPic = (member: iStaff) => {
     photo.value = {
         id: member.id,
         url: member.photo_url,
@@ -113,15 +117,15 @@ const uploadPic = (member: iStaffMember) => {
 </script>
 
 <template>
-    <StaffMember :show="show" :edit="edit" @closed="onClose" :member="bogMember" />
+    <StaffMember :show="show" :edit="edit" @closed="onClose" :member="staffMember" />
     <Picture :show="showPic" @closed="onClosePic" :photo="photo" />
-    <View :show="showView" @closed="onCloseView" :member="bogMember" />
+    <View :show="showView" @closed="onCloseView" :member="staffMember" />
 
-    <AuthenticatedLayout title="Bog Members">
+    <AuthenticatedLayout title="Staff Members">
         <div class="pb-3 md:pb-8 flex gap-3 justify-between">
             <SecondaryButton @click="newStaffMember">
                 <Icon type="add" />
-                <span class="hidden md:inline-flex">New Bog Member</span>
+                <span class="hidden md:inline-flex">New Staff Member</span>
             </SecondaryButton>
             <div>
                 <span class="relative">
@@ -143,11 +147,11 @@ const uploadPic = (member: iStaffMember) => {
                             v-text="`${member.first_name}${member.middle_name ? member.middle_name : ''} ${member.surname}`">
                         </div>
                         <div
-                            class="flex flex-col md:flex-row md:items-center text-xs text-gray-600 dark:text-gray-400 divide-x">
+                            class="flex flex-col gap-1 md:gap-0 md:flex-row md:items-center text-xs text-gray-600 dark:text-gray-400 md:divide-x">
                             <div v-if="member.role" class="flex gap-2 md:pr-2">
                                 <span class="md:hidden font-semibold uppercase">Position:</span>
-                                <span v-text="member.role.name" class="text-lime-700 dark:text-lime-500"></span>
-                                <span v-text="member.role.teach ? '(Teach)' : ''"
+                                <span v-text="member.role?.name" class="text-lime-700 dark:text-lime-500"></span>
+                                <span v-text="member.teach ? '(Teach)' : ''"
                                     class="text-lime-700 dark:text-lime-500"></span>
                             </div>
                             <div v-if="member.phone" class="flex gap-2">
@@ -167,14 +171,15 @@ const uploadPic = (member: iStaffMember) => {
                                 <span class="md:hidden font-semibold uppercase">Gender:</span>
                                 <span v-if="member.gender" class="md:px-2" v-text="member.gender"></span>
                             </div>
-                            <div v-if="member.employer" class="flex gap-2">
+                            <div v-if="member.employer?.name" class="flex gap-2">
                                 <span class="md:hidden font-semibold uppercase">Employer:</span>
-                                <span v-if="member.employer" class="md:px-2" v-text="member.employer"></span>
+                                <span v-if="member.employer?.name" class="md:px-2"
+                                    v-text="member.employer?.name"></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-1 justify-end">
+                <div class="flex flex-wrap gap-1 justify-center">
                     <SecondaryButton @click="editStaffMember(member)">
                         <Icon class="h-4 w-4" type="edit" /><span class="hidden md:block">edit</span>
                     </SecondaryButton>

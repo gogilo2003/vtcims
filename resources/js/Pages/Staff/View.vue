@@ -2,11 +2,11 @@
 import { ref, watch } from "vue";
 import Dialog from 'primevue/dialog';
 import Toast from "primevue/toast";
-import { iBogMember } from '../../interfaces/index';
+import { iStaff } from '../../interfaces/index';
 
 const props = defineProps<{
     show: boolean,
-    member?: iBogMember | null
+    member?: iStaff | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
@@ -32,9 +32,9 @@ watch(() => props.show, (value) => {
                         <img :src="member?.photo_url" alt=""
                             class="w-full h-full object-cover border p-1 shadow rounded-xl relative">
                         <div class="absolute left-[50%] -translate-x-[50%] bottom-0 rounded-full"
-                            :class="{ 'bg-lime-600': member?.active, 'bg-orange-600': !member?.active }">
-                            <div class="text-gray-300 px-3 py-2 uppercase font-semibold"
-                                v-text="member?.active ? 'Current' : 'Former'"></div>
+                            :class="{ 'bg-lime-600': member?.status?.name.toLowerCase() == 'current', 'bg-orange-600': member?.status?.name.toLowerCase() != 'current' }">
+                            <div class="text-gray-300 px-3 py-2 uppercase font-semibold" v-text="member?.status?.name">
+                            </div>
                         </div>
                     </div>
                     <div class="relative flex-1 py-2 md:pr-3 w-full px-4 md:pl-0">
@@ -50,7 +50,7 @@ watch(() => props.show, (value) => {
                             <div class="flex flex-col p-3 rounded border">
                                 <span
                                     class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Position</span>
-                                <span v-text="member?.position?.name" class="text-stone-700 dark:text-stone-200"></span>
+                                <span v-text="member?.role?.name" class="text-stone-700 dark:text-stone-200"></span>
                             </div>
                             <div class="flex flex-col p-3 rounded border">
                                 <span
@@ -67,7 +67,8 @@ watch(() => props.show, (value) => {
                                     class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Email</span>
                                 <span v-text="member?.email" class="text-stone-700 dark:text-stone-200"></span>
                             </div>
-                            <div class="flex flex-col p-3 rounded border col-span-1 lg:col-span-1 md:col-span-2">
+                            <div class="flex flex-col p-3 rounded border col-span-1 lg:col-span-1 md:col-span-2"
+                                v-if="member?.box_no || member?.post_code || member?.town">
                                 <span class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Postal
                                     Address</span>
                                 <span

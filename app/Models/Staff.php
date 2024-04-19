@@ -141,4 +141,14 @@ class Staff extends Model
     {
         return $this->hasMany(Allocation::class);
     }
+
+    /**
+     * Get the employer that owns the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function employer(): BelongsTo
+    {
+        return $this->belongsTo(Employer::class);
+    }
 }
