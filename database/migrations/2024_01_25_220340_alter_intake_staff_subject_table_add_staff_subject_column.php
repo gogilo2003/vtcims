@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -25,7 +24,7 @@ return new class extends Migration
                 });
 
             foreach ($values as $value) {
-                $intake = (object)$value->first();
+                $intake = (object) $value->first();
 
                 DB::table('staff_subject')->insert([
                     'staff_id' => $intake->staff_id,
@@ -52,13 +51,17 @@ return new class extends Migration
                 $allocation->save();
             }
         }
+        try {
+            Schema::table('intake_staff_subject', function (Blueprint $table) {
+                $table->dropForeign(['staff_id']);
+                $table->dropForeign(['subject_id']);
+                $table->dropColumn('staff_id');
+                $table->dropColumn('subject_id');
+            });
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
 
-        Schema::table('intake_staff_subject', function (Blueprint $table) {
-            $table->dropForeign(['staff_id']);
-            $table->dropForeign(['subject_id']);
-            $table->dropColumn('staff_id');
-            $table->dropColumn('subject_id');
-        });
     }
 
     /**
@@ -81,11 +84,13 @@ return new class extends Migration
                 $intake->save();
             }
         }
-
-        Schema::table('intake_staff_subject', function (Blueprint $table) {
-            $table->dropForeign(['staff_subject_id']);
-            $table->dropColumn('staff_subject_id');
-        });
+        try {
+            Schema::table('intake_staff_subject', function (Blueprint $table) {
+                $table->dropForeign(['staff_subject_id']);
+                $table->dropColumn('staff_subject_id');
+            });
+        } catch (\Throwable $th) {
+        }
         DB::table('staff_subject')->truncate();
     }
 };
