@@ -43,6 +43,9 @@ class UpdateDatabase extends Command
         Artisan::call('vtcims:clean-tables', [], $this->output);
         $this->info('Tables cleaned.');
 
+        Artisan::call('vtcims:photo-paths', [], $this->output);
+        $this->info('Photo Paths updated.');
+
         return 0;
     }
 }

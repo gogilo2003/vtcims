@@ -11,7 +11,7 @@ import Icon from "@/Components/Icons/Icon.vue";
 
 const props = defineProps<{
     show: boolean,
-    photo: iPhoto,
+    photo: iPhoto | null,
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
@@ -95,16 +95,16 @@ watch(() => props.photo?.id, (value) => {
                         <FileUpload :file-limit="1" :show-upload-button="false" :show-cancel-button="false"
                             :custom-upload="true" @upload.prevent="submit" :multiple="false" accept="image/*"
                             :maxFileSize="1000000" :pt="{
-                                unstyled: true,
-                                root: { class: 'relative z-0 flex items-center flex-col gap-3 justify-center' },
-                                content: { class: 'relative mt-4 z-0 p-3 pt-6 h-full w-full flex-1 border border-primary-300 rounded-lg min-h-24' },
-                                input: { class: 'hidden' },
-                                file: { class: 'flex flex-col items-center' },
-                                chooseButtonLabel: { class: 'hidden' },
-                                buttonbar: { class: 'bg-orange-500 absolute z-10 left-4 top-0 border border-primary-500 bg-white rounded-full flex gap-2 items-center' },
-                                chooseButton: { class: 'h-9 w-9 p-1 flex-none flex flex-col gap-2 justify-center items-center cursor-pointer' },
-                                thumbnail: { class: 'w-full max-h-56 object-contain' }
-                            }" @select="input($event)">
+        unstyled: true,
+        root: { class: 'relative z-0 flex items-center flex-col gap-3 justify-center' },
+        content: { class: 'relative mt-4 z-0 p-3 pt-6 h-full w-full flex-1 border border-primary-300 rounded-lg min-h-24' },
+        input: { class: 'hidden' },
+        file: { class: 'flex flex-col items-center' },
+        chooseButtonLabel: { class: 'hidden' },
+        buttonbar: { class: 'bg-orange-500 absolute z-10 left-4 top-0 border border-primary-500 bg-white rounded-full flex gap-2 items-center' },
+        chooseButton: { class: 'h-9 w-9 p-1 flex-none flex flex-col gap-2 justify-center items-center cursor-pointer' },
+        thumbnail: { class: 'w-full max-h-56 object-contain' }
+    }" @select="input($event)">
                             <template #chooseicon>
                                 <Icon class=" text-lg" type="pi-paperclip" />
                             </template>
@@ -113,7 +113,8 @@ watch(() => props.photo?.id, (value) => {
                             </template>
                         </FileUpload>
 
-                        <span v-if="page.props.errors.photo" v-text="page.props.errors.photo" class="text-red-400"></span>
+                        <span v-if="page.props.errors.photo" v-text="page.props.errors.photo"
+                            class="text-red-400"></span>
                     </div>
                 </div>
                 <div class="flex gap-2 items-center justify-between">

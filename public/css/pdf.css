@@ -680,14 +680,14 @@ video {
   border-color: rgb(76 76 76 / var(--tw-border-opacity));
 }
 
-.border-gray-400 {
-  --tw-border-opacity: 1;
-  border-color: rgb(168 168 168 / var(--tw-border-opacity));
-}
-
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(237 237 237 / var(--tw-bg-opacity));
+}
+
+.bg-gray-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(214 214 214 / var(--tw-bg-opacity));
 }
 
 .bg-gray-50 {
@@ -732,16 +732,6 @@ video {
   padding-bottom: 1rem;
 }
 
-.py-\[0\.3rem\] {
-  padding-top: 0.3rem;
-  padding-bottom: 0.3rem;
-}
-
-.py-\[0\.2rem\] {
-  padding-top: 0.2rem;
-  padding-bottom: 0.2rem;
-}
-
 .pb-0 {
   padding-bottom: 0px;
 }
@@ -770,19 +760,14 @@ video {
   font-family: Poppins;
 }
 
-.text-sm {
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-}
-
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .text-xl {
@@ -831,8 +816,8 @@ video {
   background-color: #EDEDED;
 }
 
-.border-gray-400 {
-  border-color: #A8A8A8;
+.bg-gray-200 {
+  background-color: #D6D6D6;
 }
 
 .border-gray-800 {
@@ -848,14 +833,17 @@ video {
   background-color: rgb(237 237 237 / var(--tw-bg-opacity));
 }
 
+.odd\:bg-gray-50:nth-child(odd) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(248 248 248 / var(--tw-bg-opacity));
+}
+
 .odd\:bg-white:nth-child(odd) {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
 .odd\:bg-gray-50:nth-child(odd) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(248 248 248 / var(--tw-bg-opacity));
   background-color: #F8F8F8;
 }
 
@@ -863,8 +851,17 @@ video {
   background-color: #EDEDED;
 }
 
+.even\:bg-gray-100:nth-child(even) {
+  --tw-bg-opacity: 1;
+  background-color: rgb(237 237 237 / var(--tw-bg-opacity));
+}
+
 .even\:bg-gray-50:nth-child(even) {
   --tw-bg-opacity: 1;
   background-color: rgb(248 248 248 / var(--tw-bg-opacity));
   background-color: #F8F8F8;
+}
+
+.even\:bg-gray-100:nth-child(even) {
+  background-color: #EDEDED;
 }

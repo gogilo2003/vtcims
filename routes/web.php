@@ -42,6 +42,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('{student}', [StudentController::class, 'update'])->name('-update');
         Route::delete('{student}', [StudentController::class, 'destroy'])->name('-destroy');
         Route::post('photo/{student}', [StudentController::class, 'picture'])->name('-photo');
+        Route::get('download/{student?}', [StudentController::class, 'download'])->name('-download');
+        Route::get('enrollment', [StudentController::class, 'enrollment'])->name('-enrollment');
     });
 
     Route::prefix('staff')->name('staff')->group(function () {

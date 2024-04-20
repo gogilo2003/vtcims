@@ -25,8 +25,8 @@ const props = defineProps<{
 
 const edit = ref(false)
 const show = ref(false)
-const student = ref<iStudent>()
-const photo = ref<iPhoto>()
+const student = ref<iStudent | null>(null)
+const photo = ref<iPhoto | null>(null)
 
 const newStudent = () => {
     student.value = {
@@ -113,6 +113,10 @@ const uploadPic = (student: iStudent) => {
 
 }
 
+const download = () => {
+    window.open(route('students-download'), '_BLANK')
+}
+const enrollment = () => { }
 </script>
 
 <template>
@@ -122,10 +126,20 @@ const uploadPic = (student: iStudent) => {
 
     <AuthenticatedLayout title="Students">
         <div class="pb-3 md:pb-8 flex gap-3 justify-between">
-            <SecondaryButton @click="newStudent">
-                <Icon type="add" />
-                <span class="hidden md:inline-flex">New Student</span>
-            </SecondaryButton>
+            <div class="flex gap-1">
+                <SecondaryButton @click="newStudent">
+                    <Icon type="add" />
+                    <span class="hidden md:inline-flex">New Student</span>
+                </SecondaryButton>
+                <SecondaryButton @click="download">
+                    <Icon class="h-6 w-6" type="download" />
+                    <span class="hidden md:inline-flex">Students List</span>
+                </SecondaryButton>
+                <SecondaryButton @click="enrollment">
+                    <Icon class="h-6 w-6" type="download" />
+                    <span class="hidden md:inline-flex">Enrollment</span>
+                </SecondaryButton>
+            </div>
             <div>
                 <span class="relative">
                     <i class="pi pi-search absolute -top-[40%] translate-y-[50%] left-2 opacity-50" />
@@ -136,7 +150,7 @@ const uploadPic = (student: iStudent) => {
         </div>
         <div class="flex flex-col gap-2">
             <ListItem v-for="student in students.data">
-                <div class="flex items-center gap-2">
+                <div class="flex items-start md:items-center gap-2">
                     <div class="h-16 w-16 flex-none overflow-hidden p-1 border rounded-lg shadow-lg">
                         <img class="rounded-md h-full w-full object-cover object-top" :src="student.photo_url" alt="">
                     </div>
@@ -145,14 +159,27 @@ const uploadPic = (student: iStudent) => {
                             v-text="`${student.first_name}${student.middle_name ? ' ' + student.middle_name : ''} ${student.surname}`">
                         </div>
                         <div
-                            class="flex flex-col md:flex-row md:items-center text-xs capitalize text-gray-600 dark:text-gray-400 divide-x">
+                            class="flex gap-1 md:gap-0 flex-col md:flex-row md:items-center text-xs capitalize text-gray-600 dark:text-gray-400 md:divide-x">
                             <div class="flex gap-2 md:pr-2">
                                 <span class="md:hidden font-semibold uppercase">Admission Number:</span>
                                 <span v-text="student.admission_no" class="text-lime-700 dark:text-lime-500"></span>
                             </div>
-                            <span class="md:px-2" v-text="student.course_name"></span>
-                            <span class="md:px-2" v-text="student.program_name"></span>
-                            <span class="md:px-2" v-text="student.sponsor_name"></span>
+                            <div v-if="student.intake?.course" class="flex items-center gap-1">
+                                <span class="md:hidden font-semibold uppercase">Course:</span>
+                                <span class="md:px-2" v-text="student?.intake?.course"></span>
+                            </div>
+                            <div v-if="student.program?.name" class="flex items-center gap-1">
+                                <span class="md:hidden font-semibold uppercase">Program:</span>
+                                <span class="md:px-2" v-text="student.program?.name"></span>
+                            </div>
+                            <div v-if="student.sponsor?.name" class="flex items-center gap-1">
+                                <span class="md:hidden font-semibold uppercase">Sponsor:</span>
+                                <span class="md:px-2" v-text="student.sponsor?.name"></span>
+                            </div>
+                            <div v-if="student.gender" class="flex items-center gap-1">
+                                <span class="md:hidden font-semibold uppercase">Gender:</span>
+                                <span class="md:px-2" v-text="student.gender ? 'Female' : 'Male'"></span>
+                            </div>
                         </div>
                     </div>
                 </div>

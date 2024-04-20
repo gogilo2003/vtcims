@@ -8,27 +8,27 @@ class Course extends Model
 {
     public function staff()
     {
-        return $this->belongsTo('App\Models\Staff');
+        return $this->belongsTo(Staff::class);
     }
 
     public function department()
     {
-        return $this->belongsTo('App\Models\Department');
+        return $this->belongsTo(Department::class);
     }
 
     public function intakes()
     {
-        return $this->hasMany('App\Models\Intake');
+        return $this->hasMany(Intake::class);
     }
 
     public function fees()
     {
-        return $this->hasMany('App\Models\Fee');
+        return $this->hasMany(Fee::class);
     }
 
     public function subjects()
     {
-        return $this->belongsToMany('App\Models\Subject')->withTimestamps();
+        return $this->belongsToMany(Subject::class)->withTimestamps();
     }
 
     public function getSubjectIdsAttribute()

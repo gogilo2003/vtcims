@@ -211,19 +211,19 @@ watch(() => props.show, (value) => {
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.idno }">
                             <label :class="{ 'text-red-400': page.props.errors.idno }" for="idno">IDNo</label>
-                            <InputNumber :useGrouping="false" id="idno" v-model="form.idno" />
+                            <InputNumber class="w-full" :useGrouping="false" id="idno" v-model="form.idno" />
                             <span class="text-red-400" v-if="page.props.errors.idno"
                                 v-text="page.props.errors.idno"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.pfno }">
                             <label :class="{ 'text-red-400': page.props.errors.pfno }" for="pfno">PF No.</label>
-                            <InputNumber :useGrouping="false" id="pfno" v-model="form.pfno" />
+                            <InputNumber class="w-full" :useGrouping="false" id="pfno" v-model="form.pfno" />
                             <span class="text-red-400" v-if="page.props.errors.pfno"
                                 v-text="page.props.errors.pfno"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.manno }">
                             <label :class="{ 'text-red-400': page.props.errors.manno }" for="manno">Man No.</label>
-                            <InputNumber :useGrouping="false" id="manno" v-model="form.manno" />
+                            <InputNumber class="w-full" :useGrouping="false" id="manno" v-model="form.manno" />
                             <span class="text-red-400" v-if="page.props.errors.manno"
                                 v-text="page.props.errors.manno"></span>
                         </div>
