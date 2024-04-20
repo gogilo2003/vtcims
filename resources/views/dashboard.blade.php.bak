@@ -16,7 +16,7 @@
 @section('sidebar')
     @parent
     <hr>
-    @include('eschool::sidebar')
+    @include('sidebar')
     {{-- @include('admin::some-additional sidebar items') --}}
 @endsection
 

@@ -54,8 +54,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('status')->name('-status')->group(function () {
             Route::get('', [StaffStatusController::class, 'index']);
             Route::post('', [StaffStatusController::class, 'store'])->name('-store');
-            Route::patch('{staff_role}', [StaffStatusController::class, 'update'])->name('-update');
-            Route::delete('{staff_role}', [StaffStatusController::class, 'destroy'])->name('-destroy');
+            Route::patch('{staff_status}', [StaffStatusController::class, 'update'])->name('-update');
+            Route::delete('{staff_status}', [StaffStatusController::class, 'destroy'])->name('-destroy');
         });
         Route::prefix('employers')->name('-employers')->group(function () {
             Route::get('', [EmployerController::class, 'index']);
@@ -69,6 +69,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::patch('{staff}', [StaffController::class, 'update'])->name('-update');
             Route::delete('{staff}', [StaffController::class, 'destroy'])->name('-destroy');
             Route::post('photo/{staff}', [StaffController::class, 'picture'])->name('-photo');
+            Route::get('download/{staff?}', [StaffController::class, 'download'])->name('-download');
         });
     });
 

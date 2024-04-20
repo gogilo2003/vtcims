@@ -11,8 +11,8 @@
 @section('sidebar')
     @parent
     <hr>
-    @include('eschool::sidebar')
-    @include('eschool::courses.sidebar')
+    @include('sidebar')
+    @include('courses.sidebar')
 @endsection
 
 @section('content')

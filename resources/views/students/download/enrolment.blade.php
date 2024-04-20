@@ -1,4 +1,4 @@
-@extends('eschool::layout.pdf')
+@extends('layout.pdf')
 
 @section('title')
     ENROLMENT
@@ -7,15 +7,15 @@
 @section('content')
     @php
 
-    $totals = (object) $years->mapWithKeys(function ($year, $key) {
-        return [
-            $year => new class {
-                public $male = 0;
-                public $female = 0;
-                public $total = 0;
-            },
-        ];
-    });
+        $totals = (object) $years->mapWithKeys(function ($year, $key) {
+            return [
+                $year => new class {
+                    public $male = 0;
+                    public $female = 0;
+                    public $total = 0;
+                },
+            ];
+        });
     @endphp
     <table class="table table-striped table-bordered text-uppercase">
         <thead class="thead-light">

@@ -3,12 +3,12 @@
 namespace App\Http\Requests\V1;
 
 use App\Rules\PhoneNumber;
-use App\Support\PhoneTrait;
+use App\Support\StudentPrepareTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateStudentRequest extends FormRequest
 {
-    use PhoneTrait;
+    use StudentPrepareTrait;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -37,9 +37,10 @@ class UpdateStudentRequest extends FormRequest
             'intake' => 'required|exists:intakes,id',
             'program' => 'required|exists:programs,id',
             'sponsor' => 'required|exists:sponsors,id',
-            'student_role' => 'required|exists:student_roles,id',
+            'role' => 'required|exists:student_roles,id',
             'status' => 'required',
             'phone' => ['nullable', 'string', new PhoneNumber()],
         ];
     }
+
 }

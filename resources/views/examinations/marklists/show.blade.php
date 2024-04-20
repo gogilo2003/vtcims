@@ -11,8 +11,8 @@
 @section('sidebar')
     @parent
     <hr>
-    @include('eschool::sidebar')
-    @include('eschool::examinations.sidebar')
+    @include('sidebar')
+    @include('examinations.sidebar')
 @endsection
 
 @section('content')
@@ -24,8 +24,8 @@
                         <div class="row">
                             <div class="form-group col-md-4">
                                 <label class="bmd-label-static" for="intake">Intake</label>
-                                <select name="intake" id="intake" class="form-control selectpicker" data-style="btn btn-link"
-                                    data-live-search="true">
+                                <select name="intake" id="intake" class="form-control selectpicker"
+                                    data-style="btn btn-link" data-live-search="true">
                                     @foreach (\Ogilo\Eschool\Models\Intake::orderBy('start_date', 'DESC')->get() as $item)
                                         <option {{ $intake->id === $item->id ? 'selected' : '' }}
                                             value="{{ $item->id }}">{{ $item->name }}</option>
@@ -34,12 +34,11 @@
                             </div>
                             <div class="form-group col-md-4">
                                 <label class="bmd-label-static" for="term">Term</label>
-                                <select name="term" id="term" class="form-control selectpicker" data-style="btn btn-link"
-                                    data-live-search="true">
-                                    @foreach (\Ogilo\Eschool\Models\Term::orderBy('year', 'DESC')->orderBy('name', 'DESC')->get()
-        as $item)
-                                        <option {{ $term->id === $item->id ? 'selected' : '' }}
-                                            value="{{ $item->id }}">{{ $item->year_name }}</option>
+                                <select name="term" id="term" class="form-control selectpicker"
+                                    data-style="btn btn-link" data-live-search="true">
+                                    @foreach (\Ogilo\Eschool\Models\Term::orderBy('year', 'DESC')->orderBy('name', 'DESC')->get() as $item)
+                                        <option {{ $term->id === $item->id ? 'selected' : '' }} value="{{ $item->id }}">
+                                            {{ $item->year_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -67,5 +66,5 @@
             </div>
         </div>
     </div>
-    @include('eschool::examinations.marklists.marklist',compact('intake','term'))
+    @include('examinations.marklists.marklist', compact('intake', 'term'))
 @endsection

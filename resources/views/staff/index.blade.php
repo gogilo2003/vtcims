@@ -11,8 +11,8 @@
 @section('sidebar')
     @parent
     <hr>
-    @include('eschool::sidebar')
-    @include('eschool::staff.sidebar')
+    @include('sidebar')
+    @include('staff.sidebar')
 @endsection
 
 @section('content')
@@ -85,7 +85,7 @@
             @endforeach
         </tbody>
     </table>
-    @include('eschool::staff.attendance')
+    @include('staff.attendance')
 @endsection
 
 @section('scripts_bottom')

@@ -1,7 +1,7 @@
-@extends('eschool::layout.pdf')
+@extends('layout.pdf')
 
 @section('content')
-<h3 class="text-uppercase text-center">staff list</h3>
+    <h3 class="text-uppercase text-center">staff list</h3>
     <table class="table table-striped table-bordered table-sm text-uppercase">
         <thead class="thead-light">
             <tr>
@@ -19,21 +19,24 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($staff as $item)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->idno }}</td>
-                <td>{{ $item->pfno }}</td>
-                <td>{{ $item->manno }}</td>
-                <td>{{ $item->name }}</td>
-                <td>{{ $item->gender }}</td>
-                <td>{{ $item->phone }}</td>
-                <td>{{ $item->email }}</td>
-                <td>{{ $item->role->name }}</td>
-                <td>{{ $item->employer }}</td>
-                <td>{{ $item->address }}</td>
-            </tr>
+            @foreach ($staff as $item)
+                <tr>
+                    <td>{{ $loop->iteration }}</td>
+                    <td>{{ $item->idno }}</td>
+                    <td>{{ $item->pfno }}</td>
+                    <td>{{ $item->manno }}</td>
+                    <td>{{ $item->name }}</td>
+                    <td>{{ $item->gender }}</td>
+                    <td>{{ $item->phone }}</td>
+                    <td>{{ $item->email }}</td>
+                    <td>{{ $item->role->name }}</td>
+                    <td>{{ $item->employer ? $item->employer->name : '' }}</td>
+                    <td>{{ $item->address }}</td>
+                </tr>
             @endforeach
         </tbody>
     </table>
 @endsection
+
+@push('styles')
+@endpush

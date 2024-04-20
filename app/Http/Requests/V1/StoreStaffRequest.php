@@ -27,8 +27,8 @@ class StoreStaffRequest extends FormRequest
     {
         return [
             'idno' => 'required|numeric|unique:staff',
-            'pfno' => 'nullable|string|unique:staff',
-            'manno' => 'nullable|numeric|unique:staff',
+            'pfno' => 'nullable|alpha_num|unique:staff',
+            'manno' => 'nullable|alpha_num|unique:staff',
             'phone' => ['nullable', 'string', new PhoneNumber(), 'unique:staff'],
             'email' => 'nullable|string|email|unique:staff',
             'photo' => 'nullable|file|image',

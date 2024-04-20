@@ -4,14 +4,16 @@ namespace App\Http\Controllers\V1;
 
 use Inertia\Inertia;
 use App\Models\Staff;
+use App\Models\Employer;
 use App\Models\StaffRole;
+use App\Models\Allocation;
+use App\Models\StaffStatus;
+use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\V1\StoreStaffRequest;
 use App\Http\Requests\V1\UpdateStaffRequest;
 use App\Http\Requests\V1\UploadStaffMemberPictureRequest;
-use App\Models\Employer;
-use App\Models\StaffStatus;
 
 class StaffController extends Controller
 {
@@ -35,7 +37,7 @@ class StaffController extends Controller
             })->paginate(7)->through(fn($member) => [
                 "id" => $member->id,
                 "photo" => $member->photo,
-                "photo_url" => $member->photo ? Storage::disk('public')->url($member->photo) : '',
+                "photo_url" => $member->photo ? Storage::disk('public')->url($member->photo) : asset('img/person_8x10.png'),
                 "idno" => $member->idno,
                 "gender" => $member->gender,
                 "plwd" => $member->plwd,
@@ -67,14 +69,14 @@ class StaffController extends Controller
             "name" => $role->name,
         ]);
 
-        $statuses = StaffStatus::all()->map(fn($role) => [
-            "id" => $role->id,
-            "name" => $role->name,
+        $statuses = StaffStatus::all()->map(fn(StaffStatus $status) => [
+            "id" => $status->id,
+            "name" => $status->name,
         ]);
 
-        $employers = Employer::all()->map(fn($role) => [
-            "id" => $role->id,
-            "name" => $role->name,
+        $employers = Employer::all()->map(fn(Employer $employer) => [
+            "id" => $employer->id,
+            "name" => $employer->name,
         ]);
 
         return Inertia::render("Staff/Index", [
@@ -111,6 +113,8 @@ class StaffController extends Controller
         $staff->teach = $request->teach;
         $staff->plwd = $request->plwd;
 
+        $staff->save();
+
         return redirect()->back()->with('success', 'Staff member created');
     }
 
@@ -136,6 +140,8 @@ class StaffController extends Controller
         $staff->gender = $request->gender;
         $staff->teach = $request->teach;
         $staff->plwd = $request->plwd;
+
+        $staff->save();
 
         return redirect()->back()->with('success', 'Staff member created');
     }
@@ -171,5 +177,50 @@ class StaffController extends Controller
             return redirect()->back()->with('error', 'An invalid picture file detected');
         }
         return redirect()->back()->with('error', 'No File has been uploaded');
+    }
+
+    public function download($id = null)
+    {
+        $pdf = App::make('snappy.pdf.wrapper');
+        $subTitle = request()->input('sub_title');
+        $status = request()->input('status');
+        $role = request()->input('role');
+        $teach = request()->input('teach');
+        $employer = request()->input('employer');
+        $gender = request()->input('gender');
+        $plwd = request()->input('plwd');
+
+        if ($id) {
+            $staff = Staff::find($id);
+            $intake_subjects = Allocation::where('staff_id', $id)->with('subject', 'intake')->orderBy('intake_id', 'DESC')->get();
+            $pdf->loadView('pdf.staff.view', compact('staff', 'intake_subjects'));
+            return $pdf->download(strtoupper('Staff#' . str_pad($staff->id, 4, '0', 0)) . '.pdf');
+        } else {
+            $staff = Staff::when($status, function ($query) use ($status) {
+                $query->where('staff_status_id', $status);
+            })
+                ->when($role, function ($query) use ($role) {
+                    $query->where('staff_role_id', $role);
+                })
+                ->when($employer, function ($query) use ($employer) {
+                    $query->where('employer_id', $employer);
+                })
+                ->when($teach, function ($query) use ($teach) {
+                    $query->where('teach', $teach);
+                })
+                ->when($gender, function ($query) use ($gender) {
+                    $query->where('gender', $gender);
+                })
+                ->when($plwd, function ($query) use ($plwd) {
+                    $query->where('plwd', $plwd);
+                })
+                ->get();
+            $pdf->loadView('pdf.staff.list', compact('staff', 'subTitle'))
+                ->setOrientation('landscape')
+                ->setPaper('A4')
+                ->setOption('footer-center', 'Page [page] of [toPage]')
+                ->setOption('footer-font-size', 8);
+            return $pdf->stream(strtoupper('STAFF_LIST_' . date('d-M-Y')) . '.pdf');
+        }
     }
 }

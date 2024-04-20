@@ -8,6 +8,7 @@ use App\Models\Program;
 use App\Models\Sponsor;
 use App\Models\Student;
 use App\Models\StudentRole;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -90,8 +91,63 @@ class StudentController extends Controller
                             "min" => number_format($marks->min('score'), 2),
                         ];
                     })->sortBy('subject')->values();
-                    $student->examinations = $examinations;
-                    return $student;
+
+                    return (object) [
+                        "id" => $student->id,
+                        "admission_no" => $student->intake
+                            ? strtoupper(
+                                $student->intake->course->code . '/'
+                                . str_pad($student->id, 4, '0', 0) . '/'
+                                . $student->date_of_admission->format('Y')
+                            )
+                            : '',
+                        "photo" => $student->photo ?? "",
+                        "photo_url" => $student->photo ? Storage::disk('public')->url($student->photo) : asset('img/person_8x10.png'),
+                        "surname" => ucfirst(Str::lower($student->surname)),
+                        "first_name" => ucfirst(Str::lower($student->first_name)),
+                        "middle_name" => ucfirst(Str::lower($student->middle_name)),
+                        "phone" => $student->phone ?? "",
+                        "email" => $student->email ?? "",
+                        "box_no" => $student->box_no ?? "",
+                        "post_code" => $student->post_code ?? "",
+                        "town" => $student->town ?? "",
+                        "physical_address" => $student->physical_address ?? "",
+                        "date_of_birth" => $student->date_of_birth ? $student->date_of_birth->isoFormat("ddd, D MMM, Y") : '',
+                        "birth_cert_no" => $student->birth_cert_no ?? "",
+                        "idno" => $student->idno ?? "",
+                        "gender" => $student->gender,
+                        "date_of_admission" => $student->date_of_admission ? $student->date_of_admission->isoFormat('ddd, D MMM, Y') : '',
+                        "intake" => [
+                            "id" => $student->intake->id,
+                            "name" => $student->intake->name,
+                            "course" => $student->intake->course->name,
+                        ],
+                        "program" => [
+                            "id" => $student->program->id,
+                            "name" => $student->program->name,
+                            "description" => $student->program->description ?? "",
+                        ],
+                        "sponsor" => [
+                            "id" => $student->sponsor->id,
+                            "name" => $student->sponsor->name,
+                            "contact_person" => $student->sponsor->contact_person ?? "",
+                            "email" => $student->sponsor->email ?? "",
+                            "phone" => $student->sponsor->phone ?? "",
+                            "box_no" => $student->sponsor->box_no ?? "",
+                            "post_code" => $student->sponsor->post_code ?? "",
+                            "town" => $student->sponsor->town ?? "",
+                            "address" => $student->sponsor->address ?? "",
+                        ],
+                        "role" => [
+                            "id" => $student->intake->id,
+                            "name" => $student->intake->name,
+                            "description" => $student->intake->description,
+                        ],
+                        "status" => $student->status,
+                        "plwd" => $student->plwd,
+                        "plwd_details" => $student->plwd_details,
+                        "examinations" => $examinations,
+                    ];
                 }
             );
 
@@ -107,7 +163,7 @@ class StudentController extends Controller
             "id" => $item->id,
             "name" => $item->name
         ]);
-        $student_roles = StudentRole::orderBy('name', 'DESC')->get()->map(fn($item) => [
+        $roles = StudentRole::orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name
         ]);
@@ -117,7 +173,7 @@ class StudentController extends Controller
             'intakes' => $intakes,
             'programs' => $programs,
             'sponsors' => $sponsors,
-            'student_roles' => $student_roles,
+            'roles' => $roles,
             'search' => $search,
         ]);
     }
@@ -148,7 +204,7 @@ class StudentController extends Controller
         $student->intake_id = $request->intake;
         $student->program_id = $request->program;
         $student->sponsor_id = $request->sponsor;
-        $student->student_role_id = $request->student_role;
+        $student->student_role_id = $request->role;
         $student->status = $request->status;
         $student->plwd = $request->plwd;
         $student->plwd_details = $request->plwd_details;
@@ -181,7 +237,7 @@ class StudentController extends Controller
         $student->intake_id = $request->intake;
         $student->program_id = $request->program;
         $student->sponsor_id = $request->sponsor;
-        $student->student_role_id = $request->student_role;
+        $student->student_role_id = $request->role;
         $student->status = $request->status;
         $student->plwd = $request->plwd;
         $student->plwd_details = $request->plwd_details;

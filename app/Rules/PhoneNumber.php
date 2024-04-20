@@ -18,9 +18,22 @@ class PhoneNumber implements ValidationRule
         $phoneNumberUtil = PhoneNumberUtil::getInstance();
 
         try {
-            $phoneNumber = $phoneNumberUtil->parse($value, 'KE');
-            if (!$phoneNumberUtil->isValidNumber($phoneNumber)) {
-                $fail('The :attribute is not a valid phone number.');
+            if ($value) {
+                $values = explode(",", $value);
+
+                if (count($values)) {
+                    foreach ($values as $item) {
+                        $phoneNumber = $phoneNumberUtil->parse($item, 'KE');
+                        if (!$phoneNumberUtil->isValidNumber($phoneNumber)) {
+                            $fail('The :attribute is not a valid phone number.');
+                        }
+                    }
+                } else {
+                    $phoneNumber = $phoneNumberUtil->parse($value, 'KE');
+                    if (!$phoneNumberUtil->isValidNumber($phoneNumber)) {
+                        $fail('The :attribute is not a valid phone number.');
+                    }
+                }
             }
         } catch (\libphonenumber\NumberParseException $e) {
             $fail('The :attribute is not a valid phone number.');

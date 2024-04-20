@@ -1,4 +1,4 @@
-@extends('eschool::layout.pdf')
+@extends('layout.pdf')
 
 @section('title')
     {{ $leaveout->student->name }}'s Leaveout
@@ -22,13 +22,17 @@
             <td colspan="4"><b class="text-uppercase">Reason</b></td>
         </tr>
         <tr>
-            <td colspan="4"><div class="underline">{{ $leaveout->reasons }}</div></td>
+            <td colspan="4">
+                <div class="underline">{{ $leaveout->reasons }}</div>
+            </td>
         </tr>
         <tr>
             <td colspan="4"><b class="text-uppercase">Remarks</b></td>
         </tr>
         <tr>
-            <td colspan="4"><div class="underline">{{ $leaveout->remarks }}</div></td>
+            <td colspan="4">
+                <div class="underline">{{ $leaveout->remarks }}</div>
+            </td>
         </tr>
     </table>
     <table class="table table-borderless">
@@ -38,20 +42,27 @@
             <td><b class="text-uppercase">Date:</b></td>
         </tr>
         <tr>
-            <td width="40%"><div class="underline">{{ $leaveout->staff->min_name }}</div></td>
-            <td width="30%"><div class="underline">&nbsp;</div></td>
-            <td width="30%"><div class="underline">{!! $leaveout->created_at->format('l, j\<\s\u\p\>S\<\/\s\u\p\> F Y') !!}</div></td>
+            <td width="40%">
+                <div class="underline">{{ $leaveout->staff->min_name }}</div>
+            </td>
+            <td width="30%">
+                <div class="underline">&nbsp;</div>
+            </td>
+            <td width="30%">
+                <div class="underline">{!! $leaveout->created_at->format('l, j\<\s\u\p\>S\<\/\s\u\p\> F Y') !!}</div>
+            </td>
         </tr>
     </table>
 @endsection
 
 @section('styles')
-<style type="text/css" rel="stylesheet">
-    .underline{
-        border-bottom: 1px dashed #222;
-    }
-    .table-borderless tr td{
-        border: 0;
-    }
-</style>
+    <style type="text/css" rel="stylesheet">
+        .underline {
+            border-bottom: 1px dashed #222;
+        }
+
+        .table-borderless tr td {
+            border: 0;
+        }
+    </style>
 @endsection

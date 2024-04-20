@@ -11,8 +11,8 @@
 @section('sidebar')
     @parent
     <hr>
-    @include('eschool::sidebar')
-    @include('eschool::examinations.sidebar')
+    @include('sidebar')
+    @include('examinations.sidebar')
 @endsection
 
 @section('content')
@@ -60,7 +60,8 @@
                         </div>
                         <div class="form-group{!! $errors->has('title') ? ' has-error' : '' !!}">
                             <label class="bmd-label-static" for="title">Title</label>
-                            <input type="text" class="form-control" id="title" name="title" {!! old('title') ? ' value="' . old('title') . '"' : '' !!}>
+                            <input type="text" class="form-control" id="title" name="title"
+                                {!! old('title') ? ' value="' . old('title') . '"' : '' !!}>
                             {!! $errors->has('title') ? '<span class="text-danger">' . $errors->first('title') . '</span>' : '' !!}
                         </div>
                         <div class="form-group{!! $errors->has('notes') ? ' has-error' : '' !!}">
@@ -140,7 +141,7 @@
             </div>
         </div>
     </div>
-    @include('eschool::examinations.transcripts.student-modal')
+    @include('examinations.transcripts.student-modal')
 @endsection
 
 

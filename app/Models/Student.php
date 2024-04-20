@@ -4,60 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Student extends Model
 {
     use HasFactory;
 
-    protected $appends = [
-        'admission_no',
-        'name',
-        'intake_name',
-        'course_name',
-        'sponsor_name',
-        'program_name',
-        'student_role_name',
-        'photo_url'
+    protected $casts = [
+        'date_of_birth' => 'date',
+        'date_of_admission' => 'date',
     ];
-
-    public function getPhotoUrlAttribute()
-    {
-        return $this->photo ? Storage::disk('public')->url($this->photo) : asset('img/person_8x10.png');
-    }
-
-    public function getIntakeNameAttribute()
-    {
-        if ($this->intake) {
-            return $this->intake->name;
-        }
-        return '';
-    }
-
-    public function getStudentRoleNameAttribute()
-    {
-        return $this->role ? $this->role->name : '';
-    }
-
-    public function getCourseNameAttribute()
-    {
-        if ($this->intake) {
-            return $this->intake->course->name;
-        }
-        return '';
-    }
-
-    public function getSponsorNameAttribute()
-    {
-        return $this->sponsor ? $this->sponsor->name : '';
-    }
-
-    public function getProgramNameAttribute()
-    {
-        return $this->program ? $this->program->name : '';
-    }
 
     /**
      * Get the intake that owns the Student
@@ -69,57 +29,74 @@ class Student extends Model
         return $this->belongsTo(Intake::class);
     }
 
-    public function program()
+    /**
+     * Get the program that owns the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function program(): BelongsTo
     {
-        return $this->belongsTo('App\Models\Program');
+        return $this->belongsTo(Program::class, 'program_id', 'id');
     }
 
-    public function sponsor()
+    /**
+     * Get the sponsor that owns the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function sponsor(): BelongsTo
     {
-        return $this->belongsTo('App\Models\Sponsor');
+        return $this->belongsTo(Sponsor::class, 'sponsor_id', 'id');
     }
 
-    public function role()
+    /**
+     * Get the role that owns the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function role(): BelongsTo
     {
-        return $this->belongsTo('App\Models\StudentRole', 'student_role_id', 'id');
+        return $this->belongsTo(Role::class, 'student_role_id', 'id');
     }
 
-    public function fee()
+    /**
+     * Get all of the fees for the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function fees(): HasMany
     {
-        return $this->hasMany('App\Models\Fee');
+        return $this->hasMany(Fee::class, 'student_id', 'id');
     }
 
-    public function results()
+    /**
+     * Get all of the results for the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function results(): HasMany
     {
-        return $this->hasMany('App\Models\Result');
+        return $this->hasMany(Result::class, 'student_id', 'id');
     }
 
-    public function tests()
+    /**
+     * Get all of the tests for the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function tests(): HasManyThrough
     {
-        return $this->hasManyThrough('App\Models\Test', 'App\Models\Result');
+        return $this->hasManyThrough(Test::class, Result::class);
     }
 
-    public function getNameAttribute()
+    /**
+     * Get all of the leave_outs for the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function leave_outs(): HasMany
     {
-        return trim($this->surname . ' ' . $this->first_name . ' ' . $this->middle_name);
-    }
-
-    public function getAdmissionNoAttribute()
-    {
-        if ($this->intake) {
-            return strtoupper($this->intake->course->code . '/' . str_pad($this->id, 4, '0', 0) . '/' . date_format(date_create($this->date_of_admission), 'Y'));
-        }
-        return '';
-    }
-
-    public function getAddressAttribute()
-    {
-        return 'P.O. Box ' . $this->box_no . ($this->post_code ? ' - ' . $this->post_code . ', ' : ', ') . $this->town;
-    }
-
-    public function leaveouts()
-    {
-        return $this->hasMany('App\Models\LeaveOut');
+        return $this->hasMany(LeaveOut::class);
     }
 
     /**

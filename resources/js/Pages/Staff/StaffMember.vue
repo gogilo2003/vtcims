@@ -55,6 +55,7 @@ const plwdOptions = ref([
 ]);
 
 watch((): iStaff => props.member, (value: iStaff) => {
+    form.id = value.id
     form.idno = value.idno
     form.pfno = value.pfno
     form.manno = value.manno
@@ -66,12 +67,13 @@ watch((): iStaff => props.member, (value: iStaff) => {
     form.town = value.town
     form.email = value.email
     form.phone = value.phone
-    form.employer = value.employer
+    form.employer = value.employer?.id
     form.gender = value.gender
     form.plwd = value.plwd
-    form.role = value.role
-    form.status = value.status
+    form.role = value.role?.id
+    form.status = value.status?.id
     form.teach = value.teach
+
 })
 
 const submit = async () => {
@@ -156,7 +158,7 @@ watch(() => props.show, (value) => {
             <form @submit.prevent="submit">
                 <div class="card-body">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 py-6">
-                        <div class="p-float-label relative">
+                        <div class="relative z-0">
                             <label :class="{ 'text-red-400': page.props.errors.first_name }" for="first_name">First
                                 Name</label>
                             <InputText id="first_name" v-model="form.first_name" />
@@ -261,15 +263,15 @@ watch(() => props.show, (value) => {
                             :class="{ 'has-error': page.props.errors.employer }">
                             <label :class="{ 'text-red-400': page.props.errors.employer }"
                                 for="employer">Employer</label>
-                            <Dropdown id="employer" :options="employers" v-model="form.employer" option-value="value"
-                                option-label="text" />
+                            <Dropdown id="employer" :options="employers" v-model="form.employer" option-value="id"
+                                option-label="name" />
                             <span class="text-red-400" v-if="page.props.errors.employer"
                                 v-text="page.props.errors.active"></span>
                         </div>
                         <div class="relative z-0 is-filled is-focused"
                             :class="{ 'has-error': page.props.errors.teach }">
                             <label :class="{ 'text-red-400': page.props.errors.teach }" for="teach">Teaches</label>
-                            <Dropdown id="teach" :options="[{ value: 1, text: 'Yes' }, { value: 1, text: 'No' }]"
+                            <Dropdown id="teach" :options="[{ value: 1, text: 'Yes' }, { value: 0, text: 'No' }]"
                                 v-model="form.teach" option-value="value" option-label="text" />
                             <span class="text-red-400" v-if="page.props.errors.teach"
                                 v-text="page.props.errors.active"></span>

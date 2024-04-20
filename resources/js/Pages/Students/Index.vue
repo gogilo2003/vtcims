@@ -18,7 +18,7 @@ const props = defineProps<{
     intakes: Array<iItem>,
     programs: Array<iItem>,
     sponsors: Array<iItem>,
-    student_roles: Array<iItem>,
+    roles: Array<iItem>,
     errors: Object,
     search: String
 }>()
@@ -41,15 +41,17 @@ const newStudent = () => {
         town: "",
         physical_address: "",
         date_of_birth: new Date(),
-        birth_cert_no: "",
+        birth_cert_no: null,
         idno: null,
-        gender: "",
+        gender: false,
         date_of_admission: null,
-        intake_id: null,
-        program_id: null,
-        sponsor_id: null,
-        student_role_id: null,
+        intake: null,
+        program: null,
+        sponsor: null,
+        role: null,
         status: "",
+        plwd: false,
+        plwd_details: "",
     }
     show.value = true
 }
@@ -134,17 +136,24 @@ const uploadPic = (student: iStudent) => {
         </div>
         <div class="flex flex-col gap-2">
             <ListItem v-for="student in students.data">
-                <div>
-                    <div class="text-sm font-semibold uppercase" v-text="student.name"></div>
-                    <div
-                        class="flex flex-col md:flex-row md:items-center text-xs capitalize text-gray-600 dark:text-gray-400 divide-x">
-                        <div class="flex gap-2 md:pr-2">
-                            <span class="md:hidden font-semibold uppercase">Admission Number:</span>
-                            <span v-text="student.admission_no" class="text-lime-700 dark:text-lime-500"></span>
+                <div class="flex items-center gap-2">
+                    <div class="h-16 w-16 flex-none overflow-hidden p-1 border rounded-lg shadow-lg">
+                        <img class="rounded-md h-full w-full object-cover object-top" :src="student.photo_url" alt="">
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-sm font-semibold uppercase"
+                            v-text="`${student.first_name}${student.middle_name ? ' ' + student.middle_name : ''} ${student.surname}`">
                         </div>
-                        <span class="md:px-2" v-text="student.course_name"></span>
-                        <span class="md:px-2" v-text="student.program_name"></span>
-                        <span class="md:px-2" v-text="student.sponsor_name"></span>
+                        <div
+                            class="flex flex-col md:flex-row md:items-center text-xs capitalize text-gray-600 dark:text-gray-400 divide-x">
+                            <div class="flex gap-2 md:pr-2">
+                                <span class="md:hidden font-semibold uppercase">Admission Number:</span>
+                                <span v-text="student.admission_no" class="text-lime-700 dark:text-lime-500"></span>
+                            </div>
+                            <span class="md:px-2" v-text="student.course_name"></span>
+                            <span class="md:px-2" v-text="student.program_name"></span>
+                            <span class="md:px-2" v-text="student.sponsor_name"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-1">

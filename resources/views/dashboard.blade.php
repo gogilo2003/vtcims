@@ -16,7 +16,7 @@
 @section('sidebar')
     @parent
     <hr>
-    @include('eschool::sidebar')
+    @include('sidebar')
     {{-- @include('admin::some-additional sidebar items') --}}
 @endsection
 
@@ -122,7 +122,8 @@
                     </p>
                 </div>
                 <div class="card-footer">
-                    <a href="" class="btn btn-fab btn-round btn-primary"><i class="material-icons">bubble_chart</i></a>
+                    <a href="" class="btn btn-fab btn-round btn-primary"><i
+                            class="material-icons">bubble_chart</i></a>
                     <a href="{{ route('admin-eschool-students-enrolment') }}" class="btn btn-fab btn-round btn-success"><i
                             class="material-icons">cloud_download</i></a>
                 </div>
@@ -137,9 +138,7 @@
     </style>
 @endsection
 @section('scripts_top')
-    <script type="text/javascript">
-
-    </script>
+    <script type="text/javascript"></script>
 @endsection
 
 @section('scripts_bottom')

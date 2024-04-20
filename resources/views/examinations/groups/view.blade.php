@@ -5,18 +5,18 @@
 @endsection
 
 @section('page_title')
-    {{ implode(", ",$examination_group->intakes()->pluck('name')->toArray()) }}
+    {{ implode(', ', $examination_group->intakes()->pluck('name')->toArray()) }}
 @endsection
 
 @section('sidebar')
     @parent
     <hr>
-    @include('eschool::sidebar')
-    @include('eschool::examinations.sidebar')
+    @include('sidebar')
+    @include('examinations.sidebar')
 @endsection
 
 @section('content')
-<table class="table table-bordered text-uppercase">
+    <table class="table table-bordered text-uppercase">
         <thead class="thead-light">
             <tr>
                 <th></th>
@@ -32,10 +32,12 @@
                     <td>{{ $examination->title }}</td>
                     <td>{{ $examination->tests->count() }}</td>
                     <td>
-                        <a href="{{ route('admin-eschool-examinations-view',$examination->id) }}" class="btn btn-primary btn-round btn-sm btn-fab">
+                        <a href="{{ route('admin-eschool-examinations-view', $examination->id) }}"
+                            class="btn btn-primary btn-round btn-sm btn-fab">
                             <span class="material-icons">list</span>
                         </a>
-                        <a href="{{ route('admin-eschool-examinations-marks',$examination->id) }}" class="btn btn-primary btn-round btn-sm btn-fab">
+                        <a href="{{ route('admin-eschool-examinations-marks', $examination->id) }}"
+                            class="btn btn-primary btn-round btn-sm btn-fab">
                             <span class="material-icons">assignment</span>
                         </a>
                     </td>
@@ -43,9 +45,7 @@
             @endforeach
         </tbody>
     </table>
-
 @endsection
 
 @section('scripts_bottom')
-
 @endsection

@@ -11,10 +11,9 @@
 @section('sidebar')
     @parent
     <hr>
-    @include('eschool::sidebar')
-    @include('eschool::students.sidebar')
+    @include('sidebar')
+    @include('students.sidebar')
 @endsection
 
 @section('content')
-    
 @endsection

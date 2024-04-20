@@ -11,8 +11,8 @@
 @section('sidebar')
     @parent
     <hr>
-    @include('eschool::sidebar')
-    @include('eschool::students.sidebar')
+    @include('sidebar')
+    @include('students.sidebar')
 @endsection
 
 @section('content')
@@ -56,7 +56,7 @@
                             <div class="form-group">
                                 <select id="my-select" class="custom-select change-status"
                                     admission_no="{{ $student->id }}">
-                                    @include('eschool::components.students.status', [
+                                    @include('components.students.status', [
                                         'selected' => $student->status,
                                     ])
                                 </select>
@@ -90,8 +90,8 @@
                                         <i class="material-icons">cloud_download</i>&nbsp;&nbsp;
                                         Download Details
                                     </a>
-                                    <a href="JavaScript:" data-id="{{ $student->id }}"
-                                        data-name="{{ $student->name }}" class="dropdown-item leaveOutButton">
+                                    <a href="JavaScript:" data-id="{{ $student->id }}" data-name="{{ $student->name }}"
+                                        class="dropdown-item leaveOutButton">
                                         <i class="material-icons">assignment</i>&nbsp;&nbsp;
                                         Leave Out
                                     </a>
@@ -104,12 +104,12 @@
             </tbody>
         </table>
     </div>
-    @include('eschool::students.add')
-    @include('eschool::students.attendance')
-    @include('eschool::students.photo')
-    @include('eschool::students.list')
-    @include('eschool::students.enrolment')
-    @include('eschool::students.leaveout')
+    @include('students.add')
+    @include('students.attendance')
+    @include('students.photo')
+    @include('students.list')
+    @include('students.enrolment')
+    @include('students.leaveout')
 @endsection
 
 @section('scripts_bottom')

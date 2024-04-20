@@ -45,8 +45,8 @@ const editStaffStatus = (STAFF_STATUS: iStaffStatus) => {
 }
 
 const cancelEdit = () => {
-    form.id = null
-    form.name = ""
+    form.reset()
+    form.clearErrors()
     detailTitle.value = "New Staff Status"
     edit.value = false
 }
@@ -78,8 +78,10 @@ const submit = () => {
                 toast.add({
                     severity: 'success',
                     summary: 'Success',
-                    detail: props?.notification?.success
+                    detail: props?.notification?.success,
+                    life: 3000
                 })
+                cancelEdit()
             }
         })
     } else {
@@ -162,7 +164,7 @@ const deletePosition = (id: number) => {
                             <InputText v-model="form.name" />
                             <InputError :message="form.errors.name" />
                         </div>
-                        <div>
+                        <div class="flex items-center justify-between">
                             <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing">Save
                             </PrimaryButton>
                             <SecondaryButton type="button" @click="cancelEdit" v-if="edit">Cancel</SecondaryButton>

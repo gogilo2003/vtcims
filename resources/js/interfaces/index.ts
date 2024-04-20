@@ -4,35 +4,41 @@ export interface iLink {
     active: String,
 }
 export interface iStudent {
-    id: Number | null,
-    photo: string,
-    photo_url: string,
-    surname: string,
-    first_name: string,
-    middle_name: string,
+    id: number | null,
+    photo?: string,
+    photo_url?: string | "",
+    surname: string | "",
+    first_name: string | "",
+    middle_name?: string | "",
     phone: string,
-    email: string,
-    box_no: string,
-    post_code: string,
-    town: string,
-    physical_address: string,
+    email?: string | "",
+    box_no?: string | "",
+    post_code?: string | "",
+    town?: string | "",
+    physical_address: string | "",
     date_of_birth: Date,
-    birth_cert_no: string,
-    idno: Number | null,
-    gender: string,
+    birth_cert_no?: number | null,
+    idno?: number | null,
+    gender: boolean,
+    plwd: boolean,
+    plwd_details?: string | "",
     date_of_admission: Date | null,
-    intake_id: Number | null,
-    program_id: Number | null,
-    sponsor_id: Number | null,
-    student_role_id: Number | null,
-    name: string,
-    intake_name: string,
-    program_name: string,
-    sponsor_name: string,
-    course_name: string,
-    student_role_name: string,
-    admission_no: string,
-    status: string,
+    intake: { id: number, name: string } | number | null,
+    program: { id: number, name: string, description?: string } | number | null,
+    sponsor: {
+        id: number,
+        name: string,
+        contact_person?: string
+        email?: string
+        phone?: string
+        box_no?: string
+        post_code?: string
+        town?: string
+        address?: string
+    } | number | null,
+    role: { id: number, name: string, description?: string } | number | null,
+    admission_no?: string | "",
+    status: { id: number, name: string } | string | number | null | "",
 }
 export interface iStudents {
     data: Array<iStudent>

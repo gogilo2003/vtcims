@@ -2,8 +2,9 @@
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
 import { iStaff, iStaffMembers, iItem, iPhoto } from '../../interfaces/index';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
+import PrimaryButton from '../../Components/PrimaryButton.vue';
 import Icon from '../../Components/Icons/Icon.vue'
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import StaffMember from './StaffMember.vue';
 import View from './View.vue';
 import Picture from './Picture.vue';
@@ -12,6 +13,25 @@ import Paginator from '../../Components/Paginator.vue';
 import { debounce } from 'lodash'
 import InputText from 'primevue/inputtext';
 import ListItem from '../../Components/ListItem.vue';
+import InputLabel from '../../Components/InputLabel.vue';
+import Modal from '../../Components/Modal.vue';
+import Dropdown from 'primevue/dropdown';
+import BasePreset from '../../../assets/primevue-lara-theme/dropdown'
+import { usePassThrough } from 'primevue/passthrough';
+
+
+const customPreset = usePassThrough(
+    BasePreset,
+    {
+        root: {
+            class: ['leading-none font-light text-2xl']
+        }
+    },
+    {
+        mergeSections: true,
+        mergeProps: false
+    }
+);
 
 const props = defineProps<{
     members: iStaffMembers,
@@ -88,20 +108,7 @@ const showView = ref(false)
 
 const searchVal = ref<string | null | undefined>(props.search)
 
-watch(() => searchVal.value, debounce((value: string) => {
-
-    let data = {}
-
-    if (value) {
-        data = { search: value }
-    }
-
-    router.get(route('staff-members'), data, {
-        only: ['members', 'search'],
-        preserveScroll: true,
-        preserveState: true
-    })
-}, 500))
+watch(() => searchVal.value, debounce((value: string) => search(value), 500))
 
 const uploadPic = (member: iStaff) => {
     photo.value = {
@@ -114,6 +121,63 @@ const uploadPic = (member: iStaff) => {
 
 }
 
+const search = (value?: string) => {
+
+    let data = {}
+
+    if (value) {
+        data = { search: value }
+    }
+
+    router.get(route('staff-members'), data, {
+        only: ['members', 'search'],
+        preserveScroll: true,
+        preserveState: true
+    })
+}
+
+const showDownload = ref<boolean>(false)
+const customTitle = ref<string>('Staff List')
+const subTitle = ref<string>('')
+const status = ref<number | null>(null)
+const role = ref<number | null>(null)
+const teach = ref<number | null>(null)
+const employer = ref<number | null>(null)
+const gender = ref<string | null>(null)
+const plwd = ref<number | null>(null)
+
+const download = (id?: number) => {
+    let query = {}
+    if (id) {
+        query = { id, ...query }
+    }
+    if (customTitle.value) {
+        query = { ...query, custom_title: customTitle.value }
+    }
+    if (subTitle.value) {
+        query = { ...query, sub_title: subTitle.value }
+    }
+    if (status.value) {
+        query = { ...query, status: status.value }
+    }
+    if (role.value) {
+        query = { ...query, role: role.value }
+    }
+    if (teach.value) {
+        query = { ...query, teach: teach.value }
+    }
+    if (employer.value) {
+        query = { ...query, employer: employer.value }
+    }
+    if (gender.value) {
+        query = { ...query, gender: gender.value }
+    }
+    if (plwd.value) {
+        query = { ...query, plwd: plwd.value }
+    }
+    window.open(route('staff-members-download', query), '_BLANK')
+}
+
 </script>
 
 <template>
@@ -121,12 +185,71 @@ const uploadPic = (member: iStaff) => {
     <Picture :show="showPic" @closed="onClosePic" :photo="photo" />
     <View :show="showView" @closed="onCloseView" :member="staffMember" />
 
+    <Modal :show="showDownload" maxWidth="lg">
+        <template #header>
+            <div class="text-white">Download</div>
+            <button class="text-white h-4 w-4" @click="showDownload = false">
+                <Icon class="w-full h-full object-contain" type="close" />
+            </button>
+        </template>
+        <div class="mb-4">
+            <InputLabel value="Custom Title" />
+            <InputText v-model="customTitle" class="w-full" />
+        </div>
+        <div class="mb-4">
+            <InputLabel value="Sub Title" />
+            <InputText v-model="subTitle" class="w-full" />
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <InputLabel value="Roles" />
+                <Dropdown :options="roles" optionValue="id" optionLabel="name" v-model="role" :showClear="true" />
+            </div>
+            <div>
+                <InputLabel value="Status" />
+                <Dropdown :options="statuses" optionValue="id" optionLabel="name" v-model="status" :showClear="true" />
+            </div>
+            <div>
+                <InputLabel value="Employer" />
+                <Dropdown :options="employers" optionValue="id" optionLabel="name" v-model="employer"
+                    :showClear="true" />
+            </div>
+            <div>
+                <InputLabel value="Teach" />
+                <Dropdown :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]" optionValue="id" optionLabel="name"
+                    v-model="teach" :showClear="true" />
+            </div>
+            <div>
+                <InputLabel value="Gender" />
+                <Dropdown :options="['Male', 'Female']" v-model="gender" :showClear="true" />
+            </div>
+            <div>
+                <InputLabel value="PLWD" />
+                <Dropdown :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]" optionValue="id" optionLabel="name"
+                    v-model="plwd" :showClear="true" />
+            </div>
+        </div>
+        <div class="flex items-center justify-between pt-4">
+            <PrimaryButton @click="download()">Download</PrimaryButton>
+            <SecondaryButton @click="showDownload = false">Close</SecondaryButton>
+        </div>
+    </Modal>
+
     <AuthenticatedLayout title="Staff Members">
         <div class="pb-3 md:pb-8 flex gap-3 justify-between">
-            <SecondaryButton @click="newStaffMember">
-                <Icon type="add" />
-                <span class="hidden md:inline-flex">New Staff Member</span>
-            </SecondaryButton>
+            <div class="flex items-center gap-2">
+                <SecondaryButton @click="newStaffMember">
+                    <Icon type="add" />
+                    <span class="hidden md:inline-flex">New Staff Member</span>
+                </SecondaryButton>
+                <SecondaryButton @click="showDownload = true">
+                    <Icon class="h-6 w-6" type="download" />
+                    <span class="hidden md:inline-flex">Download</span>
+                </SecondaryButton>
+                <div class="w-56">
+                    <Dropdown @change="" :options="employers" optionValue="id" optionLabel="name" v-model="employer" />
+                </div>
+            </div>
             <div>
                 <span class="relative">
                     <i class="pi pi-search absolute -top-[40%] translate-y-[50%] left-2 opacity-50" />
@@ -136,15 +259,15 @@ const uploadPic = (member: iStaff) => {
             </div>
         </div>
         <div class="flex flex-col gap-2">
-            <ListItem v-for="(member) in   members.data">
+            <ListItem v-for="( member ) in    members.data ">
                 <div class="flex items-center gap-2">
                     <div class="flex-none h-20 w-20">
-                        <img class="h-full w-full object-cover rounded-full shadow border p-1" :src="member.photo_url"
-                            alt="">
+                        <img class="h-full w-full object-cover object-top rounded-full shadow border p-1"
+                            :src="member.photo_url" alt="">
                     </div>
                     <div>
                         <div class="text-sm font-semibold uppercase"
-                            v-text="`${member.first_name}${member.middle_name ? member.middle_name : ''} ${member.surname}`">
+                            v-text="`${member.first_name}${member.middle_name ? ' ' + member.middle_name : ''} ${member.surname}`">
                         </div>
                         <div
                             class="flex flex-col gap-1 md:gap-0 md:flex-row md:items-center text-xs text-gray-600 dark:text-gray-400 md:divide-x">
