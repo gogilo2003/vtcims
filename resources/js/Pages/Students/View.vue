@@ -6,7 +6,7 @@ import { iStudent } from "@/interfaces/index";
 
 const props = defineProps<{
     show: boolean,
-    student: iStudent
+    student: iStudent | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
@@ -29,11 +29,11 @@ watch(() => props.show, (value) => {
             <div class="shadow border border-stone-100 dark:border-gray-500 rounded-lg">
                 <div class="relative flex flex-col md:flex-row items-center">
                     <div class="absolute right-4 top-2 rounded-full" :class="{
-                        'bg-lime-600': student.status.toLowerCase() == 'completed',
-                        'bg-blue-700': student.status.toLowerCase() == 'in session',
-                        'bg-red-600': student.status.toLowerCase() == 'dropout',
-                        'bg-orange-600': student.status.toLowerCase() == 'on attachment'
-                    }">
+        'bg-lime-600': student.status.toLowerCase() == 'completed',
+        'bg-blue-700': student.status.toLowerCase() == 'in session',
+        'bg-red-600': student.status.toLowerCase() == 'dropout',
+        'bg-orange-600': student.status.toLowerCase() == 'on attachment'
+    }">
                         <div class="text-gray-300 px-3 py-2 uppercase font-semibold" v-text="student.status"></div>
                     </div>
                     <div class="p-4 flex-none w-40 h-40">
@@ -45,7 +45,8 @@ watch(() => props.show, (value) => {
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div class="flex flex-col p-3 rounded border">
-                                <span class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Admission
+                                <span
+                                    class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Admission
                                     No</span>
                                 <span v-text="student.admission_no" class="text-stone-700 dark:text-stone-200"></span>
                             </div>

@@ -10,27 +10,27 @@ class Intake extends Model
 {
     public function staff()
     {
-        return $this->belongsTo('App\Models\Staff');
+        return $this->belongsTo(Staff::class);
     }
 
     public function course()
     {
-        return $this->belongsTo('App\Models\Course');
+        return $this->belongsTo(Course::class);
     }
 
     public function students()
     {
-        return $this->hasMany('App\Models\Student');
+        return $this->hasMany(Student::class);
     }
 
     public function staff_subjects()
     {
-        return $this->hasMany('App\Models\IntakeStaffSubject', 'intake_id', 'id');
+        return $this->hasMany(IntakeStaffSubject::class, 'intake_id', 'id');
     }
 
     public function examinations()
     {
-        return $this->belongsToMany('App\Models\Examination')->withTimestamps();
+        return $this->belongsToMany(Examination::class)->withTimestamps();
     }
 
     /**

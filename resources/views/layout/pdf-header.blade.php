@@ -42,42 +42,48 @@
             </td>
             <td class="title text-center">
                 <div class="uppercase" style="font-size:32px">{{ config('eschool.name') }}</div>
-                <address class="text-sm font-extralight">
+                <div class="text-sm font-light">
                     {{ $postal_address }} <br>
                     @if ($phone)
-                        <span class="btn-address btn-phone"><i class="fa fa-phone"></i>
-                            {{ $phone }}</span> |
+                        <span class="inline-block whitespace-nowrap">
+                            {!! \App\Support\Icons::phone('class="w-4 h-4 object-contain inline"') !!}
+                            {{ $phone }}
+                        </span> |
                     @endif
                     @if ($email)
-                        <span class="btn-address btn-email"><i class="fa fa-envelope"></i> {{ $email }}</span> |
+                        <span class="btn-address btn-email">
+                            {!! \App\Support\Icons::email('class="w-4 h-4 object-contain inline"') !!}
+                            {{ $email }}
+                        </span> |
                     @endif
                     @if ($website)
-                        <span class="btn-address btn-website"><i class="fa fa-globe"></i>
+                        <span class="btn-address btn-website">
+                            {!! \App\Support\Icons::website('class="w-4 h-4 object-contain inline"') !!}
                             www.{{ $website }}</span>
                     @endif
                     @if (($phone || $email || $website) && ($facebook || $twitter || $youtube || $linkedin))
                         <hr class="my-2">
                     @endif
                     @if ($facebook)
-                        <span class="btn-social btn-facebook"><i class="fa fa-facebook"></i> {{ $facebook }}</span>
+                        <span class="btn-social btn-facebook">{!! \App\Support\Icons::facebook('class="w-4 h-4 object-contain inline"') !!} {{ $facebook }}</span>
                     @endif
                     @if ($twitter)
-                        <span class="btn-social btn-twitter"><i class="fa fa-twitter"></i> {{ $twitter }}</span>
+                        <span class="btn-social btn-twitter">{!! \App\Support\Icons::twitter('class="w-4 h-4 object-contain inline"') !!} {{ $twitter }}</span>
                     @endif
                     @if ($youtube)
-                        <span class="btn-social btn-youtube"><i class="fa fa-youtube"></i> {{ $youtube }}</span>
+                        <span class="btn-social btn-youtube">{!! \App\Support\Icons::youtube('class="w-4 h-4 object-contain inline"') !!} {{ $youtube }}</span>
                     @endif
                     @if ($linkedin)
-                        <span class="btn-social btn-linkedin"><i class="fa fa-linkedin"></i> {{ $linkedin }}</span>
+                        <span class="btn-social btn-linkedin">{!! \App\Support\Icons::linkedin('class="w-4 h-4 object-contain inline"') !!} {{ $linkedin }}</span>
                     @endif
                     @if (($phone || $email || $website || $facebook || $twitter || $youtube || $linkedin) && $physical_address)
                         <hr class="my-2">
                     @endif
                     @if ($physical_address)
-                        <span class="btn-social btn-website"><i class="fa fa-map"></i>
+                        <span class="btn-social btn-website">{!! \App\Support\Icons::location('class="w-4 h-4 object-contain inline"') !!}
                             {{ $physical_address }}</span>
                     @endif
-                </address>
+                </div>
             </td>
             <td class="right-logo pl-4">
                 @if ($logo2)

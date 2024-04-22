@@ -56,8 +56,8 @@ export interface iStudents {
     total: number,
 }
 export interface iItem {
-    id: Number,
-    name: String
+    id: number,
+    name: string
 }
 
 export interface iPhoto {

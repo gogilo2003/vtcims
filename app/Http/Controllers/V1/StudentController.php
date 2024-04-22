@@ -154,10 +154,26 @@ class StudentController extends Controller
                 }
             );
 
-        $intakes = Intake::orderBy('name', 'DESC')->get()->map(fn($item) => [
+        $departments = Department::orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name
         ]);
+        $courses = Course::when($department = request()->input('d'), function ($query) use ($department) {
+            $query->where('department_id', $department);
+        })->orderBy('name', 'DESC')->get()->map(fn($item) => [
+                "id" => $item->id,
+                "name" => $item->name
+            ]);
+        $intakes = Intake::when($department = request()->input('d'), function ($query) use ($department) {
+            $query->whereHas('course', function ($query) use ($department) {
+                $query->where('department_id', $department);
+            });
+        })->when($course = request()->input('c'), function ($query) use ($course) {
+            $query->where('course_id', $course);
+        })->orderBy('name', 'DESC')->get()->map(fn($item) => [
+                "id" => $item->id,
+                "name" => $item->name
+            ]);
         $programs = Program::orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name
@@ -173,6 +189,8 @@ class StudentController extends Controller
 
         return Inertia::render('Students/Index', [
             'students' => $students,
+            'departments' => $departments,
+            'courses' => $courses,
             'intakes' => $intakes,
             'programs' => $programs,
             'sponsors' => $sponsors,
@@ -297,28 +315,31 @@ class StudentController extends Controller
             $filename = str_replace('/', '_', $student->admission_no) . '.pdf';
             return $pdf->download($filename);
         } else {
-            $pdf->setOption('footer-center', 'Page [page] of [toPage]')
-                ->setOption('footer-font-size', 8);
-            $departments = null;
+            $department = request()->input('d');
+            $course = request()->input('c');
+            $intake = request()->input('i');
 
-            $department = request()->input('department');
-            $course = request()->input('course');
-            $intake = request()->input('intake');
+            $gender = request()->has('g') ? request()->input('g') : null;
+            $sponsor = request()->has('sp') ? request()->input('sp') : null;
+            $program = request()->has('pr') ? request()->input('pr') : null;
+            $role = request()->has('r') ? request()->input('r') : null;
+            $date_of_admission = request()->has('da') ? Carbon::parse(request()->input('da')) : null;
+            $status = request()->has('su') ? request()->input('su') : null;
 
-            $gender = request()->has('gender') ? request()->input('gender') : null;
-            $sponsor = request()->has('sponsor') ? request()->input('sponsor') : null;
-            $program = request()->has('program') ? request()->input('program') : null;
-            $role = request()->has('role') ? request()->input('role') : null;
-            $before_after = request()->has('before_after') ? request()->input('before_after') : null;
-            $date_of_admission = request()->has('date_of_admission') ? Carbon::parse(request()->input('date_of_admission')) : null;
-            $status = request()->has('status') ? request()->input('status') : null;
-
-            $date_of_birth = date_create();
+            $date_of_birth = null;
             if (request()->age > 0) {
+                $date_of_birth = now();
                 date_sub($date_of_birth, date_interval_create_from_date_string(request()->age . ' years'));
             }
 
-            $students = Student::with('intake.course.department')
+            // dd($department, $course, $intake, $gender, $sponsor, $program, $role, $before_after, $date_of_admission, $date_of_birth);
+
+            $students = Student::with([
+                'intake.course',
+                "sponsor",
+                "program"
+            ])
+                ->orderBy('id', 'DESC')
                 ->when($department, function ($query) use ($department) {
                     return $query->whereHas('intake.course', function ($query) use ($department) {
                         $query->where('department_id', $department);
@@ -329,34 +350,34 @@ class StudentController extends Controller
                         $query->where('course_id', $course);
                     });
                 })
-                ->when(request()->intake, function ($query) use ($intake) {
-                    return $query->whereIn('intake_id', $intake);
+                ->when($intake, function ($query) use ($intake) {
+                    $query->where('intake_id', $intake);
                 })
-                ->when(request()->has('gender'), function ($query) use ($gender) {
+                ->when(isset($gender), function ($query) use ($gender) {
                     return $query->where('gender', $gender);
                 })
-                ->when(request()->has('sponsor'), function ($query) use ($sponsor) {
-                    return $query->whereIn('sponsor_id', $sponsor);
+                ->when($sponsor, function ($query) use ($sponsor) {
+                    return $query->where('sponsor_id', $sponsor);
                 })
-                ->when(request()->has('program'), function ($query) use ($program) {
-                    return $query->whereIn('program_id', $program);
+                ->when($program, function ($query) use ($program) {
+                    return $query->where('program_id', $program);
                 })
-                ->when(request()->has('role'), function ($query) use ($role) {
-                    return $query->whereIn('student_role_id', $role);
+                ->when($role, function ($query) use ($role) {
+                    return $query->where('student_role_id', $role);
                 })
-                ->when(request()->has('status'), function ($query) use ($status) {
+                ->when($status, function ($query) use ($status) {
                     return $query->where('status', $status);
                 })
                 ->when(
-                    request()->has('before_after') && request()->has('date_of_admission'),
+                    $date_of_admission,
                     function ($query) use ($date_of_admission) {
+
                         return $query->where('date_of_admission', '>', $date_of_admission);
                     }
                 )
-                // ->when(request()->age,function($query)use($date_of_birth){
-                //     return $query->where('date_of_birth','>',$date_of_birth);
-                // })
-                ->orderBy('intake.name', 'asc')
+                ->when($date_of_birth, function ($query) use ($date_of_birth) {
+                    return $query->where('date_of_birth', '>', $date_of_birth);
+                })
                 ->get()
                 ->map(fn($student) => (object) [
                     "id" => $student->id,
@@ -415,9 +436,14 @@ class StudentController extends Controller
                     "plwd_details" => $student->plwd_details,
                 ]);
 
-            // dd($students);
+            $data['students'] = $students;
+            if ($title = request()->input('t')) {
+                $data['title'] = $title;
+            }
+            $pdf->setOption('footer-center', 'Page [page] of [toPage]')
+                ->setOption('footer-font-size', 7)
+                ->loadView('pdf.students.list', $data);
 
-            $pdf->loadView('pdf.students.list', compact('students'));
             $filename = 'STUDENTS_' . date('d-m-Y') . '.pdf';
             return $pdf->stream($filename);
         }
