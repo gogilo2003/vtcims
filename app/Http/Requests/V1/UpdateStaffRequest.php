@@ -29,10 +29,12 @@ class UpdateStaffRequest extends FormRequest
             'idno' => 'required|numeric|unique:staff,phone,' . $this->id . ',id',
             'pfno' => 'nullable|alpha_num|unique:staff,pfno,' . $this->id . ',id',
             'manno' => 'nullable|alpha_num|unique:staff,manno,' . $this->id . ',id',
-            'phone' => ['nullable', 'string', new PhoneNumber(), 'unique:staff'],
+            'phone' => ['nullable', 'string', new PhoneNumber(), 'unique:staff,phone,' . $this->id . ',id'],
             'email' => 'nullable|string|email|unique:staff,email,' . $this->id . ',id',
             'photo' => 'nullable|file|image',
             'role' => 'required|numeric|integer|exists:staff_roles,id',
+            'job_group' => 'required|numeric|integer|exists:job_groups,id',
+            'designation' => 'required|numeric|integer|exists:designations,id',
         ];
     }
 

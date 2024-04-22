@@ -21,6 +21,8 @@ const props = defineProps<{
     roles: Array<iItem>,
     statuses: Array<iItem>,
     employers: Array<iItem>,
+    job_groups: Array<iItem>,
+    designations: Array<iItem>,
     errors: Object,
     search?: string | null,
     notification: {

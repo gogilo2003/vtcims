@@ -5,8 +5,10 @@ namespace App\Http\Controllers\V1;
 use Inertia\Inertia;
 use App\Models\Staff;
 use App\Models\Employer;
+use App\Models\JobGroup;
 use App\Models\StaffRole;
 use App\Models\Allocation;
+use App\Models\Designation;
 use App\Models\StaffStatus;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
@@ -58,6 +60,14 @@ class StaffController extends Controller
                     "id" => $member->role->id,
                     "name" => $member->role->name,
                 ],
+                "job_group" => [
+                    "id" => $member->job_group->id,
+                    "name" => $member->job_group->name,
+                ],
+                "designation" => [
+                    "id" => $member->designation->id,
+                    "name" => $member->designation->name,
+                ],
                 "status" => [
                     "id" => $member->status->id,
                     "name" => $member->status->name,
@@ -79,11 +89,23 @@ class StaffController extends Controller
             "name" => $employer->name,
         ]);
 
+        $job_groups = JobGroup::all()->map(fn(JobGroup $job_group) => [
+            "id" => $job_group->id,
+            "name" => $job_group->name,
+        ]);
+
+        $designations = Designation::all()->map(fn(Designation $designation) => [
+            "id" => $designation->id,
+            "name" => $designation->name,
+        ]);
+
         return Inertia::render("Staff/Index", [
             "members" => $members,
             "roles" => $roles,
             "statuses" => $statuses,
             'employers' => $employers,
+            'job_groups' => $job_groups,
+            'designations' => $designations,
             "search" => $search
         ]);
     }
@@ -112,6 +134,8 @@ class StaffController extends Controller
         $staff->gender = $request->gender;
         $staff->teach = $request->teach;
         $staff->plwd = $request->plwd;
+        $staff->job_group_id = $request->job_group;
+        $staff->designation_id = $request->designation;
 
         $staff->save();
 
@@ -140,6 +164,8 @@ class StaffController extends Controller
         $staff->gender = $request->gender;
         $staff->teach = $request->teach;
         $staff->plwd = $request->plwd;
+        $staff->job_group_id = $request->job_group;
+        $staff->designation_id = $request->designation;
 
         $staff->save();
 

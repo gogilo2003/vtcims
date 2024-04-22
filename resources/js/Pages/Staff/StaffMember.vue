@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useForm, usePage } from '@inertiajs/vue3';
-import Dialog from 'primevue/dialog';
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import { useToast } from 'primevue/usetoast';
@@ -9,6 +8,8 @@ import Toast from "primevue/toast";
 import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import { iStaff, iItem } from '../../interfaces/index';
+import Icon from '../../Components/Icons/Icon.vue';
+import Modal from '../../Components/Modal.vue'
 
 const props = defineProps<{
     show: boolean,
@@ -31,6 +32,8 @@ const form = useForm<iStaff>({
     email: "",
     phone: "",
     employer: "",
+    job_group: null,
+    designation: null,
     gender: null,
     plwd: false,
     role: null,
@@ -44,6 +47,8 @@ const toast = useToast()
 const roles = computed<iItem[]>((): Array<iItem> => page?.props?.roles)
 const statuses = computed<iItem[]>((): Array<iItem> => page?.props?.statuses)
 const employers = computed<iItem[]>((): Array<iItem> => page?.props?.employers)
+const job_groups = computed<iItem[]>((): Array<iItem> => page?.props?.job_groups)
+const designations = computed<iItem[]>((): Array<iItem> => page?.props?.designations)
 
 const genderOptions = ref([
     { value: "Male", text: 'Male' },
@@ -73,6 +78,8 @@ watch((): iStaff => props.member, (value: iStaff) => {
     form.role = value.role?.id
     form.status = value.status?.id
     form.teach = value.teach
+    form.job_group = value.job_group
+    form.designation = value.designation
 
 })
 
@@ -152,8 +159,13 @@ watch(() => props.show, (value) => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog v-model:visible="visible" :closeable="true" @update:visible="close" modal :header="dialogTitle"
-        :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+    <Modal :show="visible">
+        <template #header>
+            <div v-text="dialogTitle"></div>
+            <button @click="close(false)">
+                <Icon class="h-5 w-5" type="close" />
+            </button>
+        </template>
         <div class="">
             <form @submit.prevent="submit">
                 <div class="card-body">
@@ -276,6 +288,24 @@ watch(() => props.show, (value) => {
                             <span class="text-red-400" v-if="page.props.errors.teach"
                                 v-text="page.props.errors.active"></span>
                         </div>
+                        <div class="relative z-0 is-filled is-focused"
+                            :class="{ 'has-error': page.props.errors.job_group }">
+                            <label :class="{ 'text-red-400': page.props.errors.job_group }" for="job_group">Job
+                                group</label>
+                            <Dropdown id="job_group" :options="job_groups" v-model="form.job_group" option-value="id"
+                                option-label="name" />
+                            <span class="text-red-400" v-if="page.props.errors.job_group"
+                                v-text="page.props.errors.active"></span>
+                        </div>
+                        <div class="relative z-0 is-filled is-focused"
+                            :class="{ 'has-error': page.props.errors.designation }">
+                            <label :class="{ 'text-red-400': page.props.errors.designation }"
+                                for="designation">Designation</label>
+                            <Dropdown id="designation" :options="designations" v-model="form.designation"
+                                option-value="id" option-label="name" />
+                            <span class="text-red-400" v-if="page.props.errors.designation"
+                                v-text="page.props.errors.active"></span>
+                        </div>
                     </div>
                 </div>
                 <div class="flex gap-2 items-center justify-between">
@@ -285,5 +315,5 @@ watch(() => props.show, (value) => {
                 </div>
             </form>
         </div>
-    </Dialog>
+    </Modal>
 </template>

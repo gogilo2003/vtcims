@@ -122,6 +122,8 @@ export interface iStaff {
     gender?: boolean | null,
     plwd?: boolean | null,
     role?: { id: number, name: string } | number | null,
+    job_group?: { id: number, name: string } | number | null,
+    designation?: { id: number, name: string } | number | null,
     status?: { id: number, name: string } | number | null,
     teach?: boolean | null,
     user?: { id: number, name: string, email: string } | number | null,

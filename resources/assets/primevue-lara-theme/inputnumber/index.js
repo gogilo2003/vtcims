@@ -18,8 +18,9 @@ export default {
     input: {
         root: ({ parent, context }) => ({
             class: [
-                 // Display
+                // Display
                 'flex flex-auto',
+                'w-full',
 
                 // Font
                 'font-sans leading-none',
