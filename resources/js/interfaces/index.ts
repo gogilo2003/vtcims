@@ -324,7 +324,6 @@ export interface iNotification {
     warning?: string | null
 }
 
-
 export interface iStaffRole {
     id?: number | null
     name?: string | ""
@@ -373,6 +372,48 @@ export interface iEmployer {
 }
 export interface iEmployers {
     data: Array<iEmployer>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
+
+export interface iJobGroup {
+    id?: number | null
+    name?: string | ""
+    members?: number | Array<iStaff> | null
+}
+export interface iJobGroups {
+    data: Array<iJobGroup>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
+
+export interface iDesignation {
+    id?: number | null
+    name?: string | ""
+    members?: number | Array<iStaff> | null
+}
+export interface iDesignations {
+    data: Array<iDesignation>
     current_page: number,
     first_page_url: string | null,
     from: number,

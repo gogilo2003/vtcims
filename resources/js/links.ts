@@ -43,6 +43,14 @@ export const links: iMenu[] = [
                 name: "staff-employers",
                 caption: "Employers"
             },
+            {
+                name: "staff-job_groups",
+                caption: "Job Groups"
+            },
+            {
+                name: "staff-designations",
+                caption: "Designations"
+            },
         ]
     },
     {
