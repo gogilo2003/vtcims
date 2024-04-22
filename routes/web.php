@@ -13,12 +13,14 @@ use App\Http\Controllers\V1\SponsorController;
 use App\Http\Controllers\V1\StudentController;
 use App\Http\Controllers\V1\SubjectController;
 use App\Http\Controllers\V1\EmployerController;
+use App\Http\Controllers\V1\JobGroupController;
 use App\Http\Controllers\V1\BogMemberController;
 use App\Http\Controllers\V1\StaffRoleController;
 use App\Http\Controllers\V1\AllocationController;
 use App\Http\Controllers\V1\AttendanceController;
 use App\Http\Controllers\V1\DepartmentController;
 use App\Http\Controllers\V1\BogPositionController;
+use App\Http\Controllers\V1\DesignationController;
 use App\Http\Controllers\V1\StaffStatusController;
 
 /*
@@ -64,6 +66,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('', [EmployerController::class, 'store'])->name('-store');
             Route::patch('{employer}', [EmployerController::class, 'update'])->name('-update');
             Route::delete('{employer}', [EmployerController::class, 'destroy'])->name('-destroy');
+        });
+        Route::prefix('designations')->name('-designations')->group(function () {
+            Route::get('', [DesignationController::class, 'index']);
+            Route::post('', [DesignationController::class, 'store'])->name('-store');
+            Route::patch('{designation}', [DesignationController::class, 'update'])->name('-update');
+            Route::delete('{designation}', [DesignationController::class, 'destroy'])->name('-destroy');
+        });
+        Route::prefix('job_groups')->name('-job_groups')->group(function () {
+            Route::get('', [JobGroupController::class, 'index']);
+            Route::post('', [JobGroupController::class, 'store'])->name('-store');
+            Route::patch('{job_group}', [JobGroupController::class, 'update'])->name('-update');
+            Route::delete('{job_group}', [JobGroupController::class, 'destroy'])->name('-destroy');
         });
         Route::prefix('members')->name('-members')->group(function () {
             Route::get('', [StaffController::class, 'index']);
