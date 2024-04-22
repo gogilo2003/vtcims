@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests\V1;
 
+use App\Rules\PhoneNumber;
+use App\Support\PhoneTrait;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateStaffRequest extends FormRequest
 {
+    use PhoneTrait;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -22,7 +25,15 @@ class UpdateStaffRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'id' => ['required', 'numeric', 'integer', 'exists:staff,id'],
+            'idno' => 'required|numeric|unique:staff,phone,' . $this->id . ',id',
+            'pfno' => 'nullable|alpha_num|unique:staff,pfno,' . $this->id . ',id',
+            'manno' => 'nullable|alpha_num|unique:staff,manno,' . $this->id . ',id',
+            'phone' => ['nullable', 'string', new PhoneNumber(), 'unique:staff'],
+            'email' => 'nullable|string|email|unique:staff,email,' . $this->id . ',id',
+            'photo' => 'nullable|file|image',
+            'role' => 'required|numeric|integer|exists:staff_roles,id',
         ];
     }
+
 }

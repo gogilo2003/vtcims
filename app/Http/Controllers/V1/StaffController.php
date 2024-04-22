@@ -143,7 +143,7 @@ class StaffController extends Controller
 
         $staff->save();
 
-        return redirect()->back()->with('success', 'Staff member created');
+        return redirect()->back()->with('success', 'Staff member updated');
     }
 
     /**
@@ -182,13 +182,15 @@ class StaffController extends Controller
     public function download($id = null)
     {
         $pdf = App::make('snappy.pdf.wrapper');
-        $subTitle = request()->input('sub_title');
-        $status = request()->input('status');
-        $role = request()->input('role');
-        $teach = request()->input('teach');
-        $employer = request()->input('employer');
-        $gender = request()->input('gender');
-        $plwd = request()->input('plwd');
+        $title = request()->input('tt');
+        $status = request()->input('su');
+        $role = request()->input('r');
+        $teach = request()->input('t');
+        $employer = request()->input('e');
+        $gender = request()->input('g');
+        $plwd = request()->input('p');
+
+        // dd($title, $status, $role, $teach, $employer, $gender, $plwd);
 
         if ($id) {
             $staff = Staff::find($id);
@@ -215,7 +217,8 @@ class StaffController extends Controller
                     $query->where('plwd', $plwd);
                 })
                 ->get();
-            $pdf->loadView('pdf.staff.list', compact('staff', 'subTitle'))
+
+            $pdf->loadView('pdf.staff.list', compact('staff'))
                 ->setOrientation('landscape')
                 ->setPaper('A4')
                 ->setOption('footer-center', 'Page [page] of [toPage]')

@@ -32,7 +32,7 @@ class StoreStaffRequest extends FormRequest
             'phone' => ['nullable', 'string', new PhoneNumber(), 'unique:staff'],
             'email' => 'nullable|string|email|unique:staff',
             'photo' => 'nullable|file|image',
-            'staff_role_id' => 'required|numeric|integer|exists:table,column',
+            'role' => 'required|numeric|integer|exists:staff_roles,id',
         ];
     }
 

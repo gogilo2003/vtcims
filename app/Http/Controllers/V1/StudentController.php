@@ -12,6 +12,7 @@ use App\Models\Department;
 use App\Models\StudentRole;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -186,6 +187,9 @@ class StudentController extends Controller
             "id" => $item->id,
             "name" => $item->name
         ]);
+        $years = DB::table('students')
+            ->selectRaw("DISTINCT DATE_FORMAT(date_of_admission,'%Y') as `YEAR`")
+            ->orderBy('YEAR', 'DESC')->get()->pluck('YEAR');
 
         return Inertia::render('Students/Index', [
             'students' => $students,
@@ -195,6 +199,7 @@ class StudentController extends Controller
             'programs' => $programs,
             'sponsors' => $sponsors,
             'roles' => $roles,
+            'years' => $years,
             'search' => $search,
         ]);
     }
@@ -447,5 +452,71 @@ class StudentController extends Controller
             $filename = 'STUDENTS_' . date('d-m-Y') . '.pdf';
             return $pdf->stream($filename);
         }
+    }
+
+    function enrollment()
+    {
+        $years = DB::table('students')
+            ->selectRaw("DISTINCT DATE_FORMAT(date_of_admission,'%Y') as `YEAR`")
+            ->orderBy('YEAR', 'ASC')->get()->pluck('YEAR');
+
+        if (request()->input('y')) {
+            $years = collect(explode(",", request()->input('y')))->sort();
+        }
+
+        $departments = Department::select("id", "name")
+            ->get();
+
+        $enrollments = $departments->map(
+            function ($department) use ($years) {
+                $data = [
+                    "id" => $department->id,
+                    "name" => $department->name,
+                ];
+                foreach ($years as $year) {
+
+                    $male = Student::selectRaw('count(*) AS enrollment')
+                        ->whereYear('date_of_admission', $year)
+                        ->where('gender', 1)
+                        ->whereHas('intake.course', function ($query) use ($department) {
+                            $query->where('department_id', $department->id);
+                        })->first();
+
+                    $female = Student::selectRaw('count(*) AS enrollment')
+                        ->whereYear('date_of_admission', $year)
+                        ->where('gender', 0)
+                        ->whereHas('intake.course', function ($query) use ($department) {
+                            $query->where('department_id', $department->id);
+                        })->first();
+
+                    $plwd = Student::selectRaw('count(*) AS enrollment')
+                        ->whereYear('date_of_admission', $year)
+                        ->where('plwd', 1)
+                        ->whereHas('intake.course', function ($query) use ($department) {
+                            $query->where('department_id', $department->id);
+                        })->first();
+
+                    $data[$year] = (object) [
+                        "male" => $male->enrollment,
+                        "female" => $female->enrollment,
+                        "total" => $male->enrollment + $female->enrollment,
+                        "plwd" => $plwd->enrollment,
+                    ];
+                }
+
+                return (object) $data;
+            }
+        );
+
+        $pdf = App::make('snappy.pdf.wrapper');
+        $pdf->loadView('pdf.students.enrollment', compact('enrollments', 'years'))
+            ->setOption('orientation', 'landscape')
+            ->setOption('no-outline', true)
+            ->setOption('enable-javascript', true)
+            ->setOption('javascript-delay', 10000)
+            ->setOption('enable-smart-shrinking', true)
+            ->setOption('no-stop-slow-scripts', true);
+        return $pdf->stream();
+        // return view('pdf.students.enrollment', compact('enrollments', 'years'));
     }
 }

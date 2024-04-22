@@ -2,36 +2,19 @@
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
 import { iStaff, iStaffMembers, iItem, iPhoto } from '../../interfaces/index';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
-import PrimaryButton from '../../Components/PrimaryButton.vue';
 import Icon from '../../Components/Icons/Icon.vue'
 import { ref, watch, onMounted } from 'vue';
 import StaffMember from './StaffMember.vue';
 import View from './View.vue';
+import Download from './Download.vue';
 import Picture from './Picture.vue';
 import { router } from '@inertiajs/vue3';
 import Paginator from '../../Components/Paginator.vue';
 import { debounce } from 'lodash'
 import InputText from 'primevue/inputtext';
 import ListItem from '../../Components/ListItem.vue';
-import InputLabel from '../../Components/InputLabel.vue';
-import Modal from '../../Components/Modal.vue';
 import Dropdown from 'primevue/dropdown';
-import BasePreset from '../../../assets/primevue-lara-theme/dropdown'
-import { usePassThrough } from 'primevue/passthrough';
 
-
-const customPreset = usePassThrough(
-    BasePreset,
-    {
-        root: {
-            class: ['leading-none font-light text-2xl']
-        }
-    },
-    {
-        mergeSections: true,
-        mergeProps: false
-    }
-);
 
 const props = defineProps<{
     members: iStaffMembers,
@@ -105,6 +88,7 @@ const onCloseView = (value: boolean) => {
 
 const showPic = ref(false)
 const showView = ref(false)
+const showDownload = ref(false)
 
 const searchVal = ref<string | null | undefined>(props.search)
 
@@ -136,46 +120,8 @@ const search = (value?: string) => {
     })
 }
 
-const showDownload = ref<boolean>(false)
-const customTitle = ref<string>('Staff List')
-const subTitle = ref<string>('')
-const status = ref<number | null>(null)
-const role = ref<number | null>(null)
-const teach = ref<number | null>(null)
-const employer = ref<number | null>(null)
-const gender = ref<string | null>(null)
-const plwd = ref<number | null>(null)
-
-const download = (id?: number) => {
-    let query = {}
-    if (id) {
-        query = { id, ...query }
-    }
-    if (customTitle.value) {
-        query = { ...query, custom_title: customTitle.value }
-    }
-    if (subTitle.value) {
-        query = { ...query, sub_title: subTitle.value }
-    }
-    if (status.value) {
-        query = { ...query, status: status.value }
-    }
-    if (role.value) {
-        query = { ...query, role: role.value }
-    }
-    if (teach.value) {
-        query = { ...query, teach: teach.value }
-    }
-    if (employer.value) {
-        query = { ...query, employer: employer.value }
-    }
-    if (gender.value) {
-        query = { ...query, gender: gender.value }
-    }
-    if (plwd.value) {
-        query = { ...query, plwd: plwd.value }
-    }
-    window.open(route('staff-members-download', query), '_BLANK')
+const onCloseDownload = (val: boolean) => {
+    showDownload.value = val
 }
 
 </script>
@@ -184,56 +130,7 @@ const download = (id?: number) => {
     <StaffMember :show="show" :edit="edit" @closed="onClose" :member="staffMember" />
     <Picture :show="showPic" @closed="onClosePic" :photo="photo" />
     <View :show="showView" @closed="onCloseView" :member="staffMember" />
-
-    <Modal :show="showDownload" maxWidth="lg">
-        <template #header>
-            <div class="text-white">Download</div>
-            <button class="text-white h-4 w-4" @click="showDownload = false">
-                <Icon class="w-full h-full object-contain" type="close" />
-            </button>
-        </template>
-        <div class="mb-4">
-            <InputLabel value="Custom Title" />
-            <InputText v-model="customTitle" class="w-full" />
-        </div>
-        <div class="mb-4">
-            <InputLabel value="Sub Title" />
-            <InputText v-model="subTitle" class="w-full" />
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <InputLabel value="Roles" />
-                <Dropdown :options="roles" optionValue="id" optionLabel="name" v-model="role" :showClear="true" />
-            </div>
-            <div>
-                <InputLabel value="Status" />
-                <Dropdown :options="statuses" optionValue="id" optionLabel="name" v-model="status" :showClear="true" />
-            </div>
-            <div>
-                <InputLabel value="Employer" />
-                <Dropdown :options="employers" optionValue="id" optionLabel="name" v-model="employer"
-                    :showClear="true" />
-            </div>
-            <div>
-                <InputLabel value="Teach" />
-                <Dropdown :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]" optionValue="id" optionLabel="name"
-                    v-model="teach" :showClear="true" />
-            </div>
-            <div>
-                <InputLabel value="Gender" />
-                <Dropdown :options="['Male', 'Female']" v-model="gender" :showClear="true" />
-            </div>
-            <div>
-                <InputLabel value="PLWD" />
-                <Dropdown :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]" optionValue="id" optionLabel="name"
-                    v-model="plwd" :showClear="true" />
-            </div>
-        </div>
-        <div class="flex items-center justify-between pt-4">
-            <PrimaryButton @click="download()">Download</PrimaryButton>
-            <SecondaryButton @click="showDownload = false">Close</SecondaryButton>
-        </div>
-    </Modal>
+    <Download :show="showDownload" @closed="onCloseDownload" />
 
     <AuthenticatedLayout title="Staff Members">
         <div class="pb-3 md:pb-8 flex gap-3 justify-between">

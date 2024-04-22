@@ -1,38 +1,41 @@
 @extends('layout.pdf')
 
 @section('content')
-    <h3 class="uppercase text-center font-light text-2xl py-4">staff list</h3>
-    @if ($subTitle)
+    @if ($title = request()->input('t'))
+        <h3 class="uppercase text-center font-light text-2xl py-4">{{ $title }}</h3>
+    @endif
+    @if ($subTitle = request()->input('st'))
         <div class="font-normal text-xl text-center capitalize">{{ $subTitle }}</div>
     @endif
-    <table class="w-full uppercase">
-        <thead class="thead-light">
-            <tr class="bg-gray-100">
-                <th class="p-2 font-medium uppercase"></th>
-                <th class="p-2 font-medium uppercase">IDNO</th>
-                <th class="p-2 font-medium uppercase">PF/NO</th>
-                <th class="p-2 font-medium uppercase">MANNO</th>
-                <th class="p-2 font-medium uppercase">NAME</th>
-                <th class="p-2 font-medium uppercase">Gender</th>
-                <th class="p-2 font-medium uppercase">Phone</th>
-                <th class="p-2 font-medium uppercase">Email</th>
-                <th class="p-2 font-medium uppercase">Position</th>
-                <th class="p-2 font-medium uppercase">Employer</th>
+    <table class="w-full text-sm">
+        <thead class="bg-gray-800">
+            <tr class="text-gray-100 uppercase font-medium">
+                <th class="py-2 px-3 border-l border-r border-gray-200"></th>
+                <th class="py-2 px-3 border-r border-gray-200">IDNO</th>
+                <th class="py-2 px-3 border-r border-gray-200">PF/NO</th>
+                <th class="py-2 px-3 border-r border-gray-200">MANNO</th>
+                <th class="py-2 px-3 border-r border-gray-200">NAME</th>
+                <th class="py-2 px-3 border-r border-gray-200">Gender</th>
+                <th class="py-2 px-3 border-r border-gray-200">Phone</th>
+                <th class="py-2 px-3 border-r border-gray-200">Email</th>
+                <th class="py-2 px-3 border-r border-gray-200">Position</th>
+                <th class="py-2 px-3 border-r border-gray-200">Employer</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($staff as $item)
-                <tr class="odd:bg-gray-50">
-                    <td class="text-sm border px-3 py-1 font-extralight">{{ $loop->iteration }}</td>
-                    <td class="text-sm border px-3 py-1 font-extralight">{{ $item->idno }}</td>
-                    <td class="text-sm border px-3 py-1 font-extralight">{{ $item->pfno }}</td>
-                    <td class="text-sm border px-3 py-1 font-extralight">{{ $item->manno }}</td>
-                    <td class="text-sm border px-3 py-1 font-extralight">{{ $item->name }}</td>
-                    <td class="text-sm border px-3 py-1 font-extralight">{{ $item->gender }}</td>
-                    <td class="text-sm border px-3 py-1 font-extralight">{{ $item->phone }}</td>
-                    <td class="text-sm border px-3 py-1 font-extralight">{{ $item->email }}</td>
-                    <td class="text-sm border px-3 py-1 font-extralight">{{ $item->role->name }}</td>
-                    <td class="text-sm border px-3 py-1 font-extralight">
+                <tr class="odd:bg-gray-100">
+                    <td class="border-l border-r border-gray-200 px-3 py-2 font-light">{{ $loop->iteration }}</td>
+                    <td class="border-r border-gray-200 px-3 py-2 font-light">{{ $item->idno }}</td>
+                    <td class="border-r border-gray-200 px-3 py-2 font-light">{{ $item->pfno }}</td>
+                    <td class="border-r border-gray-200 px-3 py-2 font-light">{{ $item->manno }}</td>
+                    <td class="border-r border-gray-200 px-3 py-2 font-light uppercase">{{ $item->name }}</td>
+                    <td class="border-r border-gray-200 px-3 py-2 font-light uppercase">{{ $item->gender }}</td>
+                    <td class="border-r border-gray-200 px-3 py-2 font-light">{{ $item->phone }}</td>
+                    <td class="border-r border-gray-200 px-3 py-2 font-light">{{ $item->email }}</td>
+                    <td class="border-r border-gray-200 px-3 py-2 font-light uppercase">{{ $item->role->name }}
+                    </td>
+                    <td class="border-r border-gray-200 px-3 py-2 font-light uppercase">
                         {{ $item->employer ? $item->employer->name : '' }}</td>
                 </tr>
             @endforeach
