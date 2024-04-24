@@ -33,7 +33,7 @@ class BogMemberController extends Controller
         })->paginate()->through(fn($member) => [
                 "id" => $member->id,
                 "photo" => $member->photo,
-                "photo_url" => Storage::disk('public')->url($member->photo),
+                "photo_url" => $member->photo ? Storage::disk('public')->url($member->photo) : asset('img/person_8x10.png'),
                 "idno" => $member->idno,
                 "gender" => $member->gender,
                 "plwd" => $member->plwd,

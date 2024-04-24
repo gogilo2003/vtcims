@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import Dialog from 'primevue/dialog';
+import Modal from '../../Components/Modal.vue'
 import Toast from "primevue/toast";
 import { iBogMember } from '../../interfaces/index';
+import Icon from "@/Components/Icons/Icon.vue";
 
 const props = defineProps<{
     show: boolean,
@@ -23,14 +24,19 @@ watch(() => props.show, (value) => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog v-model:visible="visible" :closeable="true" @update:visible="close" modal
-        :pt="{ root: { class: ['w-full md:w-[50rem] lg:w-[60rem]'] } }" header="Student Details">
+    <Modal :show="visible" max-width="3xl">
+        <template #header>
+            <div>BOG Member Details</div>
+            <button @click="close(false)">
+                <Icon class="h-5 w-5" type="close" />
+            </button>
+        </template>
         <div>
             <div class="shadow border border-stone-100 dark:border-gray-500 rounded-lg">
                 <div class="relative flex flex-col md:flex-row items-start">
-                    <div class="p-4 flex-none w-full md:w-48 h-64 md:h-48 relative">
+                    <div class="p-4 flex-none w-full md:w-48 h-96 md:h-48 relative">
                         <img :src="member?.photo_url" alt=""
-                            class="w-full h-full object-cover border p-1 shadow rounded-xl relative">
+                            class="w-full h-full object-top object-cover border p-1 shadow rounded-xl relative">
                         <div class="absolute left-[50%] -translate-x-[50%] bottom-0 rounded-full"
                             :class="{ 'bg-lime-600': member?.active, 'bg-orange-600': !member?.active }">
                             <div class="text-gray-300 px-3 py-2 uppercase font-semibold"
@@ -62,12 +68,12 @@ watch(() => props.show, (value) => {
                                     class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Phone</span>
                                 <span v-text="member?.phone" class="text-stone-700 dark:text-stone-200"></span>
                             </div>
-                            <div class="flex flex-col p-3 rounded border col-span-1 lg:col-span-1 md:col-span-2">
+                            <div class="flex flex-col p-3 rounded border col-span-2">
                                 <span
                                     class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Email</span>
                                 <span v-text="member?.email" class="text-stone-700 dark:text-stone-200"></span>
                             </div>
-                            <div class="flex flex-col p-3 rounded border col-span-1 lg:col-span-1 md:col-span-2">
+                            <div class="flex flex-col p-3 rounded border col-span-2">
                                 <span class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Postal
                                     Address</span>
                                 <span
@@ -79,5 +85,5 @@ watch(() => props.show, (value) => {
                 </div>
             </div>
         </div>
-    </Dialog>
+    </Modal>
 </template>

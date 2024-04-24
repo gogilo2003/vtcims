@@ -26,7 +26,7 @@ const props = defineProps<{
 
 const edit = ref(false)
 const show = ref(false)
-const bogMember = ref<iBogMember | null>()
+const bogMember = ref<iBogMember | null>(null)
 const photo = ref<iPhoto | undefined>()
 
 const newBogMember = () => {
@@ -135,12 +135,12 @@ const uploadPic = (member: iBogMember) => {
             <ListItem v-for="(member) in   members.data">
                 <div class="flex items-center gap-2">
                     <div class="flex-none h-20 w-20">
-                        <img class="h-full w-full object-cover rounded-full shadow border p-1" :src="member.photo_url"
-                            alt="">
+                        <img class="h-full w-full object-top object-cover rounded-full shadow border p-1"
+                            :src="member.photo_url" alt="">
                     </div>
                     <div>
                         <div class="text-sm font-semibold uppercase"
-                            v-text="`${member.first_name} ${member.middle_name} ${member.surname}`">
+                            v-text="`${member.first_name}${member.middle_name ? ' ' + member.middle_name : ''} ${member.surname}`">
                         </div>
                         <div
                             class="flex flex-col md:flex-row md:items-center text-xs text-gray-600 dark:text-gray-400 divide-x">

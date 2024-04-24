@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { useForm, usePage } from '@inertiajs/vue3';
-import Dialog from 'primevue/dialog';
+import Modal from '../../Components/Modal.vue';
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import { useToast } from 'primevue/usetoast';
@@ -10,11 +10,12 @@ import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
 import { iBogMember } from '../../interfaces/index';
+import Icon from "../../Components/Icons/Icon.vue";
 
 const props = defineProps<{
     show: boolean,
     edit: Boolean,
-    member?: iBogMember | null
+    member: iBogMember | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
@@ -62,7 +63,7 @@ const plwdOptions = ref([
     { value: 1, text: 'Yes' },
 ]);
 
-watch(() => props.member, value => {
+watch(() => props.member, (value: iBogMember) => {
     form.id = value?.id
     form.idno = value?.idno
     form.gender = value?.gender
@@ -174,13 +175,16 @@ watch(() => props.show, (value) => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog v-model:visible="visible" :closeable="true" @update:visible="close" modal :header="dialogTitle"
-        :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+    <Modal :show="visible">
+        <template #header>
+            <div v-text="dialogTitle"></div>
+            <Icon class="h-5 w-5" type="close" />
+        </template>
         <div class="">
             <form @submit.prevent="submit">
-                <div class="card-body">
+                <div class="">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3 py-6">
-                        <div class="p-float-label relative">
+                        <div class="relative">
                             <label :class="{ 'text-red-400': page.props.errors.first_name }" for="first_name">First
                                 Name</label>
                             <InputText id="first_name" v-model="form.first_name" />
@@ -213,7 +217,8 @@ watch(() => props.show, (value) => {
                                 v-text="page.props.errors.email"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.box_no }">
-                            <label :class="{ 'text-red-400': page.props.errors.box_no }" for="box_no">Box No</label>
+                            <label :class="{ 'text-red-400': page.props.errors.box_no }" for="box_no">Box
+                                No</label>
                             <InputText id="box_no" v-model="form.box_no" />
                             <span class="text-red-400" v-if="page.props.errors.box_no"
                                 v-text="page.props.errors.box_no"></span>
@@ -255,14 +260,16 @@ watch(() => props.show, (value) => {
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.term_start_at }">
                             <label :class="{ 'text-red-400': page.props.errors.term_start_at }" for="term_start_at">Term
                                 Start Date</label>
-                            <Calendar :manualInput="false" id="term_start_at" v-model="form.term_start_at" />
+                            <Calendar :manualInput="false" dateFormat="D, d M, yy" id="term_start_at"
+                                v-model="form.term_start_at" />
                             <span class="text-red-400" v-if="page.props.errors.term_start_at"
                                 v-text="page.props.errors.term_start_at"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.term_end_at }">
                             <label :class="{ 'text-red-400': page.props.errors.term_end_at }" for="term_end_at">Term End
                                 Date</label>
-                            <Calendar :manualInput="false" id="term_end_at" v-model="form.term_end_at" />
+                            <Calendar :manualInput="false" dateFormat="D, d M, yy" id="term_end_at"
+                                v-model="form.term_end_at" />
                             <span class="text-red-400" v-if="page.props.errors.term_end_at"
                                 v-text="page.props.errors.term_end_at"></span>
                         </div>
@@ -292,12 +299,12 @@ watch(() => props.show, (value) => {
                         </div>
                     </div>
                 </div>
-                <div class="flex gap-2 items-center justify-between">
-                    <Button :class="{ 'opacity-30': form.processing }" :disabled="form.processing" type="submit"
-                        label="Save" rounded />
-                    <Button type="reset" @click="close(false)" label="Cancel" rounded outlined severity="danger" />
-                </div>
             </form>
         </div>
-    </Dialog>
+        <template #footer>
+            <Button :class="{ 'opacity-30': form.processing }" :disabled="form.processing" type="submit" label="Save"
+                rounded />
+            <Button type="reset" @click="close(false)" label="Cancel" rounded outlined severity="danger" />
+        </template>
+    </Modal>
 </template>

@@ -3,6 +3,7 @@ export default {
         class: [
             // Display
             'inline-flex',
+            'w-full',
 
             { 'flex-col': props.showButtons && props.buttonLayout == 'vertical' },
 
