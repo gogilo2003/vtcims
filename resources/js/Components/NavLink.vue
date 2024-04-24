@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref, watch, watchEffect } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import { iMenuItem } from '../interfaces/index';
 import Icon from '@/Components/Icons/Icon.vue';
@@ -35,6 +35,28 @@ const showSubmenu = ref(false)
 const onClickAway = () => {
     showSubmenu.value = false
 }
+
+const submenu = ref<HTMLDivElement>()
+
+watchEffect(() => {
+    if (submenu.value) {
+        const el = submenu.value
+        let parentTop = el.parentElement?.offsetTop ?? 0
+        let parentHeight = el.parentElement?.offsetHeight ?? 0
+        let elTop = el.offsetTop ?? 0
+        let elHeight = el.offsetHeight ?? 0
+        let winHeight = window.innerHeight - 64
+
+        let bottom = parentTop + parentHeight + elTop + elHeight
+
+        if (bottom > winHeight && elHeight < winHeight) {
+            el.style.top = `${(winHeight - bottom) + 64}px`
+        }
+        if (bottom > winHeight && elHeight > winHeight) {
+            el.style.top = `-${parentTop - 32}px`
+        }
+    }
+})
 </script>
 
 <template>
@@ -50,14 +72,14 @@ const onClickAway = () => {
         <Transition enter-active-class="transition ease-out duration-200" enter-from-class="opacity-0 scale-95"
             enter-to-class="opacity-100 scale-100" leave-active-class="transition ease-in duration-75"
             leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-            <div v-if="items?.length && showSubmenu"
-                class="absolute z-20 left-0 top-[100%] bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-400 p-3 ml-6 w-[calc(100%_-_2.5rem)] rounded-b-lg border-t border-gray-800 flex flex-col gap-1"
+            <div ref="submenu" v-if="items?.length && showSubmenu"
+                class="absolute z-20 left-0 top-[100%] bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-400 p-3 ml-6 w-[calc(100%_-_2.5rem)] rounded-lg flex flex-col gap-1"
                 v-click-away="onClickAway">
                 <Link
                     class="w-full text-base px-3 py-2 transition-all duration-300 rounded bg-gray-50 dark:bg-gray-700 hover:bg-primary-500 hover:text-gray-100"
                     :class="{ 'bg-primary-500 text-gray-100': route().current(name), 'dark:text-gray-300': !route().current(name) }"
-                    :href="route(name)" v-for="{ name, caption } in items">{{
-                        caption }}
+                    :href="route(name)" v-for="{ name, caption } in items">
+                {{ caption }}
                 </Link>
             </div>
         </Transition>

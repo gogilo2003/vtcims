@@ -150,7 +150,7 @@ const submit = async () => {
                 form.birth_cert_no = null
                 form.idno = null
                 form.gender = null
-                form.date_of_admission = null
+                form.date_of_admission = new Date()
                 form.intake = null
                 form.program = null
                 form.sponsor = null
@@ -406,11 +406,11 @@ watch(() => props.show, (value) => {
                         </div>
                     </div>
                 </div>
-                <div class="flex gap-2 items-center justify-between">
-                    <PrimaryButton type="submit">Save</PrimaryButton>
-                    <SecondaryButton type="reset" @click="close(false)">Cancel</SecondaryButton>
-                </div>
             </form>
         </div>
+        <template #footer>
+            <PrimaryButton type="submit" @click="submit">Save</PrimaryButton>
+            <SecondaryButton type="reset" @click="close(false)">Cancel</SecondaryButton>
+        </template>
     </Modal>
 </template>

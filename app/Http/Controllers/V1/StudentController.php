@@ -330,6 +330,7 @@ class StudentController extends Controller
             $role = request()->has('r') ? request()->input('r') : null;
             $date_of_admission = request()->has('da') ? Carbon::parse(request()->input('da')) : null;
             $status = request()->has('su') ? request()->input('su') : null;
+            $year = request()->has('y') ? request()->input('y') : null;
 
             $date_of_birth = null;
             if (request()->age > 0) {
@@ -382,6 +383,9 @@ class StudentController extends Controller
                 )
                 ->when($date_of_birth, function ($query) use ($date_of_birth) {
                     return $query->where('date_of_birth', '>', $date_of_birth);
+                })
+                ->when($year, function ($query) use ($year) {
+                    return $query->whereYear('date_of_admission', $year);
                 })
                 ->get()
                 ->map(fn($student) => (object) [
@@ -475,32 +479,29 @@ class StudentController extends Controller
                 ];
                 foreach ($years as $year) {
 
-                    $male = Student::selectRaw('count(*) AS enrollment')
-                        ->whereYear('date_of_admission', $year)
-                        ->where('gender', 1)
-                        ->whereHas('intake.course', function ($query) use ($department) {
-                            $query->where('department_id', $department->id);
-                        })->first();
-
-                    $female = Student::selectRaw('count(*) AS enrollment')
-                        ->whereYear('date_of_admission', $year)
+                    $male = Student::whereYear('date_of_admission', $year)
                         ->where('gender', 0)
                         ->whereHas('intake.course', function ($query) use ($department) {
                             $query->where('department_id', $department->id);
-                        })->first();
+                        })->get()->count();
 
-                    $plwd = Student::selectRaw('count(*) AS enrollment')
-                        ->whereYear('date_of_admission', $year)
+                    $female = Student::whereYear('date_of_admission', $year)
+                        ->where('gender', 1)
+                        ->whereHas('intake.course', function ($query) use ($department) {
+                            $query->where('department_id', $department->id);
+                        })->get()->count();
+
+                    $plwd = Student::whereYear('date_of_admission', $year)
                         ->where('plwd', 1)
                         ->whereHas('intake.course', function ($query) use ($department) {
                             $query->where('department_id', $department->id);
-                        })->first();
+                        })->get()->count();
 
                     $data[$year] = (object) [
-                        "male" => $male->enrollment,
-                        "female" => $female->enrollment,
-                        "total" => $male->enrollment + $female->enrollment,
-                        "plwd" => $plwd->enrollment,
+                        "male" => $male,
+                        "female" => $female,
+                        "total" => $male + $female,
+                        "plwd" => $plwd,
                     ];
                 }
 

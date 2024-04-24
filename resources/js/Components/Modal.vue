@@ -85,12 +85,12 @@ const maxWidthClass = computed(() => {
                         class="bg-transparent rounded-lg shadow-xl transform transition-all sm:w-full sm:mx-auto"
                         :class="maxWidthClass">
                         <div
-                            class="relative z-0 bg-white dark:bg-gray-700 px-4 pt-8 pb-4 rounded-lg w-[calc(100%_+_2rem)] -ml-4 flex flex-col gap-2">
-                            <div
-                                class="absolute w-full top-0 -translate-y-[50%] z-50 px-3 md:px-6 py-3 flex items-center justify-between bg-gradient-to-br from-lime-600 dark:from-gray-900 to-lime-500 dark:to-gray-800 text-white dark:text-lime-600 rounded-3xl">
-                                <slot name="header" />
-                            </div>
-                            <div class="flex-1 max-h-[calc(100svh_-_10rem)] overflow-auto">
+                            class="absolute w-full top-0 -translate-y-[50%] z-50 px-3 md:px-6 py-3 flex items-center justify-between bg-gradient-to-br from-lime-600 dark:from-gray-900 to-lime-500 dark:to-gray-800 text-white dark:text-lime-600 rounded-3xl">
+                            <slot name="header" />
+                        </div>
+                        <div
+                            class="relative z-0 bg-white dark:bg-gray-700 px-4 pt-8 pb-4 rounded-lg w-[calc(100%_+_2rem)] max-h-[calc(100svh_-_6rem)] -ml-4 flex flex-col gap-2">
+                            <div class="flex-1 max-h-[calc(100%_-_10rem)] overflow-auto">
                                 <slot v-if="show" />
                             </div>
                             <div class="flex items-center justify-between flex-none">

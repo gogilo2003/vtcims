@@ -60,14 +60,14 @@ class StaffController extends Controller
                     "id" => $member->role->id,
                     "name" => $member->role->name,
                 ],
-                "job_group" => [
+                "job_group" => $member->job_group ? [
                     "id" => $member->job_group->id,
                     "name" => $member->job_group->name,
-                ],
-                "designation" => [
+                ] : null,
+                "designation" => $member->designation ? [
                     "id" => $member->designation->id,
                     "name" => $member->designation->name,
-                ],
+                ] : null,
                 "status" => [
                     "id" => $member->status->id,
                     "name" => $member->status->name,

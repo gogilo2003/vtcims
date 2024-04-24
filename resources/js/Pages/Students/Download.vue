@@ -8,6 +8,7 @@ import SecondaryButton from '../../Components/SecondaryButton.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
+import MultiSelect from 'primevue/multiselect';
 
 defineProps({
     show: {
@@ -24,6 +25,7 @@ const intakes = computed(() => usePage().props.intakes)
 const programs = computed(() => usePage().props.programs)
 const sponsors = computed(() => usePage().props.sponsors)
 const roles = computed(() => usePage().props.roles)
+const years = computed(() => usePage().props.years)
 
 const downloadForm = ref<{
     t: string | ""// title
@@ -38,6 +40,7 @@ const downloadForm = ref<{
     r: number | null // role
     da: string | null // date_of_admission
     age: number | null // age
+    y: number | null // age
 }>({
     t: "",
     st: "",
@@ -51,6 +54,11 @@ const downloadForm = ref<{
     r: null,
     da: null,
     age: null,
+    y: null,
+})
+
+watch(() => downloadForm.value.g, () => {
+    console.log(downloadForm.value.g);
 })
 const download = () => {
 
@@ -72,6 +80,7 @@ const download = () => {
         data = { ...data, i: downloadForm.value.i.id }
     }
     if (downloadForm.value.g) {
+
         data = { ...data, g: downloadForm.value.g }
     }
     if (downloadForm.value.su) {
@@ -88,6 +97,9 @@ const download = () => {
     }
     if (downloadForm.value.age) {
         data = { ...data, age: downloadForm.value.age }
+    }
+    if (downloadForm.value.y) {
+        data = { ...data, y: downloadForm.value.y }
     }
     window.open(route('students-download', data), '_BLANK')
 }
@@ -135,7 +147,7 @@ watch(() => downloadForm.value.su, (value) => {
 })
 
 const close = () => {
-    downloadForm.value.y = [];
+    downloadForm.value.y = null;
     downloadForm.value.t = "";
     downloadForm.value.st = "";
     downloadForm.value.d = null;
@@ -172,7 +184,8 @@ const close = () => {
             </div>
             <div class="mb-4">
                 <InputLabel value="Intakes" />
-                <Dropdown showClear v-model="downloadForm.i" :options="intakes" optionValue="id" optionLabel="name" />
+                <MultiSelect showClear v-model="downloadForm.i" :options="intakes" optionValue="id"
+                    optionLabel="name" />
             </div>
             <div class="mb-4">
                 <InputLabel value="Program" />
@@ -185,7 +198,7 @@ const close = () => {
             <div class="mb-4">
                 <InputLabel value="Gender" />
                 <Dropdown showClear v-model="downloadForm.g"
-                    :options="[{ id: 0, name: 'Male' }, { id: 1, name: 'Female' }]" optionValue="id"
+                    :options="[{ id: '0', name: 'Male' }, { id: '1', name: 'Female' }]" optionValue="id"
                     optionLabel="name" />
             </div>
             <div class="mb-4">
@@ -196,6 +209,10 @@ const close = () => {
             <div class="mb-4">
                 <InputLabel value="Roles" />
                 <Dropdown showClear v-model="downloadForm.sp" :options="roles" optionLabel="name" />
+            </div>
+            <div class="mb-4">
+                <InputLabel value="Year" />
+                <Dropdown showClear v-model="downloadForm.y" :options="years" />
             </div>
         </div>
         <div class="flex justify-between">

@@ -7,6 +7,7 @@
     <table class="w-full text-sm border-b border-gray-200">
         <thead class="bg-gray-800 text-gray-100 font-medium">
             <tr>
+                <th></th>
                 <th class="px-3 py-2 text-left border-r border-gray-600">Admission No</th>
                 <th class="px-3 py-2 text-left border-r border-gray-600">Name</th>
                 @if (empty(request()->input('g')))
@@ -33,6 +34,7 @@
         <tbody class="font-normal">
             @foreach ($students as $student)
                 <tr class="even:bg-gray-100">
+                    <td class="px-3 py-2 border-r border-l border-gray-200">{{ $loop->iteration }}</td>
                     <td class="px-3 py-2 border-r border-l border-gray-200">{{ $student->admission_no }}</td>
                     <td class="px-3 py-2 border-r border-gray-200 uppercase">
                         {{ $student->first_name }}{{ $student->middle_name ? ' ' . $student->middle_name : '' }}
