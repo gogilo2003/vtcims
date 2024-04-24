@@ -145,9 +145,24 @@ export interface iIntake {
 }
 
 export interface iProgram {
-    id: number
-    name: string
-    description: string
+    id: number | null
+    name: string | ""
+    description?: string
+}
+export interface iPrograms {
+    data: Array<iProgram>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
 }
 
 export interface iSponsor {
