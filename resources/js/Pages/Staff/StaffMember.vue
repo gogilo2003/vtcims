@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import { useForm, usePage } from '@inertiajs/vue3';
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
@@ -10,6 +10,8 @@ import Dropdown from 'primevue/dropdown';
 import { iStaff, iItem } from '../../interfaces/index';
 import Icon from '../../Components/Icons/Icon.vue';
 import Modal from '../../Components/Modal.vue'
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
 
 const props = defineProps<{
     show: boolean,
@@ -78,8 +80,8 @@ watch((): iStaff => props.member, (value: iStaff) => {
     form.role = value.role?.id
     form.status = value.status?.id
     form.teach = value.teach
-    form.job_group = value.job_group
-    form.designation = value.designation
+    form.job_group = value.job_group?.id
+    form.designation = value.designation?.id
 
 })
 
@@ -308,12 +310,12 @@ watch(() => props.show, (value) => {
                         </div>
                     </div>
                 </div>
-                <div class="flex gap-2 items-center justify-between">
-                    <Button :class="{ 'opacity-30': form.processing }" :disabled="form.processing" type="submit"
-                        label="Save" rounded />
-                    <Button type="reset" @click="close(false)" label="Cancel" rounded outlined severity="danger" />
-                </div>
             </form>
         </div>
+        <template #footer>
+            <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" @click="submit">Save
+            </PrimaryButton>
+            <SecondaryButton type="reset" @click="close(false)">Cancel</SecondaryButton>
+        </template>
     </Modal>
 </template>

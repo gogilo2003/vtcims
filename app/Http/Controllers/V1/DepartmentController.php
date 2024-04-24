@@ -5,8 +5,11 @@ namespace App\Http\Controllers\V1;
 use Inertia\Inertia;
 use App\Models\Staff;
 use App\Models\Department;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\StoreDepartmentRequest;
+use App\Http\Requests\V1\UpdateDepartmentRequest;
 
 class DepartmentController extends Controller
 {
@@ -27,14 +30,22 @@ class DepartmentController extends Controller
                 "name" => $item->name,
                 "hod" => [
                     "id" => $item->hod->id,
-                    "name" => trim(sprintf('%s %s %s', $item->hod->surname, $item->hod->first_name, $item->hod->middle_name)),
+                    "name" => sprintf(
+                        "%s %s",
+                        Str::ucfirst(Str::lower($item->hod->first_name)),
+                        Str::ucfirst(Str::lower($item->hod->surname))
+                    ),
                 ]
             ]);
         $instructors = Staff::whereHas('status', function ($query) {
-            $query->where('name', 'current');
+            $query->where('name', 'like', '%current%');
         })->where('teach', 1)->get()->map(fn($item) => [
                 "id" => $item->id,
-                "name" => sprintf("%s %s %s", $item->surname, $item->last_name, $item->middle_name),
+                "name" => sprintf(
+                    "%s %s",
+                    Str::ucfirst(Str::lower($item->first_name)),
+                    Str::ucfirst(Str::lower($item->surname))
+                ),
             ]);
         return Inertia::render('Departments/Index', ['departments' => $departments, 'instructors' => $instructors, 'search' => $search,]);
     }
@@ -45,21 +56,8 @@ class DepartmentController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreDepartmentRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'code' => 'required|unique:departments',
-            'name' => 'required',
-            'hod' => 'required|exists:staff,id'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors($validator)
-                ->with('warning', 'Some fields failed to validate. Please check and try again');
-        }
 
         $department = new Department;
         $department->code = $request->code;
@@ -79,26 +77,12 @@ class DepartmentController extends Controller
      * @param \App\Models\Department $department
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Department $department)
+    public function update(UpdateDepartmentRequest $request, Department $department)
     {
-        $validator = Validator::make($request->all(), [
-            'code' => 'required|unique:departments,code,' . $request->id,
-            'name' => 'required',
-            'hod' => 'required|exists:staff,id'
-        ]);
 
-        if ($validator->fails()) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->withErrors($validator)
-                ->with('warning', 'Some fields failed to validate. Please check and try again');
-        }
-
-        $department = Department::find($request->id);
         $department->code = $request->code ? $request->code : $department->code;
         $department->name = $request->name ? $request->name : $department->name;
-        $department->staff_id = $request->hod ? $request->id : $department->staff_id;
+        $department->staff_id = $request->hod ? $request->hod : $department->staff_id;
         $department->save();
 
         return redirect()

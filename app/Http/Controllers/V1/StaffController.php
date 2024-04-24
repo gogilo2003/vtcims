@@ -26,7 +26,7 @@ class StaffController extends Controller
     {
         $search = request()->input("search");
 
-        $members = Staff::with('status', 'role')
+        $members = Staff::with('status', 'role', 'job_group', 'designation', 'employer')
             ->when($search, function ($query) use ($search) {
                 $names = explode(" ", $search);
                 foreach ($names as $name) {
@@ -43,10 +43,6 @@ class StaffController extends Controller
                 "idno" => $member->idno,
                 "gender" => $member->gender,
                 "plwd" => $member->plwd,
-                "employer" => isset ($member->employer->id) ? [
-                    "id" => $member->employer->id,
-                    "name" => $member->employer->name
-                ] : null,
                 "surname" => $member->surname,
                 "first_name" => $member->first_name,
                 "middle_name" => $member->middle_name,
@@ -55,7 +51,10 @@ class StaffController extends Controller
                 "box_no" => $member->box_no,
                 "town" => $member->town,
                 "teach" => $member->teach,
-                "subjects" => $member->subjects,
+                "employer" => isset ($member->employer->id) ? [
+                    "id" => $member->employer->id,
+                    "name" => $member->employer->name
+                ] : null,
                 "role" => [
                     "id" => $member->role->id,
                     "name" => $member->role->name,
@@ -63,7 +62,7 @@ class StaffController extends Controller
                 "job_group" => $member->job_group ? [
                     "id" => $member->job_group->id,
                     "name" => $member->job_group->name,
-                ] : null,
+                ] : $member->job_group_id,
                 "designation" => $member->designation ? [
                     "id" => $member->designation->id,
                     "name" => $member->designation->name,
@@ -72,6 +71,7 @@ class StaffController extends Controller
                     "id" => $member->status->id,
                     "name" => $member->status->name,
                 ],
+                "subjects" => $member->subjects,
             ]);
 
         $roles = StaffRole::all()->map(fn($role) => [

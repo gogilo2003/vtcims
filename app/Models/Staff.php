@@ -151,4 +151,24 @@ class Staff extends Model
     {
         return $this->belongsTo(Employer::class);
     }
+
+    /**
+     * Get the job_group that owns the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function job_group(): BelongsTo
+    {
+        return $this->belongsTo(JobGroup::class);
+    }
+
+    /**
+     * Get the designation that owns the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function designation(): BelongsTo
+    {
+        return $this->belongsTo(Designation::class);
+    }
 }
