@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\V1;
 
+use Inertia\Inertia;
 use App\Models\Staff;
 use App\Models\Course;
+use App\Models\Department;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Inertia\Inertia;
+use App\Http\Requests\V1\StoreCourseRequest;
+use App\Http\Requests\V1\UpdateCourseRequest;
 
 class CourseController extends Controller
 {
@@ -23,6 +27,10 @@ class CourseController extends Controller
                 "id" => $item->id,
                 "code" => $item->code,
                 "name" => $item->name,
+                "department" => [
+                    "id" => $item->department->id,
+                    "name" => $item->department->name,
+                ],
                 "staff" => [
                     "id" => $item->staff->id,
                     "name" => trim(
@@ -39,9 +47,20 @@ class CourseController extends Controller
             $query->where('name', 'current');
         })->where('teach', 1)->get()->map(fn($item) => [
                 "id" => $item->id,
-                "name" => sprintf("%s %s %s", $item->surname, $item->last_name, $item->middle_name),
+                "name" => Str::title(Str::lower(sprintf("%s %s", $item->first_name, $item->surname))),
             ]);
-        return Inertia::render('Courses/Index', ['courses' => $courses, 'instructors' => $instructors, 'search' => $search,]);
+
+        $departments = Department::all()->map(fn(Department $dept) => [
+            "id" => $dept->id,
+            "name" => Str::upper($dept->name),
+        ]);
+
+        return Inertia::render('Courses/Index', [
+            'courses' => $courses,
+            'instructors' => $instructors,
+            'departments' => $departments,
+            'search' => $search,
+        ]);
     }
 
     /**
@@ -50,15 +69,8 @@ class CourseController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreCourseRequest $request)
     {
-        $request->validate([
-            'department' => 'required|exists:departments,id',
-            'staff' => 'required|exists:staff,id',
-            'code' => 'required|unique:courses|max:5',
-            'name' => 'required'
-        ]);
-
         $course = new Course;
         $course->department_id = $request->department;
         $course->code = $request->code;
@@ -78,16 +90,8 @@ class CourseController extends Controller
      * @param \App\Models\Course $course
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Course $course)
+    public function update(UpdateCourseRequest $request, Course $course)
     {
-        $request->validate([
-            'id' => 'required|exists:courses,id',
-            'department' => 'required|exists:departments,id',
-            'staff' => 'required|exists:staff,id',
-            'code' => 'required|unique:courses,code,' . $request->id . '|max:5',
-            'name' => 'required'
-        ]);
-
         $course = Course::find($request->id);
         $course->department_id = $request->department;
         $course->code = $request->code;

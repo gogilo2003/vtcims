@@ -31,21 +31,23 @@ class IntakeController extends Controller
                 "name" => $item->name,
                 "start_date" => $item->start_date,
                 "end_date" => $item->end_date,
-                "staff" => [
+                "instructor" => [
                     "id" => $item->staff->id,
                     "name" => trim(
-                        sprintf(
-                            '%s %s %s',
-                            $item->staff->surname,
-                            $item->staff->first_name,
-                            $item->staff->middle_name
+                        Str::title(Str::lower(
+                            sprintf(
+                                '%s %s',
+                                $item->staff->first_name,
+                                $item->staff->surname
+                            )
+                        )
                         )
                     ),
                 ],
                 "course" => [
                     "id" => $item->course->id,
                     "code" => $item->course->code,
-                    "name" => $item->course->name,
+                    "name" => Str::title(Str::lower($item->course->name)),
                 ],
             ]);
 

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iLink, iCourse, iIntake } from '../../interfaces/index';
+import { iInstructor, iCourse, iIntake, iIntakes } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
@@ -20,21 +20,7 @@ import { generateIntakeName } from '../../helpers';
 import Toast from 'primevue/toast';
 
 const props = defineProps<{
-    intakes: {
-        current_page: number,
-        first_page_url: string,
-        from: number,
-        last_page: number,
-        last_page_url: string,
-        links: Array<iLink>,
-        next_page_url: string,
-        path: string,
-        per_page: number,
-        prev_page_url: string,
-        to: number,
-        total: number
-        data: Array<iIntake>
-    },
+    intakes: iIntakes,
     instructors: Array<iInstructor>
     courses: Array<iCourse>
     search: string,
@@ -44,7 +30,7 @@ const props = defineProps<{
 
 const toast = useToast()
 
-const form = useForm({
+const form = useForm<iIntake>({
     id: 0,
     course: 0,
     start_date: new Date(),
@@ -66,11 +52,11 @@ const newIntake = () => {
 const editIntake = (intake: iIntake) => {
 
     form.id = intake.id
-    form.course = intake.course.id
+    form.course = intake.course?.id
     form.start_date = new Date(intake.start_date)
     form.end_date = new Date(intake.end_date)
     form.name = intake.name
-    form.instructor = intake.staff.id
+    form.instructor = intake.instructor?.id
 
     showIntakeDialog.value = true
     edit.value = true
@@ -223,17 +209,18 @@ const submit = () => {
             <ListItem v-for="intake in intakes.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
                     <div v-text="intake.name"
-                        class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-default">
+                        class="uppercase text-sm font-medium text-gray-800 dark:text-primary-default">
                     </div>
                     <div class="flex gap-2 flex-col md:flex-row divide-x">
                         <div class="flex items-center gap-1">
-                            <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">COURSE NAME:</span>
-                            <span v-text="intake.course.name" class="text-xs text-gray-500 dark:text-gray-300"></span>
+                            <span class="text-xs font-medium text-gray-800 dark:text-gray-100">Course Name:</span>
+                            <span v-text="intake.course?.name" class="text-xs text-gray-500 dark:text-gray-300"></span>
                         </div>
                         <div class="flex items-center gap-1 pl-2">
-                            <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">HEAD OF
-                                DEPARTMENT:</span>
-                            <span v-text="intake.staff.name" class="text-xs text-gray-500 dark:text-gray-300"></span>
+                            <span class="text-xs font-medium text-gray-800 dark:text-gray-100">Head Of
+                                Course:</span>
+                            <span v-text="intake.instructor?.name"
+                                class="text-xs text-gray-500 dark:text-gray-300"></span>
                         </div>
                     </div>
                 </div>
