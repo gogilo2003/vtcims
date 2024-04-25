@@ -1,41 +1,27 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iLink, iCourse, iLesson } from '../../interfaces/index';
+import { iLesson, iLessons, iNotification } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
+import PrimaryButton from '../../Components/PrimaryButton.vue';
 import { ref, watch } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import Icon from '../../Components/Icons/Icon.vue';
 import InputText from 'primevue/inputtext';
 import ListItem from '@/Components/ListItem.vue';
-import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Calendar from 'primevue/calendar';
-import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
+import Modal from '../../Components/Modal.vue'
 
 const props = defineProps<{
-    lessons: {
-        current_page: number,
-        first_page_url: string,
-        from: number,
-        last_page: number,
-        last_page_url: string,
-        links: Array<iLink>,
-        next_page_url: string,
-        path: string,
-        per_page: number,
-        prev_page_url: string,
-        to: number,
-        total: number
-        data: Array<iLesson>
-    },
+    lessons: iLessons,
     search: string,
-    notification: Object,
+    notification: iNotification,
     errors: Object
 }>()
 
@@ -148,8 +134,13 @@ const days = ref(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog modal :header="dialogTitle" v-model:visible="showLessonDialog" :style="{ width: '50vw' }"
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+    <Modal :show="showLessonDialog">
+        <template #header>
+            <div v-text="dialogTitle"></div>
+            <button @click="cancel">
+                <Icon class="h-5 w-5" type="close" />
+            </button>
+        </template>
         <form @submit.prevent="submit">
             <div class="mb-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -173,12 +164,12 @@ const days = ref(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
                     <InputError :message="form.errors.end_at" />
                 </div>
             </div>
-            <div class="flex items-center justify-between mt-8">
-                <Button type="submit" label="Save" size="small" rounded />
-                <Button @click="cancel" label="Cancel" size="small" rounded outlined />
-            </div>
         </form>
-    </Dialog>
+        <template #footer>
+            <PrimaryButton @click="submit">Save</PrimaryButton>
+            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+        </template>
+    </Modal>
     <AuthenticatedLayout title="Lessons">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
             <SecondaryButton @click="newLesson">

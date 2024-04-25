@@ -63,7 +63,7 @@ export interface iItem {
 export interface iPhoto {
     id: number | null,
     url?: string | null,
-    photo?: string | null
+    photo: string | null
 }
 
 export interface iMenu {
@@ -277,6 +277,21 @@ export interface iLesson {
     day: string
     start_at: any
     end_at: any
+}
+export interface iLessons {
+    data: Array<iLesson>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
 }
 
 export interface iAllocationLesson {

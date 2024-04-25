@@ -1,20 +1,19 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iCourse, iAllocation, iAllocations, iLesson } from '../../interfaces/index';
+import { iInstructor, iAllocation, iAllocations, iLesson } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
-import { ref, watch, onMounted, computed } from 'vue';
+import PrimaryButton from '../../Components/PrimaryButton.vue';
+import { ref, watch } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import Icon from '../../Components/Icons/Icon.vue';
 import InputText from 'primevue/inputtext';
 import ListItem from '../../Components/ListItem.vue';
-import Dialog from 'primevue/dialog';
+import Modal from '../../Components/Modal.vue';
 import Dropdown from 'primevue/dropdown';
 import InputError from '../../Components/InputError.vue';
 import InputLabel from '../../Components/InputLabel.vue';
-import InputSwitch from 'primevue/inputswitch';
-import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import MultiSelect from 'primevue/multiselect';
@@ -211,9 +210,11 @@ const saveLessons = () => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog modal header="Set Lessons" v-model:visible="showLessonsDialog" :pt="{
-        root: { class: 'max-h-full w-full max-w-[40rem] md:w-[35rem]' }
-    }">
+    <Modal modal :show="showLessonsDialog">
+        <template #header>
+            <div>Set Lessons</div>
+            <button @click="cancelLessons"></button>
+        </template>
         <form @submit.prevent="saveLessons" class="flex flex-col">
             <div class="dark:bg-gray-700 shadow p-3 rounded-lg my-3 flex flex-col gap-2 text-sm capitalize flex-none">
                 <div class="flex gap-2">
@@ -267,15 +268,20 @@ const saveLessons = () => {
                     </template>
                 </div>
             </div>
-            <div class="flex items-center justify-between mt-8 flex-none">
-                <Button type="submit" label="Save" size="small" rounded />
-                <Button @click="cancelLessons" label="Cancel" size="small" rounded outlined />
-            </div>
         </form>
-    </Dialog>
-    <Dialog modal :header="dialogTitle" v-model:visible="showAllocationDialog" :pt="{
-        root: { class: 'w-full md:w-72 lg:w-[48rem]' }
-    }">
+        <template #footer>
+            <PrimaryButton @click="saveLessons">Save</PrimaryButton>
+            <SecondaryButton @click="cancelLessons">Cancel
+            </SecondaryButton>
+        </template>
+    </Modal>
+    <Modal modal :show="showAllocationDialog">
+        <template #header>
+            <div v-text="dialogTitle"></div>
+            <button @click="cancel">
+                <Icon class="h-4 w-4" type="close" />
+            </button>
+        </template>
         <form @submit.prevent="submit">
             <div class="mb-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -301,12 +307,12 @@ const saveLessons = () => {
                     <InputError :message="form.errors.intakes" />
                 </div>
             </div>
-            <div class="flex items-center justify-between mt-8">
-                <Button type="submit" label="Save" size="small" rounded />
-                <Button @click="cancel" label="Cancel" size="small" rounded outlined />
-            </div>
         </form>
-    </Dialog>
+        <template #footer>
+            <PrimaryButton @click="submit">Save</PrimaryButton>
+            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+        </template>
+    </Modal>
     <AuthenticatedLayout title="Allocations">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
             <SecondaryButton @click="newAllocation">

@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
-import Dialog from 'primevue/dialog';
 import Toast from "primevue/toast";
 import { iStudent } from "@/interfaces/index";
+import Modal from '../../Components/Modal.vue'
+import Icon from '../../Components/Icons/Icon.vue'
 
 const props = defineProps<{
     show: boolean,
-    student: iStudent | null
+    student: iStudent
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
@@ -23,8 +24,13 @@ watch(() => props.show, (value) => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog v-model:visible="visible" :closeable="true" @update:visible="close" modal :style="{ width: '50rem' }"
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }" header="Student Details">
+    <Modal :show="visible">
+        <template #header>
+            <div>Student Details</div>
+            <button @click="close(false)">
+                <Icon class="h-5 w-5" type="close" />
+            </button>
+        </template>
         <div>
             <div class="shadow border border-stone-100 dark:border-gray-500 rounded-lg">
                 <div class="relative flex flex-col md:flex-row items-center">
@@ -88,5 +94,5 @@ watch(() => props.show, (value) => {
                 </div>
             </div>
         </div>
-    </Dialog>
+    </Modal>
 </template>

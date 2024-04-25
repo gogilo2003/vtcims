@@ -3,18 +3,18 @@ import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
 import { iInstructor, iLink, iCourse, iIntake } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
+import PrimaryButton from '../../Components/PrimaryButton.vue';
+import Modal from '../../Components/Modal.vue';
 import { ref, watch } from 'vue';
 import { router, useForm } from '@inertiajs/vue3';
 import { debounce } from 'lodash';
 import Icon from '../../Components/Icons/Icon.vue';
 import InputText from 'primevue/inputtext';
 import ListItem from '@/Components/ListItem.vue';
-import Dialog from 'primevue/dialog';
 import Dropdown from 'primevue/dropdown';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Calendar from 'primevue/calendar';
-import Button from 'primevue/button';
 import { useToast } from 'primevue/usetoast';
 import { generateIntakeName } from '../../helpers';
 import Toast from 'primevue/toast';
@@ -64,7 +64,6 @@ const newIntake = () => {
 }
 
 const editIntake = (intake: iIntake) => {
-    console.log(intake.start_date);
 
     form.id = intake.id
     form.course = intake.course.id
@@ -164,8 +163,13 @@ const submit = () => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog modal :header="dialogTitle" v-model:visible="showIntakeDialog" :style="{ width: '50vw' }"
-        :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+    <Modal modal :show="showIntakeDialog">
+        <template #header>
+            <div v-text="dialogTitle"></div>
+            <button @click="cancel">
+                <Icon class="h-5 w-5" type="close" />
+            </button>
+        </template>
         <form @submit.prevent="submit">
             <div class="mb-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -195,12 +199,12 @@ const submit = () => {
                 <InputText v-model="form.name" readonly />
                 <InputError :message="form.errors.name" />
             </div>
-            <div class="flex items-center justify-between mt-8">
-                <Button type="submit" label="Save" size="small" rounded />
-                <Button @click="cancel" label="Cancel" size="small" rounded outlined />
-            </div>
         </form>
-    </Dialog>
+        <template #footer>
+            <PrimaryButton @click="submit">Save</PrimaryButton>
+            <SecondaryButton @click="cancel">Cancel</SecondaryButton>
+        </template>
+    </Modal>
     <AuthenticatedLayout title="Intakes">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
             <SecondaryButton @click="newIntake">
@@ -208,11 +212,11 @@ const submit = () => {
                 <span class="hidden md:inline-flex">New Intake</span>
             </SecondaryButton>
             <div>
-                <span class="relative">
-                    <i class="pi pi-search absolute -top-[40%] translate-y-[50%] left-2 opacity-50" />
+                <div class="relative">
+                    <span class="pi pi-search absolute -top-[40%] translate-y-[50%] left-2 opacity-50"></span>
                     <InputText v-model="searchVal" placeholder="Search" class="px-8 w-full"
                         :pt="{ root: { class: 'rounded-full focus:ring-primary-500 text-surface-600 dark:text-surface-200 bg-surface-0 dark:bg-surface-700' } }" />
-                </span>
+                </div>
             </div>
         </div>
         <div class="flex flex-col gap-2">

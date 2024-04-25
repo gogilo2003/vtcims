@@ -2,11 +2,12 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { useForm, usePage } from '@inertiajs/vue3';
 import Modal from '../../Components/Modal.vue';
+import PrimaryButton from '../../Components/PrimaryButton.vue';
+import SecondaryButton from '../../Components/SecondaryButton.vue';
 import InputText from "primevue/inputtext";
 import InputNumber from "primevue/inputnumber";
 import { useToast } from 'primevue/usetoast';
 import Toast from "primevue/toast";
-import Button from 'primevue/button';
 import Dropdown from 'primevue/dropdown';
 import Calendar from 'primevue/calendar';
 import { iBogMember } from '../../interfaces/index';
@@ -15,7 +16,7 @@ import Icon from "../../Components/Icons/Icon.vue";
 const props = defineProps<{
     show: boolean,
     edit: Boolean,
-    member: iBogMember | null
+    member: iBogMember
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
@@ -178,7 +179,9 @@ watch(() => props.show, (value) => {
     <Modal :show="visible">
         <template #header>
             <div v-text="dialogTitle"></div>
-            <Icon class="h-5 w-5" type="close" />
+            <button @click="close(false)">
+                <Icon class="h-5 w-5" type="close" />
+            </button>
         </template>
         <div class="">
             <form @submit.prevent="submit">
@@ -302,9 +305,10 @@ watch(() => props.show, (value) => {
             </form>
         </div>
         <template #footer>
-            <Button :class="{ 'opacity-30': form.processing }" :disabled="form.processing" type="submit" label="Save"
-                rounded />
-            <Button type="reset" @click="close(false)" label="Cancel" rounded outlined severity="danger" />
+            <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" type="submit"
+                label="Save" rounded></PrimaryButton>
+            <SecondaryButton type="reset" @click="close(false)" label="Cancel" rounded outlined severity="danger">
+            </SecondaryButton>
         </template>
     </Modal>
 </template>

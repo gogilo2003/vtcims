@@ -18,22 +18,14 @@ class LessonController extends Controller
         $search = request()->input('search');
         $lessons = Lesson::when($search, function ($query) use ($search) {
             $query->where('title', 'LIKE', "%$search%");
-        })->with('allocations')->paginate(3)->through(fn ($item) => [
-            "id" => $item->id,
-            "title" => $item->title,
-            "day" => $item->day,
-            "start_at" => $item->start_at->format('H:i'),
-            "end_at" => $item->end_at->format('H:i'),
-        ]);
+        })->with('allocations')->paginate(3)->through(fn($item) => [
+                "id" => $item->id,
+                "title" => $item->title,
+                "day" => $item->day,
+                "start_at" => $item->start_at->format('H:i'),
+                "end_at" => $item->end_at->format('H:i'),
+            ]);
         return Inertia::render('Lessons/Index', ['lessons' => $lessons, 'search' => $search]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -41,23 +33,16 @@ class LessonController extends Controller
      */
     public function store(StoreLessonRequest $request)
     {
-        //
-    }
+        $lesson = new Lesson();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Lesson $lesson)
-    {
-        //
-    }
+        $lesson->title = $request->title;
+        $lesson->day = $request->day;
+        $lesson->start_at = $request->start_at;
+        $lesson->end_at = $request->end_at;
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Lesson $lesson)
-    {
-        //
+        $lesson->save();
+
+        return redirect()->back()->with('success', 'Lesson created');
     }
 
     /**
@@ -65,7 +50,14 @@ class LessonController extends Controller
      */
     public function update(UpdateLessonRequest $request, Lesson $lesson)
     {
-        //
+        $lesson->title = $request->title;
+        $lesson->day = $request->day;
+        $lesson->start_at = $request->start_at;
+        $lesson->end_at = $request->end_at;
+
+        $lesson->save();
+
+        return redirect()->back()->with('success', 'Lesson updated');
     }
 
     /**
@@ -73,6 +65,7 @@ class LessonController extends Controller
      */
     public function destroy(Lesson $lesson)
     {
-        //
+        $lesson->delete();
+        return redirect()->back()->with('success', 'Lesson updated');
     }
 }

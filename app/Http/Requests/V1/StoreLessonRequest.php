@@ -22,7 +22,10 @@ class StoreLessonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "title" => ["required", "string", "unique:lessons,title"],
+            "day" => ["required", "string"],
+            "start_at" => ["required", "time"],
+            "end_at" => ["required", "time"],
         ];
     }
 }

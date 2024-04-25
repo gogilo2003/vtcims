@@ -68,8 +68,6 @@ const editStudent = (STUDENT: iStudent) => {
 }
 
 const viewStudent = (STUDENT: iStudent) => {
-    console.log('here');
-
     student.value = STUDENT
     showView.value = true
 }

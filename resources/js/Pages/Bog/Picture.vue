@@ -1,21 +1,23 @@
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useForm, usePage } from '@inertiajs/vue3';
-import Dialog from 'primevue/dialog';
 import FileUpload from "primevue/fileupload";
 import { useToast } from 'primevue/usetoast';
 import Toast from "primevue/toast";
-import Button from 'primevue/button';
 import { iPhoto } from "@/interfaces/index";
 import Icon from "@/Components/Icons/Icon.vue";
+import Modal from '../../Components/Modal.vue'
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 const props = defineProps<{
     show: boolean,
-    photo?: iPhoto | null,
+    photo: iPhoto,
+
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
-const form = useForm({
+const form = useForm<iPhoto>({
     id: null,
     photo: null,
 })
@@ -23,7 +25,7 @@ const form = useForm({
 const page = usePage()
 const toast = useToast()
 
-watch(() => props.student, value => {
+watch(() => props.photo, value => {
     form.id = value.id
     form.photo = value.photo
 })
@@ -69,7 +71,6 @@ const close = (value: boolean) => {
 }
 
 const visible = ref(false)
-const dialogTitle = computed(() => props.edit ? 'Edit Student Photo' : 'New Student Photo')
 
 watch(() => props.show, (value) => {
     visible.value = value
@@ -82,10 +83,12 @@ watch(() => props.photo?.id, (value) => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Dialog v-model:visible="visible" :closeable="true" @update:visible="close" modal :header="dialogTitle"
-        :style="{ width: 'auto' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+    <Modal :show="visible" max-width="lg">
         <template #header>
-            <h4>Student Photo</h4>
+            <h4>BOG Member Photo</h4>
+            <button @click="close(false)">
+                <Icon class="h-5 w-5" type="close" />
+            </button>
         </template>
         <div class="">
             <form @submit.prevent="submit">
@@ -117,12 +120,12 @@ watch(() => props.photo?.id, (value) => {
                             class="text-red-400"></span>
                     </div>
                 </div>
-                <div class="flex gap-2 items-center justify-between">
-                    <Button type="submit" label="Upload Photo" rounded :loading="form.processing"
-                        :disabled="form.processing" />
-                    <Button type="reset" @click="close(false)" label="Cancel" rounded outlined severity="danger" />
-                </div>
             </form>
         </div>
-    </Dialog>
+        <template #footer>
+            <PrimaryButton @click="submit" :loading="form.processing" :disabled="form.processing">Upload Photo
+            </PrimaryButton>
+            <SecondaryButton @click="close(false)">Cancel</SecondaryButton>
+        </template>
+    </Modal>
 </template>

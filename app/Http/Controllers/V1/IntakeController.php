@@ -6,7 +6,7 @@ use Inertia\Inertia;
 use App\Models\Staff;
 use App\Models\Course;
 use App\Models\Intake;
-use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreIntakeRequest;
@@ -26,19 +26,21 @@ class IntakeController extends Controller
         })->with(['staff', 'course'])
             ->orderBy('created_at', 'DESC')
             ->orderBy('name', 'ASC')
-            ->paginate(10)->through(fn ($item) => [
+            ->paginate(10)->through(fn($item) => [
                 "id" => $item->id,
                 "name" => $item->name,
                 "start_date" => $item->start_date,
                 "end_date" => $item->end_date,
                 "staff" => [
                     "id" => $item->staff->id,
-                    "name" => trim(sprintf(
-                        '%s %s %s',
-                        $item->staff->surname,
-                        $item->staff->first_name,
-                        $item->staff->middle_name
-                    )),
+                    "name" => trim(
+                        sprintf(
+                            '%s %s %s',
+                            $item->staff->surname,
+                            $item->staff->first_name,
+                            $item->staff->middle_name
+                        )
+                    ),
                 ],
                 "course" => [
                     "id" => $item->course->id,
@@ -49,15 +51,15 @@ class IntakeController extends Controller
 
         $instructors = Staff::whereHas('status', function ($query) {
             $query->where('name', 'current');
-        })->where('teach', 1)->get()->map(fn ($item) => [
-            "id" => $item->id,
-            "name" => sprintf("%s %s %s", $item->surname, $item->last_name, $item->middle_name),
-        ]);
+        })->where('teach', 1)->get()->map(fn($item) => [
+                "id" => $item->id,
+                "name" => sprintf("%s %s", Str::ucfirst(Str::lower($item->first_name)), Str::ucfirst(Str::lower($item->surname))),
+            ]);
 
-        $courses = Course::orderBy('name', 'ASC')->get()->map(fn ($item) => [
+        $courses = Course::orderBy('name', 'ASC')->get()->map(fn($item) => [
             "id" => $item->id,
             "code" => $item->code,
-            "name" => $item->name,
+            "name" => Str::title(Str::lower($item->name)),
         ]);
 
         return Inertia::render('Intakes/Index', ['intakes' => $intakes, 'instructors' => $instructors, 'courses' => $courses, 'search' => $search,]);
@@ -103,6 +105,10 @@ class IntakeController extends Controller
      */
     public function destroy(Intake $intake)
     {
-        //
+        $intake->delete();
+
+        return redirect()
+            ->back()
+            ->with('success', 'Class/Intake deleted');
     }
 }

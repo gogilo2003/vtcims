@@ -22,7 +22,11 @@ class UpdateLessonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "id" => ["required", "numeric", "integer", "exists:lessons,id"],
+            "title" => ["required", "string", "unique:lessons,title," . $this->id . ",id"],
+            "day" => ["required", "string"],
+            "start_at" => ["required", "time"],
+            "end_at" => ["required", "time"],
         ];
     }
 }
