@@ -21,6 +21,7 @@ use App\Http\Controllers\V1\AttendanceController;
 use App\Http\Controllers\V1\DepartmentController;
 use App\Http\Controllers\V1\BogPositionController;
 use App\Http\Controllers\V1\DesignationController;
+use App\Http\Controllers\V1\ExaminationController;
 use App\Http\Controllers\V1\StaffStatusController;
 
 /*
@@ -174,6 +175,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('', [TermController::class, 'store'])->name('-store');
         Route::patch('{term}', [TermController::class, 'update'])->name('-update');
         Route::delete('{term}', [TermController::class, 'destroy'])->name('-destroy');
+    });
+    Route::prefix('examinations')->name('examinations')->group(function () {
+        Route::get('', [ExaminationController::class, 'index']);
+        Route::post('', [ExaminationController::class, 'store'])->name('-store');
+        Route::patch('{term}', [ExaminationController::class, 'update'])->name('-update');
+        Route::delete('{term}', [ExaminationController::class, 'destroy'])->name('-destroy');
     });
 
     Route::prefix('profile')->name('profile')->group(function () {

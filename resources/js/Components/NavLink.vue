@@ -61,10 +61,11 @@ watchEffect(() => {
 
 <template>
     <component :is="items?.length ? 'span' : Link" :href="href"
-        class="ml-4 md:ml-8 my-0 flex items-center text-lg font-medium leading-5 transition duration-150 ease-in-out relative rounded-l-full"
+        class="ml-4 md:ml-8 my-0 flex items-center leading-5 transition duration-150 ease-in-out relative rounded-l-full"
         :class="classes">
         <Icon class="h-6 w-6 object-contain ml-4 flex-none" :type="icon" />
-        <span @click="showSubmenu = !showSubmenu" class="cursor-pointer pl-3 pr-6 py-4 flex justify-between flex-1">
+        <span @click="showSubmenu = !showSubmenu"
+            class="cursor-pointer pl-3 pr-6 py-4 flex justify-between flex-1 text-base font-light uppercase ">
             <slot />
             <Icon v-if="items?.length" :type="showSubmenu ? 'pi-chevron-up' : 'pi-chevron-down'"
                 class="transition duration-300" />
@@ -76,7 +77,7 @@ watchEffect(() => {
                 class="absolute z-20 left-0 top-[100%] bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-400 p-3 ml-6 w-[calc(100%_-_2.5rem)] rounded-lg flex flex-col gap-1"
                 v-click-away="onClickAway">
                 <Link
-                    class="w-full text-base px-3 py-2 transition-all duration-300 rounded bg-gray-50 dark:bg-gray-700 hover:bg-primary-500 hover:text-gray-100"
+                    class="w-full text-sm font-light px-3 py-2 transition-all duration-300 rounded bg-gray-50 dark:bg-gray-700 hover:bg-primary-500 hover:text-gray-100"
                     :class="{ 'bg-primary-500 text-gray-100': route().current(name), 'dark:text-gray-300': !route().current(name) }"
                     :href="route(name)" v-for="{ name, caption } in items">
                 {{ caption }}

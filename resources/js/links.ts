@@ -70,6 +70,21 @@ export const links: iMenu[] = [
     },
     {
         name: '',
+        icon: 'certificate',
+        caption: 'Examinations',
+        items: [
+            {
+                name: "examinations",
+                caption: "Examinations"
+            },
+            // {
+            //     name: "bog-positions",
+            //     caption: "Positions"
+            // },
+        ]
+    },
+    {
+        name: '',
         icon: 'settings',
         caption: 'Setup',
         items: [

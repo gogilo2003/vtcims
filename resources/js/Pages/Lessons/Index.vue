@@ -178,7 +178,7 @@ const days = ref(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"])
             </SecondaryButton>
             <div>
                 <span class="relative">
-                    <i class="pi pi-search absolute -top-[40%] translate-y-[50%] left-2 opacity-50" />
+                    <span class="pi pi-search absolute top-[50%] -translate-y-[50%] left-2 opacity-50"></span>
                     <InputText v-model="searchVal" placeholder="Search" class="px-8 w-full"
                         :pt="{ root: { class: 'rounded-full focus:ring-primary-500 text-surface-600 dark:text-surface-200 bg-surface-0 dark:bg-surface-700' } }" />
                 </span>

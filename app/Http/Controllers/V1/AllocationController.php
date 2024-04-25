@@ -9,6 +9,7 @@ use App\Models\Intake;
 use App\Models\Lesson;
 use App\Models\Subject;
 use App\Models\Allocation;
+use App\Models\Examination;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
@@ -128,23 +129,32 @@ class AllocationController extends Controller
         $allocation->save();
 
         $allocation->intakes()->sync($request->intakes);
+
+        $term = Term::find($request->term);
+        $subject = Subject::find($request->subject);
+        $subjectName = Str::title(Str::lower($subject->name));
+
+        if (count($request->intakes) == 1) {
+            $intake = Intake::find($request->intakes[0]);
+            $subjectName = sprintf("%s - %s", $intake->name, $subjectName);
+        }
+
+        $examination = new Examination();
+        $examination->title = sprintf(
+            '%d - %s - %s',
+            $term->year,
+            Str::upper($term->name),
+            $subjectName
+        );
+        $examination->subject_id = $request->subject;
+        $examination->staff_id = $request->instructor;
+        $examination->term_id = $request->term;
+
+        $examination->save();
+
+        $examination->intakes()->sync($request->intakes);
+
         return redirect()->back()->with('success', 'Allocation created');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Allocation $intakeStaffSubject)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Allocation $intakeStaffSubject)
-    {
-        //
     }
 
     /**
