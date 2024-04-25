@@ -81,15 +81,16 @@
             <tfoot>
                 <tr>
                     <td colspan="{{ $cols }}" class="text-center p-2 border border-gray-800">
-                        @include('students.download.components.key')
+                        @include('pdf.students.components.key')
                     </td>
                 </tr>
             </tfoot>
         </table>
     </div>
     <div class="p-4">
-        @include('students.download.components.attendance-footer', [
+        @include('pdf.students.components.attendance-footer', [
             'instructor' => $allocation->staff,
+            'principal' => $principal,
         ])
     </div>
 @endsection

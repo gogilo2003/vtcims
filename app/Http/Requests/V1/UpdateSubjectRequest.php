@@ -25,6 +25,7 @@ class UpdateSubjectRequest extends FormRequest
             'id' => 'required|integer|exists:subjects,id',
             'code' => 'required|unique:subjects,code,' . $this->id,
             'name' => 'required|string',
+            "courses" => "required|array|min:1",
             'courses.*' => 'nullable|integer|exists:courses,id',
         ];
     }

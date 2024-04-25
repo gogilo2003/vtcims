@@ -1,12 +1,3 @@
-@php
-    $principal = \App\Models\Staff::whereHas('role', function ($query) {
-        $query->where('name', 'LIKE', 'principal');
-    })
-        ->whereHas('status', function ($query) {
-            $query->where('name', 'LIKE', 'current');
-        })
-        ->first();
-@endphp
 <div class=" break-before-avoid">
     <table class="w-full uppercase">
         <tr>
@@ -35,7 +26,8 @@
             </td>
             <td class="p-2 border border-gray-800"></td>
             <td class="p-2 border border-gray-800"></td>
-            <td class="p-2 border border-gray-800">{{ $principal->min_name }}</td>
+            <td class="p-2 border border-gray-800">
+                {{ sprintf('%s %s', $principal->first_name, $principal->surname ?? $principal->middle_name) }}</td>
             <td class="p-2 border border-gray-800"></td>
             <td class="p-2 border border-gray-800"></td>
         </tr>

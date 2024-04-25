@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\V1\StoreStudentRequest;
 use App\Http\Requests\V1\UpdateStudentRequest;
 use App\Http\Requests\V1\UploadPictureRequest;
+use App\Support\StudentUtil;
 
 class StudentController extends Controller
 {
@@ -388,15 +389,9 @@ class StudentController extends Controller
                     return $query->whereYear('date_of_admission', $year);
                 })
                 ->get()
-                ->map(fn($student) => (object) [
+                ->map(fn(Student $student) => (object) [
                     "id" => $student->id,
-                    "admission_no" => $student->intake
-                        ? strtoupper(
-                            $student->intake->course->code . '/'
-                            . str_pad($student->id, 4, '0', 0) . '/'
-                            . $student->date_of_admission->format('Y')
-                        )
-                        : '',
+                    "admission_no" => StudentUtil::prepAdmissionNo($student),
                     "photo" => $student->photo ?? "",
                     "photo_url" => $student->photo ? Storage::disk('public')->url($student->photo) : asset('img/person_8x10.png'),
                     "surname" => ucfirst(Str::lower($student->surname)),

@@ -22,8 +22,8 @@ class StoreSubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'code' => 'required|unique:subjects,code',
-            'name' => 'required',
+            'code' => 'required|string|unique:subjects,code',
+            'name' => 'required|string',
             'courses.*' => 'nullable|exists:courses,id',
         ];
     }

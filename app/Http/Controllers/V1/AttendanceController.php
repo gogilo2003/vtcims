@@ -5,14 +5,14 @@ namespace App\Http\Controllers\V1;
 use DateTime;
 use DatePeriod;
 use DateInterval;
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Inertia\Inertia;
 use App\Models\Staff;
 use App\Models\Lesson;
+use App\Models\Student;
 use App\Models\Allocation;
 use App\Models\Attendance;
 use Illuminate\Support\Str;
+use App\Support\StudentUtil;
 use App\Exports\StudentExport;
 use Illuminate\Support\Carbon;
 use App\Models\AllocationLesson;
@@ -21,7 +21,6 @@ use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Database\Eloquent\Collection;
 use App\Http\Requests\V1\StoreAttendanceRequest;
-use App\Http\Requests\V1\UpdateAttendanceRequest;
 use App\Http\Requests\V1\UploadAttendanceRequest;
 
 class AttendanceController extends Controller
@@ -245,10 +244,19 @@ class AttendanceController extends Controller
             $allocation->load('subject');
 
             $filename = Str::upper(Str::lower(Str::replace(" ", "_", sprintf("%s %s %s", $allocation->subject->code, $allocation->term->year, $allocation->term->name))));
-            $students = $allocation->intakes->flatMap->students->map(function ($item) {
+            $students = $allocation->intakes->flatMap->students->map(function (Student $item) {
                 return (object) [
-                    "admission_no" => $item->admission_no,
-                    "name" => Str::upper(Str::lower($item->name)), //Str::upper(Str::lower(sprintf("%s%s%s", $item->first_name, $item->middle_name, $item->surname)))
+                    "admission_no" => StudentUtil::prepAdmissionNo($item),
+                    "name" => Str::upper(
+                        Str::lower(
+                            sprintf(
+                                "%s%s %s",
+                                $item->first_name,
+                                $item->middle_name ? ' ' . $item->middle_name : '',
+                                $item->surname,
+                            )
+                        )
+                    ), //Str::upper(Str::lower(sprintf("%s%s%s", $item->first_name, $item->middle_name, $item->surname)))
                     "gender" => $item->gender ? 'Female' : 'Male',
                     "plwd" => $item->plwd ? 'Yes' : 'No'
                 ];
@@ -266,55 +274,72 @@ class AttendanceController extends Controller
 
             // Generate PDF content
             $pdfContent = "";
+            $principal = Staff::whereHas('status', function ($query) {
+                $query->where('name', 'like', '%current%');
+            })->whereHas('role', function ($query) {
+                $query->where('name', 'like', 'principal');
+            })->first();
 
-            // if (request()->input('duration') == 'day') {
-            //     $startOfWeek = (new DateTime('monday this week'))->format('Y-m-d');
-            //     $endOfWeek = date('Y-m-d', strtotime('friday this week'));
-            //     $pdfContent = view('students.download.attendance', [
-            //         'students' => $students,
-            //         'allocation' => $allocationData,
-            //         'logos' => $logos,
-            //         'styles' => $styles,
-            //         "start_date" => $startOfWeek,
-            //         "end_date" => $endOfWeek,
-            //     ])->render();
-            // } else
-            if (request()->input('duration') == 'week') {
-                $startOfWeek = Carbon::parse((new DateTime('monday this week'))->format('Y-m-d'))->isoFormat('ddd, D MMM Y');
-                $endOfWeek = Carbon::parse(date('Y-m-d', strtotime('friday this week')))->isoFormat('ddd, D MMM Y');
-                $pdfContent = view('students.download.attendance', [
+            if (!$principal) {
+                $principal = Staff::whereHas('status', function ($query) {
+                    $query->where('name', 'like', '%current%');
+                })->whereHas('role', function ($query) {
+                    $query->where('name', 'like', '%principal%');
+                })->first();
+            }
+
+            if (request()->input('duration') == 'day') {
+                $startOfWeek = (new DateTime('monday this week'))->format('Y-m-d');
+                $endOfWeek = date('Y-m-d', strtotime('friday this week'));
+                $pdfContent = view('pdf.students.attendance', [
                     'students' => $students,
                     'allocation' => $allocationData,
                     'logos' => $logos,
                     'styles' => $styles,
                     "start_date" => $startOfWeek,
                     "end_date" => $endOfWeek,
+                    "principal" => $principal,
                 ])->render();
-            } elseif (request()->input('duration') == 'month') {
-                $currentMonth = date('Y-m');
-                $startOfMonth = Carbon::parse(date('Y-m-01', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
-                $endOfMonth = Carbon::parse(date('Y-m-t', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
-                $pdfContent = view('students.download.attendance', [
-                    'students' => $students,
-                    'allocation' => $allocationData,
-                    'logos' => $logos,
-                    'styles' => $styles,
-                    "start_date" => $startOfMonth,
-                    "end_date" => $endOfMonth,
-                ])->render();
-            } elseif (request()->input('duration') == 'term') {
-                $currentQuarter = ceil(date('n') / 3);
-                $startOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, ($currentQuarter - 1) * 3 + 1, 1)))->isoFormat('ddd, D MMM Y');
-                $endOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, $currentQuarter * 3, 0)))->isoFormat('ddd, D MMM Y');
-                $pdfContent = view('students.download.attendance', [
-                    'students' => $students,
-                    'allocation' => $allocationData,
-                    'logos' => $logos,
-                    'styles' => $styles,
-                    "start_date" => $startOfQuarter,
-                    "end_date" => $endOfQuarter,
-                ])->render();
-            }
+            } else
+                if (request()->input('duration') == 'week') {
+                    $startOfWeek = Carbon::parse((new DateTime('monday this week'))->format('Y-m-d'))->isoFormat('ddd, D MMM Y');
+                    $endOfWeek = Carbon::parse(date('Y-m-d', strtotime('friday this week')))->isoFormat('ddd, D MMM Y');
+                    $pdfContent = view('pdf.students.attendance', [
+                        'students' => $students,
+                        'allocation' => $allocationData,
+                        'logos' => $logos,
+                        'styles' => $styles,
+                        "start_date" => $startOfWeek,
+                        "end_date" => $endOfWeek,
+                        "principal" => $principal,
+                    ])->render();
+                } elseif (request()->input('duration') == 'month') {
+                    $currentMonth = date('Y-m');
+                    $startOfMonth = Carbon::parse(date('Y-m-01', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
+                    $endOfMonth = Carbon::parse(date('Y-m-t', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
+                    $pdfContent = view('pdf.students.attendance', [
+                        'students' => $students,
+                        'allocation' => $allocationData,
+                        'logos' => $logos,
+                        'styles' => $styles,
+                        "start_date" => $startOfMonth,
+                        "end_date" => $endOfMonth,
+                        "principal" => $principal,
+                    ])->render();
+                } elseif (request()->input('duration') == 'term') {
+                    $currentQuarter = ceil(date('n') / 3);
+                    $startOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, ($currentQuarter - 1) * 3 + 1, 1)))->isoFormat('ddd, D MMM Y');
+                    $endOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, $currentQuarter * 3, 0)))->isoFormat('ddd, D MMM Y');
+                    $pdfContent = view('pdf.students.attendance', [
+                        'students' => $students,
+                        'allocation' => $allocationData,
+                        'logos' => $logos,
+                        'styles' => $styles,
+                        "start_date" => $startOfQuarter,
+                        "end_date" => $endOfQuarter,
+                        "principal" => $principal,
+                    ])->render();
+                }
 
             $pdf = App::make('snappy.pdf.wrapper')
                 ->setOrientation('landscape')

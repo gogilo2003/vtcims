@@ -41,7 +41,7 @@ class AllocationController extends Controller
         })->orderBy('created_at', 'DESC')
             ->with('term', 'staff', 'subject', 'intakes', 'lessons')
             ->paginate(10)
-            ->through(fn ($item) => [
+            ->through(fn($item) => [
                 "id" => $item->id,
                 "term" => [
                     "id" => $item->term->id,
@@ -53,18 +53,18 @@ class AllocationController extends Controller
                 ],
                 "instructor" => [
                     "id" => $item->staff->id,
-                    "name" => Str::lower(sprintf("%s %s %s", $item->staff->surname, $item->staff->first_name, $item->staff->middle_name)),
+                    "name" => Str::lower(sprintf("%s %s", $item->staff->first_name, $item->staff->surname ? $item->staff->surname : $item->staff->middle_name)),
                 ],
                 "subject" => [
                     "id" => $item->subject->id,
                     "code" => $item->subject->code,
                     "name" => $item->subject->name,
                 ],
-                "intakes" => $item->intakes->map(fn ($intake) => [
+                "intakes" => $item->intakes->map(fn($intake) => [
                     "id" => $intake->id,
                     "name" => $intake->name,
                 ]),
-                "lessons" => $item->lessons->map(fn ($lesson) => [
+                "lessons" => $item->lessons->map(fn($lesson) => [
                     "id" => $lesson->id,
                     "title" => $lesson->title,
                     "day" => $lesson->day,
@@ -73,7 +73,7 @@ class AllocationController extends Controller
                 ]),
             ]);
 
-        $subjects = Subject::all()->map(fn ($item) => [
+        $subjects = Subject::all()->map(fn($item) => [
             "id" => $item->id,
             "code" => $item->code,
             "name" => ucwords(strtolower($item->name)),
@@ -83,12 +83,12 @@ class AllocationController extends Controller
             $query->where('name', 'LIKE', '%current%');
         })
             // ->where('teach', 1)
-            ->get()->map(fn ($item) => [
+            ->get()->map(fn($item) => [
                 "id" => $item->id,
                 "name" => sprintf("%s %s %s", $item->first_name, $item->middle_name, $item->surname)
             ]);
 
-        $terms = Term::orderBy('year', 'DESC')->orderBy('name', 'DESC')->get()->map(fn ($item) => [
+        $terms = Term::orderBy('year', 'DESC')->orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name,
             "year" => $item->year,
@@ -97,7 +97,7 @@ class AllocationController extends Controller
             "end_date" => Carbon::parse($item->end_date)->isoFormat('lll'),
         ]);
 
-        $intakes = Intake::orderBy('start_date', 'DESC')->get()->map(fn ($item) => [
+        $intakes = Intake::orderBy('start_date', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name,
             "start_date" => $item->start_date,
