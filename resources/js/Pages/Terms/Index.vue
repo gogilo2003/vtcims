@@ -47,7 +47,7 @@ const editTerm = (term: iTerm) => {
 
     form.id = term.id
     form.name = term.name
-    selectedYear.value = new Date(form.year = term.year)
+    selectedYear.value = new Date(`1-Jan-${term.year}`)
     form.start_date = term.start_date
     form.end_date = term.end_date
 
@@ -57,6 +57,7 @@ const editTerm = (term: iTerm) => {
 const cancel = () => {
     form.reset()
     form.clearErrors()
+    selectedYear.value = new Date()
     edit.value = false
 }
 
@@ -197,8 +198,9 @@ watch(() => selectedYear.value, (value) => {
                         <InputError :message="form.errors.start_date" />
                     </div>
                     <div class="flex justify-between">
-                        <PrimaryButton>Save</PrimaryButton>
-                        <SecondaryButton type="button" @click="cancel">Cancel</SecondaryButton>
+                        <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing">Save
+                        </PrimaryButton>
+                        <SecondaryButton v-if="edit" type="button" @click="cancel">Cancel</SecondaryButton>
                     </div>
                 </form>
             </div>

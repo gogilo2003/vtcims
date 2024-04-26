@@ -33,35 +33,18 @@ class TermController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
+     *
+     * @param \App\Http\Requests\StoreTermRequest $request
+     * @return void
      */
     public function store(StoreTermRequest $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Term $term)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Term $term)
-    {
-        //
+        $term = new Term();
+        $term->name = $request->name;
+        $term->year = $request->year;
+        $term->start_at = $request->start_at;
+        $term->end_at = $request->end_at;
     }
 
     /**
