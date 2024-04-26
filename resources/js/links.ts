@@ -89,6 +89,10 @@ export const links: iMenu[] = [
         caption: 'Setup',
         items: [
             {
+                name: 'terms',
+                caption: 'Terms',
+            },
+            {
                 name: 'programs',
                 caption: 'Programs',
             },

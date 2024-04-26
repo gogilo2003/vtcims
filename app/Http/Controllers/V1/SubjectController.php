@@ -57,8 +57,12 @@ class SubjectController extends Controller
 
         $subject->save();
 
-        $subject->courses()->attach($request->courses);
-        $subject->staff()->attach($request->staff);
+        if ($request->has('courses')) {
+            $subject->courses()->sync($request->courses);
+        }
+        if ($request->has('staff')) {
+            $subject->staff()->sync($request->staff);
+        }
 
         return redirect()
             ->back()
@@ -78,9 +82,12 @@ class SubjectController extends Controller
         $subject->code = $request->code;
 
         $subject->save();
-
-        $subject->courses()->sync($request->courses);
-        $subject->staff()->sync($request->staff);
+        if ($request->has('courses')) {
+            $subject->courses()->sync($request->courses);
+        }
+        if ($request->has('staff')) {
+            $subject->staff()->sync($request->staff);
+        }
 
         return redirect()
             ->back()

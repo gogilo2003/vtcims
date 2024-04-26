@@ -219,7 +219,7 @@ const saveLessons = () => {
             <div class="dark:bg-gray-700 shadow p-3 rounded-lg my-3 flex flex-col gap-2 text-sm capitalize flex-none">
                 <div class="flex gap-2">
                     <span class="font-medium dark:text-gray-300">Term:</span><span class="dark:text-gray-100"
-                        v-text="selectedAllocation.term.year_name"></span>
+                        v-text="`${selectedAllocation.term.year}-${selectedAllocation.term.name}`"></span>
                 </div>
                 <div class="flex gap-2">
                     <span class="font-medium dark:text-gray-300">Subject:</span><span class="dark:text-gray-100"
@@ -297,7 +297,7 @@ const saveLessons = () => {
                 </div>
                 <div>
                     <InputLabel value="Term" />
-                    <Dropdown :options="terms" option-value="id" option-label="year_name" v-model="form.term" filter />
+                    <Dropdown :options="terms" option-value="id" option-label="name" v-model="form.term" filter />
                     <InputError :message="form.errors.term" />
                 </div>
                 <div>
@@ -330,7 +330,7 @@ const saveLessons = () => {
         <div class="flex flex-col gap-2">
             <ListItem v-for="allocation in allocations.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                 <div>
-                    <div v-text="`${allocation.term.year_name}: ${allocation.subject.name}`"
+                    <div v-text="`${allocation.term.year} - ${allocation.term.name}: ${allocation.subject.name}`"
                         class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-default">
                     </div>
                     <div class="flex flex-col md:flex-row md:divide-x justify-start">

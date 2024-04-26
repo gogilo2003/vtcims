@@ -64,11 +64,10 @@ class AttendanceController extends Controller
                     "year" => $item->term->year,
                     "start_date" => $item->term->start_date->isoFormat('lll'),
                     "end_date" => $item->term->end_date->isoFormat('lll'),
-                    "year_name" => $item->term->year_name,
                 ],
                 "instructor" => [
                     "id" => $item->staff->id,
-                    "name" => Str::lower(sprintf("%s %s %s", $item->staff->surname, $item->staff->first_name, $item->staff->middle_name)),
+                    "name" => Str::lower(sprintf("%s %s", $item->staff->first_name, $item->staff->surname ?? $item->staff->middle_name)),
                 ],
                 "subject" => [
                     "id" => $item->subject->id,
@@ -327,6 +326,11 @@ class AttendanceController extends Controller
                 $currentQuarter = ceil(date('n') / 3);
                 $startOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, ($currentQuarter - 1) * 3 + 1, 1)))->isoFormat('ddd, D MMM Y');
                 $endOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, $currentQuarter * 3, 0)))->isoFormat('ddd, D MMM Y');
+                if (request()->has('term')) {
+                    $term = Term::find(request()->input('term'));
+                    $startOfQuarter = Carbon::parse($term->start_date)->isoFormat('ddd, D MMM Y');
+                    $endOfQuarter = Carbon::parse($term->end_date)->isoFormat('ddd, D MMM Y');
+                }
                 $pdfContent = view('pdf.students.attendance', [
                     'students' => $students,
                     'allocation' => $allocationData,

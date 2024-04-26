@@ -8,18 +8,19 @@
 
 @section('content')
     <div class="p-4">
-        <table class="table w-full my-0 border-collapse">
+        <table class="table w-full my-0 border-collapse border-t border-b border-gray-800">
             <thead class="bg-gray-100 uppercase">
                 <tr>
                     <th class="max-w-[50%] text-left border px-2 py-1 border-gray-800">Class(s)/Intake(s)</th>
-                    <th class="text-left border px-2 py-1 border-gray-800">Subject</th>
-                    <th class="text-left border px-2 py-1 border-gray-800">From</th>
-                    <th class="text-left border px-2 py-1 border-gray-800">To</th>
+                    <th class="text-left border-r px-2 py-1 border-gray-800">Subject</th>
+                    <th class="text-left border-r px-2 py-1 border-gray-800">From</th>
+                    <th class="text-left border-r px-2 py-1 border-gray-800">To</th>
                 </tr>
             </thead>
             <tr>
                 <td class="border border-gray-800 p-2 text-sm text-gray-800 font-light">{{ $intakes }}</td>
-                <td class="border border-gray-800 p-2 text-sm text-gray-800 font-light">{{ $allocation->subject->name }}
+                <td class="border border-gray-800 p-2 text-sm text-gray-800 font-light uppercase">
+                    {{ $allocation->subject->name }}
                 </td>
                 <td class="border border-gray-800 p-2 text-sm text-gray-800 font-light">{!! $start_date !!}</td>
                 <td class="border border-gray-800 p-2 text-sm text-gray-800 font-light">{!! $end_date !!}</td>
@@ -27,30 +28,31 @@
         </table>
     </div>
     <div class="p-1">
-        <table class="w-full border border-gray-800">
-            <thead class="bg-gray-100">
+        <table class="w-full border-t border-b border-gray-800 border-collapse" style="border-spacing: 0 0">
+            <thead class="bg-gray-800 text-gray-50">
                 <tr class="">
-                    <th rowspan="2" class="text-sm w-12 border border-gray-800"></th>
-                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800" style="width: 130px">
+                    <th rowspan="2" class="text-sm w-12 border-l border-r border-gray-300"></th>
+                    <th rowspan="2" class="text-sm uppercase text-center border-r border-gray-300" style="width: 130px">
                         Admission
                         No
                     </th>
-                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800" style="width: 280px">
+                    <th rowspan="2" class="text-sm uppercase text-center border-r border-gray-300" style="width: 280px">
                         Name</th>
-                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800 w-16">
+                    <th rowspan="2" class="text-sm uppercase text-center border-r border-gray-300 w-16">
                         Gender</th>
-                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800 w-16">PLWD
+                    <th rowspan="2" class="text-sm uppercase text-center border-r border-gray-300 w-16">PLWD
                     </th>
                     @foreach ($allocation->lessons as $lesson)
                         <th colspan="{{ $lesson->lessons->count() }}"
-                            class="text-sm uppercase text-center border border-gray-800">
+                            class="text-sm uppercase text-center border-r border-b border-gray-300">
                             {!! strtoupper($lesson->date) !!}</th>
                     @endforeach
                 </tr>
                 <tr>
                     @foreach ($allocation->lessons as $lesson)
                         @foreach ($lesson->lessons as $item)
-                            <th class="text-sm uppercase text-center border border-gray-800 p-2">{{ $item->short_title }}
+                            <th class="text-sm uppercase text-center border-r border-gray-300 last:border-r-gray-800 p-2">
+                                {{ $item->short_title }}
                             </th>
                         @endforeach
                     @endforeach
@@ -61,15 +63,15 @@
                     $cols = 5;
                 @endphp
                 @foreach ($students as $student)
-                    <tr class="even:bg-gray-50 odd:bg-white">
-                        <td class="p-2 text-right border-r border-gray-800">{{ $loop->iteration }}.</td>
+                    <tr class="even:bg-gray-100 odd:bg-white">
+                        <td class="p-2 text-right border-l border-r border-gray-800">{{ $loop->iteration }}.</td>
                         <td class="p-2  border-r border-gray-800">{{ $student->admission_no }}</td>
                         <td class="p-2 uppercase border-r border-gray-800">{{ $student->name }}</td>
                         <td class="p-2 uppercase border-r border-gray-800">{{ $student->gender }}</td>
-                        <td class="p-2 uppercase border-r border-gray-800">{{ $student->plwd }}</td>
+                        <td class="p-2 uppercase border-r border-gray-800 text-center">{{ $student->plwd }}</td>
                         @foreach ($allocation->lessons as $lesson)
                             @foreach ($lesson->lessons as $item)
-                                <td class="border border-gray-800"></td>
+                                <td class="border-r border-gray-800"></td>
                                 @php
                                     $cols += 1;
                                 @endphp

@@ -306,12 +306,11 @@ export interface iAllocations {
 }
 
 export interface iTerm {
-    id: number
-    name: string
-    year: string
-    year_name: string
-    start_date: string
-    end_date: string
+    id: number | null
+    name: string | ""
+    year: number | null | string
+    start_date: Date | null
+    end_date: Date | null
 }
 export interface iAttendance {
     id: number

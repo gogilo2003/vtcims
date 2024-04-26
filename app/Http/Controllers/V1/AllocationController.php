@@ -50,7 +50,6 @@ class AllocationController extends Controller
                     "year" => $item->term->year,
                     "start_date" => $item->term->start_date->isoFormat('lll'),
                     "end_date" => $item->term->end_date->isoFormat('lll'),
-                    "year_name" => $item->term->year_name,
                 ],
                 "instructor" => [
                     "id" => $item->staff->id,
@@ -91,9 +90,8 @@ class AllocationController extends Controller
 
         $terms = Term::orderBy('year', 'DESC')->orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
-            "name" => $item->name,
+            "name" => sprintf("%d - %s", $item->year, $item->name),
             "year" => $item->year,
-            "year_name" => $item->year_name,
             "start_date" => Carbon::parse($item->start_date)->isoFormat('lll'),
             "end_date" => Carbon::parse($item->end_date)->isoFormat('lll'),
         ]);

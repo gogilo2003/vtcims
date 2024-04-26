@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Models\Term;
+use Inertia\Inertia;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTermRequest;
 use App\Http\Requests\UpdateTermRequest;
-use App\Models\Term;
 
 class TermController extends Controller
 {
@@ -14,6 +16,20 @@ class TermController extends Controller
      */
     public function index()
     {
+        $search = request()->input('search');
+        $terms = Term::orderBy('year', 'DESC')->orderBy('name', 'DESC')->when($search, function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('year', 'like', '%' . $search . '%');
+        })
+            ->paginate(8)->through(fn(Term $term) => [
+                "id" => $term->id,
+                "year" => $term->year,
+                "name" => $term->name,
+                "start_date" => Carbon::parse($term->start_date)->isoFormat('ddd, D MMM Y'),
+                "end_date" => $term->end_date->isoFormat('ddd, D MMM Y'),
+            ]);
+
+        return Inertia::render('Terms/Index', ['terms' => $terms]);
     }
 
     /**

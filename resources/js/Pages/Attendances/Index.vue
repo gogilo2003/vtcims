@@ -142,12 +142,11 @@ const download = (allocation: iAllocation) => {
                 <div>
                     <div class="flex flex-col">
                         <span class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-default"
-                            v-text="`${allocation.term.year_name}: ${allocation.subject.name}`"></span>
+                            v-text="`${allocation.term.year} - ${allocation.term.name}: ${allocation.subject.name}`"></span>
                         <div class="flex items-start gap-1">
                             <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">Intakes:</span>
                             <div class="flex flex-wrap gap-1">
-                                <span v-for="({ name }, index) in allocation.intakes"
-                                    v-text="`${name}${index < allocation.intakes.length - 1 ? ', ' : ''}`"
+                                <span v-text="allocation.intakes.map(intake => intake.name).join(', ')"
                                     class="text-xs text-gray-500 dark:text-gray-300"></span>
                             </div>
                         </div>
