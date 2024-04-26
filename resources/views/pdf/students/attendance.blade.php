@@ -39,7 +39,7 @@
                         Name</th>
                     <th rowspan="2" class="text-sm uppercase text-center border border-gray-800 w-16">
                         Gender</th>
-                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800 w-16">PWD
+                    <th rowspan="2" class="text-sm uppercase text-center border border-gray-800 w-16">PLWD
                     </th>
                     @foreach ($allocation->lessons as $lesson)
                         <th colspan="{{ $lesson->lessons->count() }}"

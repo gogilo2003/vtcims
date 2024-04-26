@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iAllocation, iAllocations, iAttendance, iAllocationLesson } from '../../interfaces/index';
+import { iAllocation, iAllocations, iAttendance, iAllocationLesson, iItem } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import { ref, watch } from 'vue';
@@ -12,7 +12,6 @@ import ListItem from '../../Components/ListItem.vue';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 import InputSwitch from 'primevue/inputswitch';
-import VueClickAway from 'vue3-click-away';
 import Upload from './Upload.vue';
 import Download from './Download.vue';
 
@@ -23,6 +22,7 @@ const props = defineProps<{
     current: string,
     notification: Object,
     errors: Object
+    terms: iItem[]
 }>()
 
 const toast = useToast()

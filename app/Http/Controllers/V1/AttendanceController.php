@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use DateTime;
 use DatePeriod;
 use DateInterval;
+use App\Models\Term;
 use Inertia\Inertia;
 use App\Models\Staff;
 use App\Models\Lesson;
@@ -98,10 +99,16 @@ class AttendanceController extends Controller
                 ]),
             ]);
 
+        $terms = Term::get()->map(fn(Term $term) => [
+            'id' => $term->id,
+            'name' => sprintf("%d - %s", $term->year, $term->name),
+        ])->sortByDesc('name')->values();
+
         return Inertia::render('Attendances/Index', [
             'allocations' => $allocations,
             'search' => $search,
             'current' => $current,
+            'terms' => $terms,
         ]);
     }
 
@@ -288,9 +295,10 @@ class AttendanceController extends Controller
                 })->first();
             }
 
-            if (request()->input('duration') == 'day') {
-                $startOfWeek = (new DateTime('monday this week'))->format('Y-m-d');
-                $endOfWeek = date('Y-m-d', strtotime('friday this week'));
+            if (request()->input('duration') == 'week') {
+                $date = request()->input('start_at') ? request()->input('start_at') : (new DateTime('monday this week'))->format('Y-m-d');
+                $startOfWeek = Carbon::parse($date)->isoFormat('ddd, D MMM Y');
+                $endOfWeek = Carbon::parse($date)->addWeek()->isoFormat('ddd, D MMM Y');
                 $pdfContent = view('pdf.students.attendance', [
                     'students' => $students,
                     'allocation' => $allocationData,
@@ -300,46 +308,35 @@ class AttendanceController extends Controller
                     "end_date" => $endOfWeek,
                     "principal" => $principal,
                 ])->render();
-            } else
-                if (request()->input('duration') == 'week') {
-                    $startOfWeek = Carbon::parse((new DateTime('monday this week'))->format('Y-m-d'))->isoFormat('ddd, D MMM Y');
-                    $endOfWeek = Carbon::parse(date('Y-m-d', strtotime('friday this week')))->isoFormat('ddd, D MMM Y');
-                    $pdfContent = view('pdf.students.attendance', [
-                        'students' => $students,
-                        'allocation' => $allocationData,
-                        'logos' => $logos,
-                        'styles' => $styles,
-                        "start_date" => $startOfWeek,
-                        "end_date" => $endOfWeek,
-                        "principal" => $principal,
-                    ])->render();
-                } elseif (request()->input('duration') == 'month') {
-                    $currentMonth = date('Y-m');
-                    $startOfMonth = Carbon::parse(date('Y-m-01', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
-                    $endOfMonth = Carbon::parse(date('Y-m-t', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
-                    $pdfContent = view('pdf.students.attendance', [
-                        'students' => $students,
-                        'allocation' => $allocationData,
-                        'logos' => $logos,
-                        'styles' => $styles,
-                        "start_date" => $startOfMonth,
-                        "end_date" => $endOfMonth,
-                        "principal" => $principal,
-                    ])->render();
-                } elseif (request()->input('duration') == 'term') {
-                    $currentQuarter = ceil(date('n') / 3);
-                    $startOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, ($currentQuarter - 1) * 3 + 1, 1)))->isoFormat('ddd, D MMM Y');
-                    $endOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, $currentQuarter * 3, 0)))->isoFormat('ddd, D MMM Y');
-                    $pdfContent = view('pdf.students.attendance', [
-                        'students' => $students,
-                        'allocation' => $allocationData,
-                        'logos' => $logos,
-                        'styles' => $styles,
-                        "start_date" => $startOfQuarter,
-                        "end_date" => $endOfQuarter,
-                        "principal" => $principal,
-                    ])->render();
-                }
+            } elseif (request()->input('duration') == 'month') {
+                $currentMonth = request()->has('month')
+                    ? Carbon::parse(request()->input('month'))->setTimezone('Africa/Nairobi')->isoFormat('Y-M')
+                    : date('Y-m');
+                $startOfMonth = Carbon::parse(date('Y-m-01', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
+                $endOfMonth = Carbon::parse(date('Y-m-t', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
+                $pdfContent = view('pdf.students.attendance', [
+                    'students' => $students,
+                    'allocation' => $allocationData,
+                    'logos' => $logos,
+                    'styles' => $styles,
+                    "start_date" => $startOfMonth,
+                    "end_date" => $endOfMonth,
+                    "principal" => $principal,
+                ])->render();
+            } elseif (request()->input('duration') == 'term') {
+                $currentQuarter = ceil(date('n') / 3);
+                $startOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, ($currentQuarter - 1) * 3 + 1, 1)))->isoFormat('ddd, D MMM Y');
+                $endOfQuarter = Carbon::parse(date('Y-m-d', mktime(0, 0, 0, $currentQuarter * 3, 0)))->isoFormat('ddd, D MMM Y');
+                $pdfContent = view('pdf.students.attendance', [
+                    'students' => $students,
+                    'allocation' => $allocationData,
+                    'logos' => $logos,
+                    'styles' => $styles,
+                    "start_date" => $startOfQuarter,
+                    "end_date" => $endOfQuarter,
+                    "principal" => $principal,
+                ])->render();
+            }
 
             $pdf = App::make('snappy.pdf.wrapper')
                 ->setOrientation('landscape')
@@ -376,10 +373,20 @@ class AttendanceController extends Controller
         return $dates;
     }
 
+    protected function getDatesForToday(array $days)
+    {
+        $startOfWeek = (new DateTime('today'))->format('Y-m-d');
+        $endOfWeek = date('Y-m-d', strtotime('today'));
+        return $this->getDatesForDaysInPeriod($days, $startOfWeek, $endOfWeek);
+    }
+
     protected function getDatesForDaysInCurrentWeek(array $days)
     {
-        $startOfWeek = (new DateTime('monday this week'))->format('Y-m-d');
-        $endOfWeek = date('Y-m-d', strtotime('friday this week'));
+        // $startOfWeek = (new DateTime('monday this week'))->format('Y-m-d');
+        // $endOfWeek = date('Y-m-d', strtotime('friday this week'));
+        $date = request()->input('start_at') ? request()->input('start_at') : (new DateTime('monday this week'))->format('Y-m-d');
+        $startOfWeek = Carbon::parse((new DateTime($date))->format('Y-m-d'))->isoFormat('ddd, D MMM Y');
+        $endOfWeek = Carbon::parse(new DateTime($date))->addWeek()->isoFormat('ddd, D MMM Y');
         return $this->getDatesForDaysInPeriod($days, $startOfWeek, $endOfWeek);
     }
 
@@ -407,7 +414,7 @@ class AttendanceController extends Controller
         $dates = null;
 
         if ($duration == 'day') {
-            $dates = $this->getDatesForDaysInCurrentWeek($days);
+            $dates = $this->getDatesForToday($days);
         } elseif ($duration == 'week') {
             $dates = $this->getDatesForDaysInCurrentWeek($days);
         } elseif ($duration == 'month') {
