@@ -11,7 +11,7 @@ class StoreSubjectRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return request()->user()->isAdmin() || request()->user()->hasPermission('subjects-update');
+        return request()->user()->isAdmin() || request()->user()->hasPermission('subjects-store');
     }
 
     /**

@@ -21,6 +21,7 @@ const props = defineProps<{
     terms: iTerms
     notification: iNotification
     search: string
+    errors: object
 }>()
 
 const toast = useToast()
@@ -28,7 +29,7 @@ const toast = useToast()
 const form = useForm<iTerm>({
     id: null,
     year: null,
-    name: "",
+    name: null,
     start_date: null,
     end_date: null,
 })

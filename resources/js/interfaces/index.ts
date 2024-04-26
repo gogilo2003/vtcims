@@ -307,7 +307,7 @@ export interface iAllocations {
 
 export interface iTerm {
     id: number | null
-    name: string | ""
+    name: string | null
     year: number | null | string
     start_date: Date | null
     end_date: Date | null
