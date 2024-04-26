@@ -1,5 +1,5 @@
 <?php return array(
-    'name' => 'Name of School',
+    'name' => env('APP_NAME', 'Name of School'),
     'logo' => [
         'logo1' => '/img/nairobi-city-county-logo.png',
         'logo2' => '/logo.png',
