@@ -20,15 +20,27 @@ const props = defineProps<{
 const selectedExamination = ref<iExamination | null>({})
 const show = ref(false)
 
+const close = (value) => {
+    show.value = value
+}
+
 const editExamination = (examination: iExamination) => {
     selectedExamination.value = examination
     show.value = true
 }
 
-const close = (value) => {
-    show.value = value
+const newExamination = () => {
+    selectedExamination.value = {}
+    show.value = true
 }
 
+const markList = (id: number) => {
+    window.open(route('examinations-marklist', { id }))
+}
+
+const viewExamination = (id: number) => {
+    router.get(route('examinations-show', id))
+}
 
 const searchVal = ref(props.search)
 
@@ -46,15 +58,17 @@ watch(() => searchVal.value, debounce((value: string) => {
         preserveState: true
     })
 }, 500))
+
+
 </script>
 <template>
     <Toast position="top-center" />
     <Examination :show="show" :examination="selectedExamination" @closed="close" />
     <AuthenticatedLayout title="Examinations">
         <div class="flex items-center justify-between gap-2 pb-3 md:pb-8 ">
-            <SecondaryButton @click="newDepartment">
+            <SecondaryButton @click="newExamination">
                 <Icon type="add" />
-                <span class="hidden md:inline-flex">New Department</span>
+                <span class="hidden md:inline-flex">New Examination</span>
             </SecondaryButton>
             <div>
                 <span class="relative">
@@ -74,6 +88,12 @@ watch(() => searchVal.value, debounce((value: string) => {
                         v-text="examination.intakes.map(intake => intake.name).join(', ')"></div>
                 </div>
                 <div class="flex gap-2">
+                    <SecondaryButton @click="viewExamination(examination.id)">
+                        <Icon class="h-4 w-4" type="done" /> View
+                    </SecondaryButton>
+                    <SecondaryButton @click="markList(examination.id)">
+                        <Icon class="h-4 w-4" type="pdf" /> Download
+                    </SecondaryButton>
                     <SecondaryButton @click="editExamination(examination)">
                         <Icon class="h-4 w-4" type="edit" /> Edit
                     </SecondaryButton>

@@ -10,11 +10,11 @@ class Test extends Model
 
     public function examination()
     {
-        return $this->belongsTo('App\Models\Examination');
+        return $this->belongsTo(Examination::class);
     }
 
     public function results()
     {
-        return $this->hasMany('App\Models\Result');
+        return $this->hasMany(Result::class);
     }
 }

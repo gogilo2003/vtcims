@@ -179,8 +179,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('examinations')->name('examinations')->group(function () {
         Route::get('', [ExaminationController::class, 'index']);
         Route::post('', [ExaminationController::class, 'store'])->name('-store');
-        Route::patch('{term}', [ExaminationController::class, 'update'])->name('-update');
-        Route::delete('{term}', [ExaminationController::class, 'destroy'])->name('-destroy');
+        Route::patch('{examination}', [ExaminationController::class, 'update'])->name('-update');
+        Route::delete('{examination}', [ExaminationController::class, 'destroy'])->name('-destroy');
+        Route::get('show/{examination}', [ExaminationController::class, 'show'])->name('-show');
+        Route::get('marklist/{examination}', [ExaminationController::class, 'marklist'])->name('-marklist');
+        Route::get('transcripts/{examination}/{student?}', [ExaminationController::class, 'transcripts'])->name('-transcripts');
     });
 
     Route::prefix('profile')->name('profile')->group(function () {

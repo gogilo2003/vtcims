@@ -79,16 +79,6 @@ class Student extends Model
     }
 
     /**
-     * Get all of the tests for the Student
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    public function tests(): HasManyThrough
-    {
-        return $this->hasManyThrough(Test::class, Result::class);
-    }
-
-    /**
      * Get all of the leave_outs for the Student
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

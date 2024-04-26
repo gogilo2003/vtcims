@@ -541,7 +541,22 @@ export interface iDesignations {
     total: number,
 }
 
-export interface iExamination { }
+export interface iExamination {
+    id: number | null
+    title: string | ""
+    intakes: iItem[] | null
+    tests: { id: number, title: string }[]
+    students: {
+        id: number,
+        admission_no?: string,
+        results: {
+            id: number | null
+            test_id: number
+            score: number
+        }[]
+    }[]
+
+}
 export interface iExaminations {
     data: Array<iExamination>
     current_page: number,

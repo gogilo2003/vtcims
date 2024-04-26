@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Models\Test;
 use Inertia\Inertia;
 use App\Models\Intake;
+use App\Models\Result;
+use App\Models\Student;
 use App\Models\Examination;
+use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreExaminationRequest;
 use App\Http\Requests\UpdateExaminationRequest;
+use App\Support\StudentUtil;
 
 class ExaminationController extends Controller
 {
@@ -67,7 +72,64 @@ class ExaminationController extends Controller
      */
     public function show(Examination $examination)
     {
-        //
+        return Inertia::render('Examinations/View', [
+            'examination' => [
+                "id" => $examination->id,
+                "title" => $examination->title,
+                "intakes" => $examination->intakes->map(fn(Intake $intake) => [
+                    "id" => $intake->id,
+                    "name" => $intake->name,
+                ]),
+                "tests" => $examination->tests->map(fn(Test $test) => [
+                    "id" => $test->id,
+                    "title" => $test->title,
+                ]),
+                "students" => $examination->intakes->flatMap->students->map(
+                    function (Student $student) use ($examination) {
+                        $student->load([
+                            'results' => function ($query) use ($examination) {
+                                $query->whereHas(
+                                    'test',
+                                    function ($query) use ($examination) {
+                                        $query->where('examination_id', $examination->id);
+                                    }
+                                );
+                            }
+                        ]);
+                        return [
+                            "id" => $student->id,
+                            "admission_no" => StudentUtil::prepAdmissionNo($student),
+                            "name" => Str::title(
+                                Str::lower(
+                                    sprintf(
+                                        "%s%s %s",
+                                        $student->first_name,
+                                        $student->middle_name ? ' ' . $student->middle_name : '',
+                                        $student->surname
+                                    )
+                                )
+                            ),
+                            "results" => $examination->tests->map(
+                                function (Test $test) use ($student) {
+                                    if ($result = $student->results->where('test_id', $test->id)->first()) {
+                                        return [
+                                            "id" => $result->id,
+                                            "test_id" => $result->test_id,
+                                            "score" => $result->score,
+                                        ];
+                                    }
+                                    return [
+                                        "id" => null,
+                                        "test_id" => $test->id,
+                                        "score" => null,
+                                    ];
+                                }
+                            ),
+                        ];
+                    }
+                )->sortBy('admission_no')->values(),
+            ]
+        ]);
     }
 
     /**
@@ -92,5 +154,10 @@ class ExaminationController extends Controller
     public function destroy(Examination $examination)
     {
         //
+    }
+
+    function marklist()
+    {
+
     }
 }

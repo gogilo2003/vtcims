@@ -10,11 +10,11 @@ class Result extends Model
 
     public function test()
     {
-        return $this->belongsTo('App\Models\Test');
+        return $this->belongsTo(Test::class);
     }
 
     public function student()
     {
-        return $this->belongsTo('App\Models\Student');
+        return $this->belongsTo(Student::class);
     }
 }
