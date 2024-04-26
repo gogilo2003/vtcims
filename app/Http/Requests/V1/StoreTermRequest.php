@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests\V1;
 
+use Illuminate\Http\Response;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+
 
 class StoreTermRequest extends FormRequest
 {
@@ -27,5 +31,10 @@ class StoreTermRequest extends FormRequest
             "start_at" => ["required", "date"],
             "end_at" => ["required", "date"],
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        // return redirect()->back()->withErrors($validator);
     }
 }

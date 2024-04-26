@@ -42,7 +42,7 @@ class TermController extends Controller
      */
     public function store(StoreTermRequest $request): RedirectResponse
     {
-        dd("Here");
+
         // $term = new Term();
         // $term->name = $request->name;
         // $term->year = $request->year;
