@@ -21,9 +21,8 @@ class StoreTermRequest extends FormRequest
      */
     public function rules(): array
     {
-
         return [
-            "name" => ["required", "string","unique:terms,name,null,id,year,".$this->year],
+            "name" => ["required", "string", "unique:terms,name,null,id,year," . $this->year],
             "year" => ["required", "numeric", "integer"],
             "start_at" => ["required", "date"],
             "end_at" => ["required", "date"],
