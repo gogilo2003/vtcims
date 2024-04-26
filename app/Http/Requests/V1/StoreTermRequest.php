@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateTermRequest extends FormRequest
+class StoreTermRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return request()->user()->isAdmin() || request()->user()->hasPermission('terms-store');
     }
 
     /**
@@ -21,8 +21,12 @@ class UpdateTermRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            //
+            "name" => ["required", "string"],
+            "year" => ["required", "numeric", "integer"],
+            // "start_at" => ["required", "date"],
+            // "end_at" => ["required", "date"],
         ];
     }
 }

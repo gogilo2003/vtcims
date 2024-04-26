@@ -4,10 +4,12 @@ namespace App\Http\Controllers\V1;
 
 use App\Models\Term;
 use Inertia\Inertia;
+use App\Models\Allocation;
 use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreTermRequest;
-use App\Http\Requests\UpdateTermRequest;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\V1\StoreTermRequest;
+use App\Http\Requests\V1\UpdateTermRequest;
 
 class TermController extends Controller
 {
@@ -33,26 +35,49 @@ class TermController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store newly created term to the database
      *
-     * @param \App\Http\Requests\StoreTermRequest $request
-     * @return void
+     * @param \App\Http\Requests\V1\StoreTermRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(StoreTermRequest $request)
+    public function store(StoreTermRequest $request): RedirectResponse
     {
-        $term = new Term();
-        $term->name = $request->name;
-        $term->year = $request->year;
-        $term->start_at = $request->start_at;
-        $term->end_at = $request->end_at;
+        dd("Here");
+        // $term = new Term();
+        // $term->name = $request->name;
+        // $term->year = $request->year;
+        // $term->start_at = $request->start_at;
+        // $term->end_at = $request->end_at;
+        // $term->save();
+
+        // if ($request->has('auto_allocate')) {
+        //     $lastTerm = Term::with('allocations')->whereNot('id', $term->id)->orderBy('id', 'DESC')->first();
+        //     foreach ($lastTerm->allocations as $allocation) {
+        //         $newAllocation = new Allocation();
+        //         $newAllocation->staff_id = $allocation->staff_id;
+        //         $newAllocation->subject_id = $allocation->subject_id;
+        //         $newAllocation->term_id = $allocation->term_id;
+        //         $newAllocation->save();
+
+        //         $newAllocation->intakes()->sync($allocation->intakes->pluck('id')->toArray());
+        //     }
+        // }
+
+        return redirect()->back()->with('success', 'Term Created');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateTermRequest $request, Term $term)
+    public function update(UpdateTermRequest $request, Term $term): RedirectResponse
     {
-        //
+        $term->name = $request->name;
+        $term->year = $request->year;
+        $term->start_at = $request->start_at;
+        $term->end_at = $request->end_at;
+        $term->save();
+
+        return redirect()->back()->with('success', 'Term updated');
     }
 
     /**

@@ -13,7 +13,7 @@ import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import InputLabel from '../../Components/InputLabel.vue';
 import InputError from '../../Components/InputError.vue';
-import Dropdown from 'primevue/dropdown';
+import InputSwitch from 'primevue/inputswitch';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import Calendar from 'primevue/calendar';
 
@@ -34,6 +34,7 @@ const form = useForm<iTerm>({
 })
 
 const edit = ref(false)
+const auto_allocate = ref(false)
 
 const newTerm = () => {
     form.reset()
@@ -88,7 +89,12 @@ const submit = () => {
             only: ['notification', 'terms']
         })
     } else {
-        form.post(route('terms-store'), {
+        form.transform((data) => {
+            if (auto_allocate.value) {
+                return { ...data, auto_allocate: 1 }
+            }
+            return data
+        }).post(route('terms-store'), {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
@@ -197,8 +203,17 @@ watch(() => selectedYear.value, (value) => {
                         <Calendar v-model="form.start_date" />
                         <InputError :message="form.errors.start_date" />
                     </div>
+                    <div class="mb-4">
+                        <InputLabel value="End Date" />
+                        <Calendar v-model="form.end_date" />
+                        <InputError :message="form.errors.end_date" />
+                    </div>
+                    <div class="mb-4 flex items-center gap-2">
+                        <InputSwitch v-model="auto_allocate" /> Auto Allocate Subjects
+                    </div>
                     <div class="flex justify-between">
-                        <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing">Save
+                        <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing">
+                            Save
                         </PrimaryButton>
                         <SecondaryButton v-if="edit" type="button" @click="cancel">Cancel</SecondaryButton>
                     </div>

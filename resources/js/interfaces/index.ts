@@ -311,6 +311,22 @@ export interface iTerm {
     year: number | null | string
     start_date: Date | null
     end_date: Date | null
+    auto_allocate?: number
+}
+export interface iTerms {
+    current_page: string
+    data: iTerm[]
+    first_page_url: string
+    from: number
+    last_page: number
+    last_page_url: string
+    links: iLink[]
+    next_page_url: string
+    path: string
+    per_page: number
+    prev_page_url: string
+    to: number
+    total: number
 }
 export interface iAttendance {
     id: number
