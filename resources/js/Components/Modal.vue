@@ -91,7 +91,7 @@ const maxWidthClass = computed(() => {
                         <div
                             class="relative z-0 bg-white dark:bg-gray-700 px-4 pt-8 pb-4 rounded-lg w-[calc(100%_+_2rem)] max-h-[calc(100svh_-_6rem)] -ml-4 flex flex-col gap-2">
                             <div class="flex-1 max-h-[calc(100%_-_10rem)] overflow-auto">
-                                <slot v-if="show" />
+                                <slot />
                             </div>
                             <div class="flex items-center justify-between flex-none">
                                 <slot name="footer" />
