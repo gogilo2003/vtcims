@@ -219,19 +219,19 @@ const saveLessons = () => {
             <div class="dark:bg-gray-700 shadow p-3 rounded-lg my-3 flex flex-col gap-2 text-sm capitalize flex-none">
                 <div class="flex gap-2">
                     <span class="font-medium dark:text-gray-300">Term:</span><span class="dark:text-gray-100"
-                        v-text="`${selectedAllocation.term.year}-${selectedAllocation.term.name}`"></span>
+                        v-text="`${selectedAllocation?.term?.year}-${selectedAllocation?.term.name}`"></span>
                 </div>
                 <div class="flex gap-2">
                     <span class="font-medium dark:text-gray-300">Subject:</span><span class="dark:text-gray-100"
-                        v-text="selectedAllocation.subject.name"></span>
+                        v-text="selectedAllocation?.subject.name"></span>
                 </div>
                 <div class="flex gap-2">
                     <span class="font-medium dark:text-gray-300">Instructor:</span><span class="dark:text-gray-100"
-                        v-text="selectedAllocation.instructor.name"></span>
+                        v-text="selectedAllocation?.instructor.name"></span>
                 </div>
                 <div class="flex gap-2">
                     <span class="font-medium dark:text-gray-300">Intakes:</span><span class="dark:text-gray-100"
-                        v-text="selectedAllocation.intakes.map(intake => intake.name).join(', ')"></span>
+                        v-text="selectedAllocation?.intakes.map(intake => intake.name).join(', ')"></span>
 
                 </div>
             </div>
@@ -337,9 +337,8 @@ const saveLessons = () => {
                         <div class="flex items-start gap-1 md:pr-2">
                             <span class="text-xs font-semibold text-gray-800 dark:text-gray-100">Intakes:</span>
                             <div class="flex flex-wrap gap-1">
-                                <span v-for="({ name }, index) in allocation.intakes"
-                                    v-text="`${name}${index < allocation.intakes.length - 1 ? ', ' : ''}`"
-                                    class="text-xs text-gray-500 dark:text-gray-300"></span>
+                                <span v-text="allocation.intakes.map(intake => intake.name).join(', ')"
+                                    class="text-xs text-gray-500 dark:text-gray-300 line-clamp-1"></span>
                             </div>
                         </div>
                     </div>
