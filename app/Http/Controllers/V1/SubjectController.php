@@ -22,7 +22,8 @@ class SubjectController extends Controller
         $search = request()->input('search');
 
         $subjects = Subject::when($search, function ($query) use ($search) {
-            $query->where('name', 'LIKE', '%' . $search . '%');
+            $query->where('name', 'LIKE', '%' . $search . '%')
+                ->orWhere('code', 'LIKE', '%' . $search . '%');
         })->with('courses')->paginate(10)->through(fn($item) => [
                 "id" => $item->id,
                 "code" => $item->code,
@@ -102,10 +103,17 @@ class SubjectController extends Controller
      */
     public function destroy(Subject $subject)
     {
-        $subject->delete();
+        try {
+            $subject->delete();
 
-        return redirect()
-            ->back()
-            ->with('success', 'Subject updated');
+            return redirect()
+                ->back()
+                ->with('success', 'Subject deleted');
+        } catch (\Throwable $th) {
+            return redirect()
+                ->back()
+                ->with('danger', 'Subject could not be deleted');
+        }
+
     }
 }
