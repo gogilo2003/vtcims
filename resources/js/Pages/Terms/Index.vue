@@ -1,225 +1,97 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iTerms, iNotification, iTerm } from '../../interfaces/index';
-import Paginator from '../../Components/Paginator.vue';
-import SecondaryButton from '../../Components/SecondaryButton.vue';
-import { ref, watch, computed } from 'vue';
-import { router, useForm } from '@inertiajs/vue3';
-import { debounce } from 'lodash';
-import Icon from '../../Components/Icons/Icon.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import Icon from '@/Components/Icons/Icon.vue';
+import { iTerm, iTerms } from '@/interfaces';
+import { ref } from 'vue';
 import InputText from 'primevue/inputtext';
-import ListItem from '../../Components/ListItem.vue';
-import Toast from 'primevue/toast';
-import { useToast } from 'primevue/usetoast';
-import InputLabel from '../../Components/InputLabel.vue';
-import InputError from '../../Components/InputError.vue';
-import InputSwitch from 'primevue/inputswitch';
-import PrimaryButton from '../../Components/PrimaryButton.vue';
-import Calendar from 'primevue/calendar';
+import ListItem from '@/Components/ListItem.vue';
+import Paginator from '@/Components/Paginator.vue';
+import Term from './Term.vue'
 
 const props = defineProps<{
     terms: iTerms
-    notification: iNotification
-    search: string
-    errors: object
+    search?: string | null
 }>()
 
-const toast = useToast()
+const searchVal = ref(props.search)
 
-const form = useForm<iTerm>({
+const show = ref(false)
+const selectedTerm = ref<iTerm>({
     id: null,
-    year: null,
-    name: null,
+    name: "",
+    year: "",
     start_date: null,
     end_date: null,
 })
 
-const edit = ref(false)
-const auto_allocate = ref(false)
-
 const newTerm = () => {
-    form.reset()
-    form.clearErrors()
-    edit.value = false
-}
 
+    let start = new Date();
+    let end = new Date(`${(start.getMonth() + 4).toString().padStart(2, '0')}-${start.getDate().toString().padStart(2, '0')}-${start.getFullYear()}`)
+
+    selectedTerm.value = {
+        id: null,
+        name: "",
+        year: "",
+        start_date: start,
+        end_date: end,
+    }
+
+    show.value = true
+}
 const editTerm = (term: iTerm) => {
-    form.reset()
-    form.clearErrors()
 
-    form.id = term.id
-    form.name = term.name
-    selectedYear.value = new Date(`1-Jan-${term.year}`)
-    form.start_date = term.start_date
-    form.end_date = term.end_date
-
-    edit.value = true
-}
-
-const cancel = () => {
-    form.reset()
-    form.clearErrors()
-    selectedYear.value = new Date()
-    edit.value = false
-}
-
-const submit = () => {
-    if (edit.value) {
-        form.patch(route('terms-update', form.id), {
-            preserveScroll: true,
-            preserveState: true,
-            onSuccess: () => {
-                console.log('success');
-
-                toast.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: props.notification.success,
-                    life: 4000
-                })
-                cancel()
-            },
-            onError: () => {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'An error occurred! please check the fields and try again',
-                    life: 4000
-                })
-            },
-            only: ['notification', 'terms']
-        })
-    } else {
-        form.transform((data) => {
-            if (auto_allocate.value) {
-                return { ...data, auto_allocate: 1 }
-            }
-            return data
-        }).post(route('terms-store'), {
-            preserveScroll: true,
-            preserveState: true,
-            onSuccess: () => {
-                toast.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: props.notification.success,
-                    life: 4000
-                })
-                cancel()
-            },
-            onError: () => {
-                toast.add({
-                    severity: 'error',
-                    summary: 'Error',
-                    detail: 'An error occurred! please check the fields and try again',
-                    life: 4000
-                })
-            },
-            only: ['notification', 'terms']
-        })
-    }
-}
-
-const searchVal = ref(props.search)
-
-watch(() => searchVal.value, debounce((value: string) => {
-
-    let data = {}
-
-    if (value) {
-        data = { search: value }
+    selectedTerm.value = {
+        id: term.id,
+        year: term.year,
+        name: term.name,
+        start_date: new Date(term.start_date),
+        end_date: new Date(term.end_date),
     }
 
-    router.get(route('terms'), data, {
-        only: ['terms', 'search'],
-        preserveScroll: true,
-        preserveState: true
-    })
-}, 500))
+    show.value = true
+}
 
-const selectedYear = ref<Date | string | number | null>(form.year)
-
-watch(() => selectedYear.value, (value) => {
-    let dt = value ? new Date(value) : new Date()
-    form.year = dt.getFullYear()
-})
-
+const onClosed = (value: boolean) => {
+    show.value = value
+}
 </script>
 <template>
-    <Toast position="top-center" />
+    <Term :show="show" @closed="onClosed" :term="selectedTerm" />
     <AuthenticatedLayout title="Terms">
-        <div class="flex items-center justify-between gap-2 pb-3 md:pb-8 ">
+        <div class="flex justify-between my-4 gap-2">
             <SecondaryButton @click="newTerm">
-                <Icon type="add" />
-                <span class="hidden md:inline-flex">New Term</span>
+                <Icon class="h-6 w-6" type="add" /><span class="hidden md:inline-flex">New Term</span>
             </SecondaryButton>
             <div>
                 <span class="relative">
-                    <span class="pi pi-search absolute top-[50%] -translate-y-[50%] left-2 opacity-50"></span>
+                    <Icon type="search" class="h-4 w-4 absolute top-[50%] -translate-y-[50%] left-2 opacity-50" />
                     <InputText v-model="searchVal" placeholder="Search" class="px-8 w-full"
                         :pt="{ root: { class: 'rounded-full focus:ring-primary-500 text-surface-600 dark:text-surface-200 bg-surface-0 dark:bg-surface-700' } }" />
                 </span>
             </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="md:col-span-2 flex flex-col gap-2">
-                <ListItem v-for="term in terms.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
-                    <div>
-                        <div v-text="`${term.year} - ${term.name}`"
-                            class="uppercase text-base font-semibold text-gray-800 dark:text-primary-500"></div>
-                        <div class="flex gap-2 flex-col md:flex-row text-sm">
-                            <div class="flex items-center gap-1">
-                                <span class="font-medium text-gray-700 dark:text-gray-200">Start Date:</span>
-                                <span v-text="term.start_date" class="text-gray-500 dark:text-gray-400"></span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <span class="text-xs font-medium text-gray-700 dark:text-gray-200">End Date:</span>
-                                <span v-text="term.end_date" class="text-xs text-gray-500 dark:text-gray-400"></span>
-                            </div>
+        <div class="flex gap-3 flex-col">
+            <ListItem v-for="term in terms.data">
+                <div>
+                    <div v-text="`${term.year} - ${term.name}`"></div>
+                    <div class="flex gap-1 md:gap-2 flex-col md:flex-row text-sm">
+                        <div class="font-medium text-gray-700">Term Dates:</div>
+                        <div class="text-gray-500 flex gap-2">
+                            <span v-text="term.start_date"></span><span>-</span>
+                            <span v-text="term.end_date"></span>
                         </div>
                     </div>
-                    <div>
-                        <SecondaryButton @click="editTerm(term)">
-                            <Icon type="edit" class="h-4 w-4" />
-                            edit
-                        </SecondaryButton>
-                    </div>
-                </ListItem>
-                <Paginator :items="terms" />
-            </div>
-            <div class="shadow rounded-lg bg-white p-4">
-                <form @submit.prevent="submit">
-                    <div class="mb-4">
-                        <InputLabel value="Year" />
-                        <Calendar view="year" dateFormat="yy" v-model="selectedYear" />
-                        <InputError :message="form.errors.year" />
-                    </div>
-                    <div class="mb-4">
-                        <InputLabel value="Term name" />
-                        <InputText v-model="form.name" />
-                        <InputError :message="form.errors.name" />
-                    </div>
-                    <div class="mb-4">
-                        <InputLabel value="Start Date" />
-                        <Calendar v-model="form.start_date" />
-                        <InputError :message="form.errors.start_date" />
-                    </div>
-                    <div class="mb-4">
-                        <InputLabel value="End Date" />
-                        <Calendar v-model="form.end_date" />
-                        <InputError :message="form.errors.end_date" />
-                    </div>
-                    <div class="mb-4 flex items-center gap-2">
-                        <InputSwitch v-model="auto_allocate" /> Auto Allocate Subjects
-                    </div>
-                    <div class="flex justify-between">
-                        <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing">
-                            Save
-                        </PrimaryButton>
-                        <SecondaryButton v-if="edit" type="button" @click="cancel">Cancel</SecondaryButton>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="flex gap-2">
+                    <SecondaryButton @click="editTerm(term)">
+                        <Icon class="h-4 w-4" type="edit" />
+                        <span class="hidden md:inline-flex">Edit</span>
+                    </SecondaryButton>
+                </div>
+            </ListItem>
+            <Paginator :items="terms" />
         </div>
     </AuthenticatedLayout>
 </template>
