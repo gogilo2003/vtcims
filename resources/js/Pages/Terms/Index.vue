@@ -72,7 +72,7 @@ const onClosed = (value: boolean) => {
                 </span>
             </div>
         </div>
-        <div class="flex gap-3 flex-col">
+        <div class="flex gap-2 flex-col">
             <ListItem v-for="term in terms.data">
                 <div>
                     <div v-text="`${term.year} - ${term.name}`"></div>
