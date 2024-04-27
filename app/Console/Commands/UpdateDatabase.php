@@ -13,14 +13,14 @@ class UpdateDatabase extends Command
      *
      * @var string
      */
-    protected $signature = 'vtcims:update-database';
+    protected $signature = 'vtcims:update';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Update database structure and re align data';
+    protected $description = 'Update database structure and re align data to recent upgrades';
 
     /**
      * Execute the console command.
