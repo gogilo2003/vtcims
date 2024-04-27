@@ -115,6 +115,37 @@ watch(() => searchVal.value, debounce((value: string) => {
     })
 }, 500))
 
+const deleteSubject = (id: number) => {
+    router.delete(route('subjects-destroy', id), {
+        only: ['notification', 'subjects', 'errors'],
+        onSuccess: () => {
+            if (props.notification?.success) {
+                toast.add({
+                    severity: 'success',
+                    summary: 'Success',
+                    detail: props?.notification?.success,
+                    life: 4000
+                })
+                cancel()
+            } else {
+                toast.add({
+                    severity: 'error',
+                    summary: 'Error',
+                    detail: props?.notification?.danger ?? 'An error ocurred! Please try gain',
+                    life: 4000
+                })
+            }
+        },
+        onError: () => {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: props?.notification?.danger ?? 'An error ocurred! Please try gain',
+                life: 4000
+            })
+        }
+    })
+}
 </script>
 <template>
     <Toast position="top-center" />
@@ -139,10 +170,15 @@ watch(() => searchVal.value, debounce((value: string) => {
                         <div v-text="subject.name"
                             class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-500">
                         </div>
-                        <div class="flex gap-1">
-                            <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">COURSES:</span>
-                            <span v-for="course in subject.courses" v-text="course.code"
-                                class="text-xs text-gray-500 dark:text-gray-400"></span>
+                        <div class="text-xs flex gap-3">
+                            <div class="flex gap-1"><span class="font-medium">CODE:</span>
+                                <span class="text-gray-500 dark:text-gray-400" v-text="subject.code"></span>
+                            </div>
+                            <div class="flex gap-1">
+                                <span class="font-semibold text-gray-800 dark:text-gray-200">COURSES:</span>
+                                <span v-text="subject.courses.map(course => course.code).join(', ')"
+                                    class="text-gray-500 dark:text-gray-400"></span>
+                            </div>
                         </div>
                     </div>
                     <div class="flex gap-2">
@@ -150,6 +186,12 @@ watch(() => searchVal.value, debounce((value: string) => {
                             <Icon class="h-4 w-4" type="edit" />
                             Edit
                         </SecondaryButton>
+                        <!--
+                        <SecondaryButton @click="deleteSubject(subject.id)">
+                            <Icon class="h-4 w-4" type="delete" />
+                            Delete
+                        </SecondaryButton>
+                    -->
                     </div>
                 </ListItem>
                 <Paginator :items="subjects" />
