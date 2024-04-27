@@ -41,7 +41,7 @@ class AllocationController extends Controller
             });
         })->orderBy('created_at', 'DESC')
             ->with('term', 'staff', 'subject', 'intakes', 'lessons')
-            ->paginate(10)
+            ->paginate(8)
             ->through(fn($item) => [
                 "id" => $item->id,
                 "term" => [
@@ -76,16 +76,16 @@ class AllocationController extends Controller
         $subjects = Subject::all()->map(fn($item) => [
             "id" => $item->id,
             "code" => $item->code,
-            "name" => ucwords(strtolower($item->name)),
-        ]);
+            "name" => Str::title(Str::lower($item->name)),
+        ])->sortBy('name')->values();
 
         $instructors = Staff::whereHas('status', function ($query) {
             $query->where('name', 'LIKE', '%current%');
-        })
+        })->orderBy('first_name')
             // ->where('teach', 1)
             ->get()->map(fn($item) => [
                 "id" => $item->id,
-                "name" => sprintf("%s %s %s", $item->first_name, $item->middle_name, $item->surname)
+                "name" => Str::title(Str::lower(sprintf("%s %s %s", $item->first_name, $item->middle_name ? ' ' . $item->middle_name : '', $item->surname)))
             ]);
 
         $terms = Term::orderBy('year', 'DESC')->orderBy('name', 'DESC')->get()->map(fn($item) => [
