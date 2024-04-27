@@ -118,7 +118,7 @@ const submit = () => {
                     life: 4000
                 })
             },
-            only: ['notification', 'programs']
+            only: ['notification', 'programs', 'errors']
         })
     }
 }

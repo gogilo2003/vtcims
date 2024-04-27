@@ -80,7 +80,7 @@ const submit = () => {
             }
         })
     } else {
-        form.post(route('terms'), {
+        form.post(route('terms-store'), {
             only: ['terms', 'notification', 'errors'],
             onSuccess: () => {
                 toast.add({

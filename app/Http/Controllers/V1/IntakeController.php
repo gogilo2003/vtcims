@@ -34,13 +34,14 @@ class IntakeController extends Controller
                 "instructor" => [
                     "id" => $item->staff->id,
                     "name" => trim(
-                        Str::title(Str::lower(
-                            sprintf(
-                                '%s %s',
-                                $item->staff->first_name,
-                                $item->staff->surname
+                        Str::title(
+                            Str::lower(
+                                sprintf(
+                                    '%s %s',
+                                    $item->staff->first_name,
+                                    $item->staff->surname
+                                )
                             )
-                        )
                         )
                     ),
                 ],
@@ -53,15 +54,20 @@ class IntakeController extends Controller
 
         $instructors = Staff::whereHas('status', function ($query) {
             $query->where('name', 'current');
-        })->where('teach', 1)->get()->map(fn($item) => [
+        })
+            // ->where('teach', 1)
+            ->get()
+            ->map(fn($item) => [
                 "id" => $item->id,
-                "name" => sprintf("%s %s", Str::ucfirst(Str::lower($item->first_name)), Str::ucfirst(Str::lower($item->surname))),
-            ]);
+                "name" => Str::title(Str::lower(sprintf("%s %s", $item->first_name, $item->surname))),
+            ])
+            ->sortBy('name')->values();
 
         $courses = Course::orderBy('name', 'ASC')->get()->map(fn($item) => [
             "id" => $item->id,
             "code" => $item->code,
             "name" => Str::title(Str::lower($item->name)),
+            "duration" => $item->duration ? (int) explode(" ", $item->duration)[0] : null,
         ]);
 
         return Inertia::render('Intakes/Index', ['intakes' => $intakes, 'instructors' => $instructors, 'courses' => $courses, 'search' => $search,]);

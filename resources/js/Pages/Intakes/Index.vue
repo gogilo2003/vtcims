@@ -33,8 +33,8 @@ const toast = useToast()
 const form = useForm<iIntake>({
     id: 0,
     course: 0,
-    start_date: new Date(),
-    end_date: new Date(),
+    start_date: null,
+    end_date: null,
     instructor: 0,
     name: ""
 })
@@ -45,6 +45,9 @@ const dialogTitle = ref('New Intake')
 const course = ref<iCourse>()
 
 const newIntake = () => {
+    form.start_date = new Date()
+    form.end_date = new Date()
+
     showIntakeDialog.value = true
     edit.value = false
 }
@@ -53,8 +56,8 @@ const editIntake = (intake: iIntake) => {
 
     form.id = intake.id
     form.course = intake.course?.id
-    form.start_date = new Date(intake.start_date)
-    form.end_date = new Date(intake.end_date)
+    form.start_date = intake.start_date
+    form.end_date = intake.end_date
     form.name = intake.name
     form.instructor = intake.instructor?.id
 
@@ -98,6 +101,9 @@ watch(() => form.start_date, (value) => {
 })
 
 const submit = () => {
+
+    form.end_date = endDate.value
+
     if (edit.value) {
         form.patch(route('intakes-update', form.id), {
             only: ['notification', 'intakes', 'errors'],
@@ -146,6 +152,25 @@ const submit = () => {
     }
 
 }
+
+const selectedCourse = ref<iCourse>({
+    id: null,
+    name: "",
+    code: "",
+    duration: 0
+})
+
+const endDate = ref<Date | null>()
+
+watch(() => selectedCourse.value, (value: iCourse) => {
+    form.course = value.id
+    if (form.end_date) {
+        let year = form.end_date.getFullYear()
+        let month = form.end_date?.getMonth() + (value?.duration ?? 0)
+        let date = form.end_date.getDate()
+        endDate.value = new Date(year, month, date)
+    }
+})
 </script>
 <template>
     <Toast position="top-center" />
@@ -160,7 +185,7 @@ const submit = () => {
             <div class="mb-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <InputLabel value="Course" />
-                    <Dropdown :options="courses" option-value="id" option-label="name" v-model="form.course" filter />
+                    <Dropdown :options="courses" option-label="name" v-model="selectedCourse" filter />
                     <InputError :message="form.errors.course" />
                 </div>
                 <div>
@@ -171,12 +196,12 @@ const submit = () => {
                 </div>
                 <div>
                     <InputLabel value="Start Date" />
-                    <Calendar v-model="form.start_date" />
+                    <Calendar :manualInput="false" dateFormat="D, d MM, yy" v-model="form.start_date" />
                     <InputError :message="form.errors.start_date" />
                 </div>
                 <div>
                     <InputLabel value="End Date" />
-                    <Calendar v-model="form.end_date" />
+                    <Calendar :manualInput="false" dateFormat="D, d MM, yy" v-model="endDate" />
                     <InputError :message="form.errors.end_date" />
                 </div>
             </div>

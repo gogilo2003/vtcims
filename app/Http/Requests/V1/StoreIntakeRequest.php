@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\V1;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreIntakeRequest extends FormRequest
@@ -27,6 +28,20 @@ class StoreIntakeRequest extends FormRequest
             'instructor' => 'required|integer|exists:staff,id',
             'course' => 'required|integer|exists:courses,id',
             'name' => 'required|string|unique:intakes,name',
+        ];
+    }
+
+    /**
+     * Get the messages for the various rules
+     *
+     * @return array
+     */
+    function messages(): array
+    {
+        $start = Carbon::parse($this->start_date)->isoFormat('ddd, D MM, Y');
+        // dd($start);
+        return [
+            'end_date.after' => 'The :attribute field must be a date after ' . $start
         ];
     }
 }

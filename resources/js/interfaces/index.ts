@@ -82,11 +82,12 @@ export interface iCourse {
     id: number | null
     code: string
     name: string
-    department: Array<{
+    duration?: number
+    department?: Array<{
         id: number,
         name: string,
     }> | null | number
-    staff: Array<{
+    staff?: Array<{
         id: number,
         name: string,
     }> | null | number
@@ -186,8 +187,8 @@ export interface iDepartments {
 
 export interface iIntake {
     id: number | null
-    start_date: Date
-    end_date: Date
+    start_date: Date | null
+    end_date: Date | null
     name: string
     instructor: iInstructor | number | null
     course: iCourse | number | null,

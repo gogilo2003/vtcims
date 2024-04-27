@@ -83,7 +83,7 @@ const submit = () => {
                     life: 4000
                 })
             },
-            only: ['notification', 'departments']
+            only: ['notification', 'departments', 'errors']
         })
     } else {
         form.post(route('departments-store'), {
@@ -106,7 +106,7 @@ const submit = () => {
                     life: 4000
                 })
             },
-            only: ['notification', 'departments']
+            only: ['notification', 'departments', 'errors']
         })
     }
 }
