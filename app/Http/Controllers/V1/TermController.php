@@ -42,26 +42,29 @@ class TermController extends Controller
      */
     public function store(StoreTermRequest $request): RedirectResponse
     {
+        // dd($request->all());
+        $term = new Term();
+        $term->name = $request->name;
+        $term->year = $request->year;
+        $term->start_date = $request->start_date;
+        $term->end_date = $request->end_date;
+        $term->save();
 
-        // $term = new Term();
-        // $term->name = $request->name;
-        // $term->year = $request->year;
-        // $term->start_at = $request->start_at;
-        // $term->end_at = $request->end_at;
-        // $term->save();
+        if ($request->has('allocate')) {
+            if ($request->allocate) {
+                $lastTerm = Term::with('allocations')->whereNot('id', $term->id)->orderBy('id', 'DESC')->first();
+                foreach ($lastTerm->allocations as $allocation) {
+                    $newAllocation = new Allocation();
+                    $newAllocation->staff_id = $allocation->staff_id;
+                    $newAllocation->subject_id = $allocation->subject_id;
+                    $newAllocation->term_id = $term->id;
+                    $newAllocation->save();
 
-        // if ($request->has('auto_allocate')) {
-        //     $lastTerm = Term::with('allocations')->whereNot('id', $term->id)->orderBy('id', 'DESC')->first();
-        //     foreach ($lastTerm->allocations as $allocation) {
-        //         $newAllocation = new Allocation();
-        //         $newAllocation->staff_id = $allocation->staff_id;
-        //         $newAllocation->subject_id = $allocation->subject_id;
-        //         $newAllocation->term_id = $allocation->term_id;
-        //         $newAllocation->save();
-
-        //         $newAllocation->intakes()->sync($allocation->intakes->pluck('id')->toArray());
-        //     }
-        // }
+                    $newAllocation->intakes()->sync($allocation->intakes->pluck('id')->toArray());
+                    $newAllocation->lessons()->sync($allocation->lessons->pluck('lesson_id')->toArray());
+                }
+            }
+        }
 
         return redirect()->back()->with('success', 'Term Created');
     }
@@ -73,8 +76,8 @@ class TermController extends Controller
     {
         $term->name = $request->name;
         $term->year = $request->year;
-        $term->start_at = $request->start_at;
-        $term->end_at = $request->end_at;
+        $term->start_date = $request->start_date;
+        $term->end_date = $request->end_date;
         $term->save();
 
         return redirect()->back()->with('success', 'Term updated');

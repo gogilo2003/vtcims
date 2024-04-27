@@ -25,9 +25,8 @@ class StoreTermRequest extends FormRequest
         return [
             "name" => ["required", "string", "unique:terms,name,null,id,year," . $this->year],
             "year" => ["required", "numeric", "integer"],
-            "start_at" => ["required", "date"],
-            "end_at" => ["required", "date"],
+            "start_date" => ["required", "date"],
+            "end_date" => ["required", "date"],
         ];
-
     }
 }
