@@ -2,10 +2,25 @@
 import { Link } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import Icon from './Icons/Icon.vue';
+import { iLink } from '@/interfaces';
 
-defineProps({
-    items: Object
-})
+defineProps<{
+    items: {
+        current_page: string
+        data: Object[]
+        first_page_url: string
+        from: number
+        last_page: number
+        last_page_url: string
+        links: iLink[]
+        next_page_url: string
+        path: string
+        per_page: number
+        prev_page_url: string
+        to: number
+        total: number
+    }
+}>()
 
 const lt = ref('&laquo; Previous');
 const gt = ref('Next &raquo;');
