@@ -176,13 +176,19 @@ class AttendanceController extends Controller
             foreach ($intake->students as $student) {
                 $students->push([
                     "id" => $student->id,
-                    "admission_no" => $student->admission_no,
-                    "name" => $student->name,
+                    "admission_no" => StudentUtil::prepAdmissionNo($student),
+                    "name" => sprintf(
+                        "%s%s %s",
+                        $student->first_name,
+                        $student->middle_name ? ' ' . $student->middle_name : '',
+                        $student->surname
+                    ),
                     "gender" => $student->gender ? "Female" : "Male",
                 ]);
             }
         }
         $day = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
         return Inertia::render('Attendances/Mark', [
             'lesson' => [
                 "id" => $allocation_lesson->id,
