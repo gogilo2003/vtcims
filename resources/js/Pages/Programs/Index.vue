@@ -19,6 +19,7 @@ const props = defineProps<{
     programs: iPrograms
     search: string
     notification: iNotification
+    errors: Object
 }>()
 
 const toast = useToast()
@@ -47,6 +48,7 @@ const form = useForm<iProgram>({
 })
 
 const edit = ref(false)
+
 const title = ref('New Program')
 
 const newProgram = () => {
@@ -93,7 +95,7 @@ const submit = () => {
                     life: 4000
                 })
             },
-            only: ['notification', 'programs']
+            only: ['notification', 'programs', 'errors']
         })
     } else {
         form.post(route('programs-store'), {
