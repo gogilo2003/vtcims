@@ -42,3 +42,25 @@ export const calculateSuggestedDate = (lessonDay: number): string => {
 
     return null; // No lesson scheduled for today
 };
+
+export const replaceQueryParams = (url: string, newParams: any[]) => {
+    const urlParts = url.split('?');
+    const baseUrl = urlParts[0];
+    const queryString = urlParts[1];
+
+    // Parse the existing query parameters
+    const queryParams = new URLSearchParams(queryString);
+
+    // Replace the selected query parameters with new values
+    Object.entries(newParams).forEach(([paramName, paramValue]) => {
+        queryParams.set(paramName, paramValue);
+    });
+
+    // Construct the updated query string
+    const updatedQueryString = queryParams.toString();
+
+    // Rebuild the URL with the updated query string
+    const updatedUrl = updatedQueryString ? `${baseUrl}?${updatedQueryString}` : baseUrl;
+
+    return updatedUrl;
+};
