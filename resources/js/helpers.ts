@@ -43,7 +43,7 @@ export const calculateSuggestedDate = (lessonDay: number): string => {
     return null; // No lesson scheduled for today
 };
 
-export const replaceQueryParams = (url: string, newParams: any[]) => {
+export const replaceQueryParams = (url: string, newParams: Object) => {
     const urlParts = url.split('?');
     const baseUrl = urlParts[0];
     const queryString = urlParts[1];

@@ -218,7 +218,7 @@ const onCloseDownload = (val: boolean) => {
                     </SecondaryButton>
                 </div>
             </ListItem>
-            <Paginator :items="members" />
+            <Paginator :items="members" :search="search" />
         </div>
     </AuthenticatedLayout>
 </template>

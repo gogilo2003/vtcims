@@ -1,7 +1,7 @@
 export interface iLink {
-    url: String,
-    label: String,
-    active: String,
+    url: string,
+    label: string,
+    active: string,
 }
 export interface iStudent {
     id: number | null,
