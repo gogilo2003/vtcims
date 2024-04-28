@@ -35,18 +35,18 @@ watch(() => props.show, (value) => {
             <div class="shadow border border-stone-100 dark:border-gray-500 rounded-lg">
                 <div class="relative flex flex-col md:flex-row items-center">
                     <div class="absolute right-4 top-2 rounded-full" :class="{
-        'bg-lime-600': student.status.toLowerCase() == 'completed',
-        'bg-blue-700': student.status.toLowerCase() == 'in session',
-        'bg-red-600': student.status.toLowerCase() == 'dropout',
-        'bg-orange-600': student.status.toLowerCase() == 'on attachment'
+        'bg-lime-600': student?.status?.toLowerCase() == 'completed',
+        'bg-blue-700': student?.status?.toLowerCase() == 'in session',
+        'bg-red-600': student?.status?.toLowerCase() == 'dropout',
+        'bg-orange-600': student?.status?.toLowerCase() == 'on attachment'
     }">
-                        <div class="text-gray-300 px-3 py-2 uppercase font-semibold" v-text="student.status"></div>
+                        <div class="text-gray-300 px-3 py-2 uppercase font-semibold" v-text="student?.status"></div>
                     </div>
                     <div class="p-4 flex-none w-40 h-40">
-                        <img :src="student.photo_url" alt="" class="w-full h-full object-cover">
+                        <img :src="student?.photo_url" alt="" class="w-full h-full object-cover">
                     </div>
                     <div class="relative flex-1 py-2 md:pr-3 w-full px-4 md:pl-0">
-                        <h3 v-text="student.name"
+                        <h3 v-text="student?.name"
                             class="text-lg font-semibold my-1 border-b uppercase text-center md:text-left dark:text-gray-300">
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -54,17 +54,17 @@ watch(() => props.show, (value) => {
                                 <span
                                     class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Admission
                                     No</span>
-                                <span v-text="student.admission_no" class="text-stone-700 dark:text-stone-200"></span>
+                                <span v-text="student?.admission_no" class="text-stone-700 dark:text-stone-200"></span>
                             </div>
                             <div class="flex flex-col p-3 rounded border">
                                 <span
                                     class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Course</span>
-                                <span v-text="student.course_name" class="text-stone-700 dark:text-stone-200"></span>
+                                <span v-text="student?.course_name" class="text-stone-700 dark:text-stone-200"></span>
                             </div>
                             <div class="flex flex-col p-3 rounded border">
                                 <span
                                     class="text-xs font-bold uppercase whitespace-nowrap dark:text-stone-400">Intake</span>
-                                <span v-text="student.intake_name" class="text-stone-700 dark:text-stone-200"></span>
+                                <span v-text="student?.intake_name" class="text-stone-700 dark:text-stone-200"></span>
                             </div>
                         </div>
                     </div>
@@ -85,7 +85,7 @@ watch(() => props.show, (value) => {
                         </thead>
                         <tbody>
                             <tr class="border-b border-gray-200 dark:border-gray-500"
-                                v-for="examination in student.examinations">
+                                v-for="examination in student?.examinations">
                                 <td class="py-2 px-3" v-text="examination.subject"></td>
                                 <td class="text-right py-2 px-3" v-text="examination.score"></td>
                             </tr>
