@@ -9,10 +9,11 @@ use App\Models\Result;
 use App\Models\Student;
 use App\Models\Examination;
 use Illuminate\Support\Str;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreExaminationRequest;
-use App\Http\Requests\UpdateExaminationRequest;
 use App\Support\StudentUtil;
+use Illuminate\Support\Facades\App;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\V1\StoreExaminationRequest;
+use App\Http\Requests\V1\UpdateExaminationRequest;
 
 class ExaminationController extends Controller
 {
@@ -64,7 +65,23 @@ class ExaminationController extends Controller
      */
     public function store(StoreExaminationRequest $request)
     {
-        //
+        if ($request->has('students')) {
+            foreach ($request->students as $student) {
+                foreach ($student['marks'] as $score) {
+                    if ($score) {
+                        if ($score['score']) {
+                            $result = $score['id'] ? Result::find($score['id']) : new Result;
+                            $result->test_id = $score['test_id'];
+                            $result->score = $score['score'];
+                            $result->student_id = $student['student_id'];
+                            $result->save();
+                        }
+                    }
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', 'Examination results saved');
     }
 
     /**
@@ -156,8 +173,70 @@ class ExaminationController extends Controller
         //
     }
 
-    function marklist()
+    function marklist(Examination $examination)
     {
+        $pdf = App::make('snappy.pdf.wrapper');
+        // $examination = Examination::with('tests')->find($id);
+        $examination->load('tests');
+        $examination->load(['intakes.students.results']);
+        $intakes = implode(', ', $examination->intakes->pluck('name')->toArray());
+        $blank = request()->input('blank');
 
+        $data = [
+            'examination' => (object) [
+                "id" => $examination->id,
+                "title" => $examination->title,
+                "tests" => $examination->tests,
+                "students" => $examination->intakes->flatMap->students->map(
+                    function (Student $student) {
+                        $student->admission_no = StudentUtil::prepAdmissionNo($student);
+                        $student->name = Str::title(
+                            Str::lower(
+                                sprintf(
+                                    "%s%s %s",
+                                    $student->first_name,
+                                    $student->middle_name ? " " . $student->middle_name : "",
+                                    $student->surname
+                                )
+                            )
+                        );
+                        return (object) [
+                            "admission_no" => StudentUtil::prepAdmissionNo($student),
+                            "name" => Str::title(
+                                Str::lower(
+                                    sprintf(
+                                        "%s%s %s",
+                                        $student->first_name,
+                                        $student->middle_name ? " " . $student->middle_name : "",
+                                        $student->surname
+                                    )
+                                )
+                            ),
+                            "results" => $student->results
+                        ];
+                    }
+                ),
+
+            ],
+            'intakes' => $intakes
+        ];
+
+        if ($blank) {
+            $data['blank'] = true;
+        }
+
+        $pdf->loadView('pdf.examinations.examination', $data)
+            ->setPaper('A4')
+            ->setOption('no-outline', true)
+            ->setOption('footer-center', 'Page [page] of [toPage]')
+            ->setOption('footer-font-size', 8);
+
+        $filename = explode('-', $examination->title);
+        foreach ($filename as $key => $value) {
+            $filename[$key] = trim($value);
+        }
+        $filename = strtoupper(str_replace('-', '_', str_replace(' ', '-', implode('-', $filename)))) . '.pdf';
+
+        return $pdf->stream($filename);
     }
 }

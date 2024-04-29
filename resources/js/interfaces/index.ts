@@ -564,6 +564,7 @@ export interface iExamination {
     tests: { id: number, title: string }[]
     students: {
         id: number,
+        name?: string,
         admission_no?: string,
         results: {
             id: number | null

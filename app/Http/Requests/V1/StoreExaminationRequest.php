@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,7 +11,7 @@ class StoreExaminationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return request()->user()->isAdmin() || request()->user()->hasPermission('examinations-store');
     }
 
     /**
@@ -21,8 +21,11 @@ class StoreExaminationRequest extends FormRequest
      */
     public function rules(): array
     {
+        // dd($this->all());
         return [
-            //
+            "examination" => "required|numeric|integer|exists:examinations,id",
+            "students" => "required|array",
+            "students.*.student_id" => "required|numeric|integer|exists:students,id",
         ];
     }
 }

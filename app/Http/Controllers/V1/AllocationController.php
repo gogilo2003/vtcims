@@ -166,6 +166,34 @@ class AllocationController extends Controller
         $allocation->save();
 
         $allocation->intakes()->sync($request->intakes);
+
+        $term = Term::find($request->term);
+        $subject = Subject::find($request->subject);
+        $subjectName = Str::title(Str::lower($subject->name));
+
+        if (count($request->intakes) == 1) {
+            $intake = Intake::find($request->intakes[0]);
+            $subjectName = sprintf("%s - %s", $intake->name, $subjectName);
+        }
+
+        $examination = Examination::where('term_id', $term->id)
+            ->where('subject_id', $subject->id)
+            ->first();
+
+        $examination->title = sprintf(
+            '%d - %s - %s',
+            $term->year,
+            Str::upper($term->name),
+            $subjectName
+        );
+        $examination->subject_id = $request->subject;
+        $examination->staff_id = $request->instructor;
+        $examination->term_id = $request->term;
+
+        $examination->save();
+
+        $examination->intakes()->sync($request->intakes);
+
         return redirect()->back()->with('success', 'Allocation updated');
     }
 

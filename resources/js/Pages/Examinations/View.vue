@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
-import { iExamination } from '../../interfaces/index';
+import { iExamination, iNotification } from '../../interfaces/index';
 import Toast from 'primevue/toast';
 import { useForm, Link } from '@inertiajs/vue3';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
@@ -8,30 +8,48 @@ import Icon from '../../Components/Icons/Icon.vue';
 import { ref, onMounted } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { debounce } from 'lodash';
+import { useToast } from 'primevue/usetoast';
+
+const toast = useToast()
 
 interface iResult {
+    id: number | null
+    test_id: number
+    score: number | null
+}
+
+interface iStudent {
     student_id: number
-    marks: {
-        result_id: number | null
-        test_id: number
-        score: number
-    }[]
+    name: string,
+    admission_no: string,
+    marks: iResult[]
 }
 
 const props = defineProps<{
     examination: iExamination
+    notification: iNotification
 }>()
 
 onMounted(() => {
-    form.results = props.examination.students
+    form.examination = props.examination.id
+    form.students = props.examination?.students.map(stud => ({
+        student_id: stud.id,
+        name: stud.name,
+        admission_no: stud.admission_no,
+        marks: stud.results.map(res => ({
+            id: res.id,
+            test_id: res.test_id,
+            score: res.score
+        }))
+    }))
 })
 
 const form = useForm<{
     examination: number | null,
-    results: iResult[]
+    students: iStudent[] | null
 }>({
     examination: null,
-    results: []
+    students: null
 });
 
 const edit = ref(false)
@@ -44,12 +62,35 @@ const cancel = () => {
     edit.value = false
 }
 const submit = () => {
-    form
+    form.post(route('examinations-store'), {
+        only: ['examinations', 'notification', 'errors'],
+        onSuccess: () => {
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: props.notification.success,
+                life: 4000
+            })
+            cancel()
+        }
+    })
 }
 
-const marksChanged = debounce((event, student_id: number, index, key) => {
-    console.log(event.value, index, key, score.score);
-}, 500)
+const markList = (blank: boolean = false) => {
+    let options: { id: number | null, blank?: number } = { id: props.examination.id }
+    let url = route('examinations-marklist', options)
+
+    if (blank) {
+        url = url + '?blank=true'
+    }
+
+
+    console.log(blank, url);
+
+    window.open(url)
+}
+
+
 </script>
 <template>
     <Toast position="top-center" />
@@ -69,15 +110,18 @@ const marksChanged = debounce((event, student_id: number, index, key) => {
                     <SecondaryButton @click="editMarks">
                         <Icon class="h-4 w-4" type="done" />Enter Marks
                     </SecondaryButton>
-                    <SecondaryButton>
+                    <SecondaryButton @click="markList(false)">
                         <Icon class="h-4 w-4" type="pdf" />Download
+                    </SecondaryButton>
+                    <SecondaryButton @click="markList(true)">
+                        <Icon class="h-4 w-4" type="pdf" />Download Blank
                     </SecondaryButton>
                 </div>
                 <div class="flex gap-2 items-center">
                     <SecondaryButton v-if="edit" @click="cancel">
                         <Icon class="h-4 w-4" type="close" />Cancel
                     </SecondaryButton>
-                    <SecondaryButton v-if="edit">
+                    <SecondaryButton v-if="edit" @click="submit">
                         <Icon class="h-4 w-4" type="checkmark" />Save
                     </SecondaryButton>
                 </div>
@@ -93,14 +137,13 @@ const marksChanged = debounce((event, student_id: number, index, key) => {
                     </tr>
                 </thead>
                 <tbody class="text-light">
-                    <tr class="even:bg-gray-100"
-                        v-for="({ id, admission_no, name, results }, index) in examination.students">
+                    <tr class="even:bg-gray-100" v-for="({ id, admission_no, name, marks }, index) in form.students">
                         <td class="px-3 py-2 border" v-text="`${index + 1}.`"></td>
                         <td class="px-3 py-2 border" v-text="admission_no"></td>
                         <td class="px-3 py-2 border" v-text="name"></td>
-                        <td class="px-3 py-2 border text-right" v-for="(result, key) in results">
+                        <td class="px-3 py-2 border text-right" v-for="(result, key) in marks">
                             <InputNumber :key="key" :min="0" :max="100" :useGrouping="false" v-if="edit"
-                                @input="marksChanged($event, id, result, index, key)" v-model="result.score" />
+                                v-model="result.score" />
                             <span v-else v-text="result.score"></span>
                         </td>
                     </tr>
