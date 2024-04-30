@@ -55,57 +55,22 @@ class StudentController extends Controller
                                 ->orWhere('middle_name', 'like', '%' . $name . '%');
                         });
                     }
+                    $query->orWhere(function ($query) use ($search) {
+                        $query->whereHas('intake.course.department', function ($query) use ($search) {
+                            $query->where('name', 'like', '%' . $search . '%');
+                        })->orWhereHas('intake.course', function ($query) use ($search) {
+                            $query->where('name', 'like', '%' . $search . '%');
+                        })->orWhereHas('intake', function ($query) use ($search) {
+                            $query->where('name', 'like', '%' . $search . '%');
+                        });
+                    });
                 }
             )->paginate(8)->through(
                 function ($student) {
                     $id = $student->id;
-                    $examinations = $student->intake->examinations->map(function ($exam) use ($id) {
-                        $exam->load([
-                            'term',
-                            'subject',
-                            'tests.results' => function ($query) use ($id) {
-                                $query->where('student_id', $id);
-                            }
-                        ]);
-
-                        $score = 0;
-
-                        foreach ($exam->tests as $test) {
-                            foreach ($test->results as $result) {
-                                $score += $result->score;
-                            }
-                        }
-
-                        $data = (object) [
-                            "subject" => sprintf(
-                                "%s/%s - %s",
-                                $exam->term->year,
-                                $exam->term->name,
-                                $exam->subject->name
-                            ),
-                            "score" => $score,
-                        ];
-
-                        return $data;
-                    })->groupBy('subject')->map(function ($marks, $key) {
-                        return [
-                            "subject" => $key,
-                            "score" => number_format($marks->avg('score'), 2),
-                            "total" => number_format($marks->sum('score'), 2),
-                            "max" => number_format($marks->max('score'), 2),
-                            "min" => number_format($marks->min('score'), 2),
-                        ];
-                    })->sortBy('subject')->values();
-
                     return (object) [
                         "id" => $student->id,
-                        "admission_no" => $student->intake
-                            ? strtoupper(
-                                $student->intake->course->code . '/'
-                                . str_pad($student->id, 4, '0', 0) . '/'
-                                . $student->date_of_admission->format('Y')
-                            )
-                            : '',
+                        "admission_no" => StudentUtil::prepAdmissionNo($student),
                         "photo" => $student->photo ?? "",
                         "photo_url" => $student->photo ? Storage::disk('public')->url($student->photo) : asset('img/person_8x10.png'),
                         "surname" => ucfirst(Str::lower($student->surname)),
@@ -118,6 +83,7 @@ class StudentController extends Controller
                         "town" => $student->town ?? "",
                         "physical_address" => $student->physical_address ?? "",
                         "date_of_birth" => $student->date_of_birth ? $student->date_of_birth->isoFormat("ddd, D MMM, Y") : '',
+                        "age" => $student->date_of_birth ? $student->date_of_birth->age : '',
                         "birth_cert_no" => $student->birth_cert_no ?? "",
                         "idno" => $student->idno ?? "",
                         "gender" => $student->gender,
@@ -151,7 +117,7 @@ class StudentController extends Controller
                         "status" => $student->status,
                         "plwd" => $student->plwd,
                         "plwd_details" => $student->plwd_details,
-                        "examinations" => $examinations,
+                        "examinations" => StudentUtil::generateSummary($id),
                     ];
                 }
             );
@@ -315,7 +281,8 @@ class StudentController extends Controller
 
         if ($id) {
             $student = Student::findOrFail($id);
-
+            $examSummary = StudentUtil::generateSummary($id);
+            dd($examSummary);
             $pdf->loadView('pdf.students.view', compact('student'));
             // return view('pdf.students.view',compact('student'));
             $filename = str_replace('/', '_', $student->admission_no) . '.pdf';
