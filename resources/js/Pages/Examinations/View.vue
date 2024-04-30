@@ -5,7 +5,7 @@ import Toast from 'primevue/toast';
 import { useForm, Link } from '@inertiajs/vue3';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import Icon from '../../Components/Icons/Icon.vue';
-import { ref, onMounted } from 'vue';
+import { ref, watchEffect } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { debounce } from 'lodash';
 import { useToast } from 'primevue/usetoast';
@@ -16,12 +16,15 @@ interface iResult {
     id: number | null
     test_id: number
     score: number | null
+    max?: number
 }
 
 interface iStudent {
     student_id: number
     name: string,
     admission_no: string,
+    grade: string,
+    remarks: string,
     marks: iResult[]
 }
 
@@ -30,20 +33,6 @@ const props = defineProps<{
     notification: iNotification
 }>()
 
-onMounted(() => {
-    form.examination = props.examination.id
-    form.students = props.examination?.students.map(stud => ({
-        student_id: stud.id,
-        name: stud.name,
-        admission_no: stud.admission_no,
-        marks: stud.results.map(res => ({
-            id: res.id,
-            test_id: res.test_id,
-            score: res.score
-        }))
-    }))
-})
-
 const form = useForm<{
     examination: number | null,
     students: iStudent[] | null
@@ -51,6 +40,25 @@ const form = useForm<{
     examination: null,
     students: null
 });
+
+watchEffect(() => {
+    if (props.examination) {
+        form.examination = props.examination.id
+        form.students = props.examination?.students.map(stud => ({
+            student_id: stud.id,
+            name: stud.name,
+            admission_no: stud.admission_no,
+            grade: stud.grade,
+            remarks: stud.remarks,
+            marks: stud.results.map(res => ({
+                id: res.id,
+                test_id: res.test_id,
+                score: res.score,
+                max: res.max
+            }))
+        }))
+    }
+})
 
 const edit = ref(false)
 
@@ -63,7 +71,7 @@ const cancel = () => {
 }
 const submit = () => {
     form.post(route('examinations-store'), {
-        only: ['examinations', 'notification', 'errors'],
+        only: ['examination', 'notification', 'errors'],
         onSuccess: () => {
             toast.add({
                 severity: 'success',
@@ -71,6 +79,7 @@ const submit = () => {
                 detail: props.notification.success,
                 life: 4000
             })
+
             cancel()
         }
     })
@@ -132,20 +141,27 @@ const markList = (blank: boolean = false) => {
                         <th class="border px-3 py-2 text-left w-4">#</th>
                         <th class="border px-3 py-2 text-left w-40">Admission No</th>
                         <th class="border px-3 py-2 text-left">Name</th>
-                        <th class="border px-3 py-2 w-48" v-for="{ title } in examination.tests" v-text="title">
+                        <th class="border px-3 py-2 w-32" v-for="{ title } in examination.tests" v-text="title">
                         </th>
+                        <th class="border px-3 py-2 text-left">Grade</th>
+                        <th class="border px-3 py-2 text-left">Remarks</th>
                     </tr>
                 </thead>
                 <tbody class="text-light">
-                    <tr class="even:bg-gray-100" v-for="({ id, admission_no, name, marks }, index) in form.students">
+                    <tr class="even:bg-gray-100"
+                        v-for="({ admission_no, name, marks, grade, remarks }, index) in form.students">
                         <td class="px-3 py-2 border" v-text="`${index + 1}.`"></td>
                         <td class="px-3 py-2 border" v-text="admission_no"></td>
                         <td class="px-3 py-2 border" v-text="name"></td>
                         <td class="px-3 py-2 border text-right" v-for="(result, key) in marks">
-                            <InputNumber :key="key" :min="0" :max="100" :useGrouping="false" v-if="edit"
-                                v-model="result.score" />
-                            <span v-else v-text="result.score"></span>
+                            <div class="flex items-center gap-2 text-right justify-end">
+                                <InputNumber :key="key" :min="0" :max="result.max" :useGrouping="false" v-if="edit"
+                                    v-model="result.score" />
+                                <span v-else v-text="result.score"></span>
+                            </div>
                         </td>
+                        <td class="px-3 py-2 border text-center" v-text="grade"></td>
+                        <td class="px-3 py-2 border" v-text="remarks"></td>
                     </tr>
                 </tbody>
             </table>
