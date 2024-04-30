@@ -50,6 +50,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('enrollment', [StudentController::class, 'enrollment'])->name('-enrollment');
         Route::prefix('roles')->name('-roles')->controller(StudentRoleController::class)->group(function () {
             Route::get('', 'index');
+            Route::post('', 'store')->name('-store');
+            Route::patch('{student_role}', 'update')->name('-update');
+            Route::delete('{student_role}', 'destroy')->name('-destroy');
         });
     });
 
