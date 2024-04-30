@@ -23,6 +23,7 @@ use App\Http\Controllers\V1\BogPositionController;
 use App\Http\Controllers\V1\DesignationController;
 use App\Http\Controllers\V1\ExaminationController;
 use App\Http\Controllers\V1\StaffStatusController;
+use App\Http\Controllers\V1\StudentRoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +48,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('photo/{student}', [StudentController::class, 'picture'])->name('-photo');
         Route::get('download/{student?}', [StudentController::class, 'download'])->name('-download');
         Route::get('enrollment', [StudentController::class, 'enrollment'])->name('-enrollment');
+        Route::prefix('roles')->name('-roles')->controller(StudentRoleController::class)->group(function () {
+            Route::get('', 'index');
+        });
     });
 
     Route::prefix('staff')->name('staff')->group(function () {
