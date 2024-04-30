@@ -33,7 +33,7 @@ const download = () => {
         start_at?: Date
         month?: string
         term?: number
-    } = { allocation: props.allocation.id, duration: duration.value }
+    } = { allocation: props.allocation?.id, duration: duration.value }
 
     if (startAt.value && duration.value == 'week') {
         query = { ...query, start_at: startAt.value }
@@ -91,21 +91,21 @@ const durationLabel = computed(() => {
                 <div class="flex gap-0 md:gap-2 flex-col md:flex-row">
                     <span class="font-medium">Subject</span>
                     <span class="capitalize font-light text-sm"
-                        v-text="`${allocation.subject.code}-${allocation.subject.name}`"></span>
+                        v-text="`${allocation?.subject.code}-${allocation?.subject.name}`"></span>
                 </div>
                 <div class="flex gap-0 md:gap-2 flex-col md:flex-row">
                     <span class="font-medium">Instructor</span>
-                    <span class="capitalize font-light text-sm" v-text="allocation.instructor.name"></span>
+                    <span class="capitalize font-light text-sm" v-text="allocation?.instructor.name"></span>
                 </div>
                 <div class="flex gap-0 md:gap-2 flex-col md:flex-row">
                     <span class="font-medium">Year/Term</span>
                     <span class="capitalize font-light text-sm"
-                        v-text="`${allocation.term.year}-${allocation.term.name}`"></span>
+                        v-text="`${allocation?.term.year}-${allocation?.term.name}`"></span>
                 </div>
                 <div class="flex gap-0 flex-col">
                     <span class="font-medium">Intakes</span>
                     <span class="capitalize font-light text-sm"
-                        v-text="allocation.intakes.map(item => item.name).join(', ')"></span>
+                        v-text="allocation?.intakes.map(item => item.name).join(', ')"></span>
                 </div>
             </div>
             <div class="grid gap-2" :class="computedClasses">
