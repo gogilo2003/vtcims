@@ -612,3 +612,25 @@ export interface iStudentRoles {
     to: number,
     total: number,
 }
+
+export interface iMark {
+    subject: string
+    score: number
+    grade: number
+    remark: string
+    average: number
+    min: number
+    max: number
+}
+
+export interface iTranscript {
+    admission_no: number,
+    name: string,
+    intake: string,
+    course: string,
+    marks: iMark[],
+    total: number
+    average: number
+    grade: number
+    remark: string
+}

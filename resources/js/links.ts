@@ -81,10 +81,10 @@ export const links: iMenu[] = [
                 name: "examinations",
                 caption: "Examinations"
             },
-            // {
-            //     name: "bog-positions",
-            //     caption: "Positions"
-            // },
+            {
+                name: "examinations-transcripts",
+                caption: "Transcripts"
+            },
         ]
     },
     {

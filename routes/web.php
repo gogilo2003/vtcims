@@ -19,6 +19,7 @@ use App\Http\Controllers\V1\StaffRoleController;
 use App\Http\Controllers\V1\AllocationController;
 use App\Http\Controllers\V1\AttendanceController;
 use App\Http\Controllers\V1\DepartmentController;
+use App\Http\Controllers\V1\TranscriptController;
 use App\Http\Controllers\V1\BogPositionController;
 use App\Http\Controllers\V1\DesignationController;
 use App\Http\Controllers\V1\ExaminationController;
@@ -190,7 +191,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('{examination}', [ExaminationController::class, 'destroy'])->name('-destroy');
         Route::get('show/{examination}', [ExaminationController::class, 'show'])->name('-show');
         Route::get('marklist/{examination}', [ExaminationController::class, 'marklist'])->name('-marklist');
-        Route::get('transcripts/{examination}/{student?}', [ExaminationController::class, 'transcripts'])->name('-transcripts');
+        Route::prefix('transcripts')
+            ->name('-transcripts')
+            ->controller(TranscriptController::class)
+            ->group(function () {
+                Route::get('', 'index');
+                Route::get('{term}/term', 'index')->name('-term');
+                Route::get('{term}/department/{department}', 'index')->name('-department');
+                Route::get('{term}/course/{course}', 'index')->name('-course');
+                Route::get('{term}/intake/{intake}', 'index')->name('-intake');
+                Route::get('{term}/student/{student}', 'index')->name('-student');
+            });
     });
 
     Route::prefix('profile')->name('profile')->group(function () {
