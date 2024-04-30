@@ -90,7 +90,6 @@ class StudentUtil
         $subjectSummaries = [];
         foreach ($summary as $subject => $terms) {
             $subjectSummary = [
-                'code' => $terms['code'],
                 'subject' => $subject,
                 // 'terms' => [],
                 'average' => 0,
@@ -99,8 +98,10 @@ class StudentUtil
             ];
 
             foreach ($terms as $termId => $termSummary) {
+
                 $termAverage = $termSummary['total_marks'] / $termSummary['tests_count'];
 
+                $subjectSummary['code'] = $termSummary['code'];
                 $subjectSummary['average'] += $termAverage;
                 $subjectSummary['min'] = min($subjectSummary['min'], $termAverage);
                 $subjectSummary['max'] = max($subjectSummary['max'], $termAverage);
