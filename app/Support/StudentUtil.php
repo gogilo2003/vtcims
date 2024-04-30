@@ -4,8 +4,18 @@ namespace App\Support;
 use App\Models\Result;
 use App\Models\Student;
 
+/**
+ * StudentUtil
+ *
+ * Utility functions for student
+ */
 class StudentUtil
 {
+    /**
+     * Summary of prepAdmissionNo
+     * @param \App\Models\Student $student
+     * @return string
+     */
     static function prepAdmissionNo(Student $student): string
     {
         $pattern = env('ADM_NUMBER_PATTERN');
@@ -26,7 +36,12 @@ class StudentUtil
         return $admissionNumber;
     }
 
-    static function generateSummary($studentId)
+    /**
+     * Summary of generateExamSummary
+     * @param mixed $studentId
+     * @return \Illuminate\Support\Collection
+     */
+    static function generateExamSummary($studentId)
     {
         // Retrieve results data for the student
         $results = Result::where('student_id', $studentId)
@@ -116,5 +131,14 @@ class StudentUtil
         $subjectSummaries = collect($subjectSummaries)->sortByDesc('average')->values();
 
         return $subjectSummaries;
+    }
+    /**
+     * Summary of generateFeeSummary
+     * @param mixed $studentId
+     * @return \Illuminate\Support\Collection
+     */
+    static function generateFeeSummary($studentId)
+    {
+        return collect();
     }
 }
