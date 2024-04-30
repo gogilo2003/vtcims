@@ -110,14 +110,14 @@ class StudentController extends Controller
                             "address" => $student->sponsor->address ?? "",
                         ],
                         "role" => [
-                            "id" => $student->intake->id,
-                            "name" => $student->intake->name,
-                            "description" => $student->intake->description,
+                            "id" => $student->role->id,
+                            "name" => $student->role->name,
+                            "description" => $student->role->description,
                         ],
                         "status" => $student->status,
                         "plwd" => $student->plwd,
                         "plwd_details" => $student->plwd_details,
-                        "examinations" => StudentUtil::generateSummary($id),
+                        "examinations" => StudentUtil::generateExamSummary($id),
                     ];
                 }
             );
@@ -275,18 +275,23 @@ class StudentController extends Controller
     function download($id = null)
     {
         $pdf = App::make('snappy.pdf.wrapper')
-            ->setOrientation('landscape')
             ->setPaper('A4')
             ->setOption('no-outline', true);
 
         if ($id) {
             $student = Student::findOrFail($id);
-            $examSummary = StudentUtil::generateSummary($id);
-            dd($examSummary);
-            $pdf->loadView('pdf.students.view', compact('student'));
+            $examSummary = StudentUtil::generateExamSummary($id);
+            $feeSummary = StudentUtil::generateFeeSummary($id);
+
+            $pdf->setOrientation('portrait');
+            $pdf->loadView('pdf.students.view', [
+                'student' => $this->mapStudent($student),
+                "examination" => $examSummary,
+                "fees" => $feeSummary,
+            ]);
             // return view('pdf.students.view',compact('student'));
             $filename = str_replace('/', '_', $student->admission_no) . '.pdf';
-            return $pdf->download($filename);
+            return $pdf->stream($filename);
         } else {
             $department = request()->input('d');
             $course = request()->input('c');
@@ -356,62 +361,14 @@ class StudentController extends Controller
                     return $query->whereYear('date_of_admission', $year);
                 })
                 ->get()
-                ->map(fn(Student $student) => (object) [
-                    "id" => $student->id,
-                    "admission_no" => StudentUtil::prepAdmissionNo($student),
-                    "photo" => $student->photo ?? "",
-                    "photo_url" => $student->photo ? Storage::disk('public')->url($student->photo) : asset('img/person_8x10.png'),
-                    "surname" => ucfirst(Str::lower($student->surname)),
-                    "first_name" => ucfirst(Str::lower($student->first_name)),
-                    "middle_name" => ucfirst(Str::lower($student->middle_name)),
-                    "phone" => $student->phone ?? "",
-                    "email" => $student->email ?? "",
-                    "box_no" => $student->box_no ?? "",
-                    "post_code" => $student->post_code ?? "",
-                    "town" => $student->town ?? "",
-                    "physical_address" => $student->physical_address ?? "",
-                    "date_of_birth" => $student->date_of_birth ? $student->date_of_birth->isoFormat("ddd, D MMM, Y") : '',
-                    "age" => Carbon::parse($student->date_of_birth)->age,
-                    "birth_cert_no" => $student->birth_cert_no ?? "",
-                    "idno" => $student->idno ?? "",
-                    "gender" => $student->gender,
-                    "date_of_admission" => $student->date_of_admission ? $student->date_of_admission->isoFormat('ddd, D MMM, Y') : '',
-                    "intake" => (object) [
-                        "id" => $student->intake->id,
-                        "name" => $student->intake->name,
-                        "course" => $student->intake->course->name,
-                    ],
-                    "program" => (object) [
-                        "id" => $student->program->id,
-                        "name" => $student->program->name,
-                        "description" => $student->program->description ?? "",
-                    ],
-                    "sponsor" => (object) [
-                        "id" => $student->sponsor->id,
-                        "name" => $student->sponsor->name,
-                        "contact_person" => $student->sponsor->contact_person ?? "",
-                        "email" => $student->sponsor->email ?? "",
-                        "phone" => $student->sponsor->phone ?? "",
-                        "box_no" => $student->sponsor->box_no ?? "",
-                        "post_code" => $student->sponsor->post_code ?? "",
-                        "town" => $student->sponsor->town ?? "",
-                        "address" => $student->sponsor->address ?? "",
-                    ],
-                    "role" => (object) [
-                        "id" => $student->intake->id,
-                        "name" => $student->intake->name,
-                        "description" => $student->intake->description,
-                    ],
-                    "status" => $student->status,
-                    "plwd" => $student->plwd,
-                    "plwd_details" => $student->plwd_details,
-                ]);
+                ->map(fn(Student $student) => $this->mapStudent($student));
 
             $data['students'] = $students;
             if ($title = request()->input('t')) {
                 $data['title'] = $title;
             }
-            $pdf->setOption('footer-center', 'Page [page] of [toPage]')
+            $pdf->setOrientation('landscape')
+                ->setOption('footer-center', 'Page [page] of [toPage]')
                 ->setOption('footer-font-size', 7)
                 ->loadView('pdf.students.list', $data);
 
@@ -481,5 +438,58 @@ class StudentController extends Controller
             ->setOption('no-stop-slow-scripts', true);
         return $pdf->stream();
         // return view('pdf.students.enrollment', compact('enrollments', 'years'));
+    }
+    protected function mapStudent(Student $student)
+    {
+        return (object) [
+            "id" => $student->id,
+            "admission_no" => StudentUtil::prepAdmissionNo($student),
+            "photo" => $student->photo ?? "",
+            "photo_url" => $student->photo ? Storage::disk('public')->url($student->photo) : asset('img/person_8x10.png'),
+            "surname" => ucfirst(Str::lower($student->surname)),
+            "first_name" => ucfirst(Str::lower($student->first_name)),
+            "middle_name" => ucfirst(Str::lower($student->middle_name)),
+            "phone" => $student->phone ?? "",
+            "email" => $student->email ?? "",
+            "box_no" => $student->box_no ?? "",
+            "post_code" => $student->post_code ?? "",
+            "town" => $student->town ?? "",
+            "physical_address" => $student->physical_address ?? "",
+            "date_of_birth" => $student->date_of_birth ? $student->date_of_birth->isoFormat("ddd, D MMM, Y") : '',
+            "age" => Carbon::parse($student->date_of_birth)->age,
+            "birth_cert_no" => $student->birth_cert_no ?? "",
+            "idno" => $student->idno ?? "",
+            "gender" => $student->gender,
+            "date_of_admission" => $student->date_of_admission ? $student->date_of_admission->isoFormat('ddd, D MMM, Y') : '',
+            "intake" => (object) [
+                "id" => $student->intake->id,
+                "name" => $student->intake->name,
+                "course" => $student->intake->course->name,
+            ],
+            "program" => (object) [
+                "id" => $student->program->id,
+                "name" => $student->program->name,
+                "description" => $student->program->description ?? "",
+            ],
+            "sponsor" => (object) [
+                "id" => $student->sponsor->id,
+                "name" => $student->sponsor->name,
+                "contact_person" => $student->sponsor->contact_person ?? "",
+                "email" => $student->sponsor->email ?? "",
+                "phone" => $student->sponsor->phone ?? "",
+                "box_no" => $student->sponsor->box_no ?? "",
+                "post_code" => $student->sponsor->post_code ?? "",
+                "town" => $student->sponsor->town ?? "",
+                "address" => $student->sponsor->address ?? "",
+            ],
+            "role" => (object) [
+                "id" => $student->role->id,
+                "name" => $student->role->name,
+                "description" => $student->role->description,
+            ],
+            "status" => $student->status,
+            "plwd" => $student->plwd,
+            "plwd_details" => $student->plwd_details,
+        ];
     }
 }
