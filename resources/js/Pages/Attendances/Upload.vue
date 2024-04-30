@@ -31,17 +31,17 @@ const form = useForm({
     file: null
 })
 
-watch(() => props.lesson, () => {
-    if (props.lesson) {
+watch(() => props?.lesson, () => {
+    if (props?.lesson) {
         let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-        form.mark_at = calculateSuggestedDate(days.findIndex((item) => item == props.lesson?.day))
+        form.mark_at = calculateSuggestedDate(days.findIndex((item) => item == props?.lesson?.day))
     }
 })
 
 const upload = () => {
     form.transform((data) => {
         return {
-            allocation: props.lesson.id,
+            allocation: props?.lesson?.id,
             mark_at: data.mark_at,
             file: data.file
         }
@@ -105,23 +105,23 @@ watch(() => form.file, (file) => {
                 <div class="flex flex-col gap-2">
                     <div
                         class="flex items-start md:items-center gap-1 text-sm md:text-lg font-medium uppercase flex-nowrap">
-                        <span v-text="`${lesson.title} : ${lesson.subject}`" class=""></span>
+                        <span v-text="`${lesson?.title} : ${lesson?.subject}`" class=""></span>
                     </div>
                     <div class=" grid grid-cols-1 md:grid-cols-2 gap-2">
                         <div class="flex flex-nowrap items-start md:items-center md:gap-1 uppercase text-xs md:text-sm">
                             <span class="font-semibold">Term:</span>
-                            <span v-text="lesson.term" class="text-gray-600 dark:text-gray-300"></span>
+                            <span v-text="lesson?.term" class="text-gray-600 dark:text-gray-300"></span>
                         </div>
                         <div
                             class="hidden md:flex flex-col md:flex-row items-start md:items-center md:gap-1 uppercase text-xs md:text-sm">
                             <span class="font-semibold">Instructor:</span>
-                            <span v-text="lesson.instructor" class="text-gray-600 dark:text-gray-300"></span>
+                            <span v-text="lesson?.instructor" class="text-gray-600 dark:text-gray-300"></span>
                         </div>
                     </div>
                     <div
                         class="hidden md:flex flex-col md:flex-row items-start md:items-center md:gap-1 uppercase text-xs md:text-sm">
                         <span class="font-semibold">Intakes:</span>
-                        <span v-text="lesson.intakes" class="text-gray-600 dark:text-gray-300"></span>
+                        <span v-text="lesson?.intakes" class="text-gray-600 dark:text-gray-300"></span>
                     </div>
                 </div>
             </div>
