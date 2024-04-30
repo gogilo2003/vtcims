@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Student extends Model
 {
@@ -55,7 +54,7 @@ class Student extends Model
      */
     public function role(): BelongsTo
     {
-        return $this->belongsTo(Role::class, 'student_role_id', 'id');
+        return $this->belongsTo(StudentRole::class, 'student_role_id', 'id');
     }
 
     /**
