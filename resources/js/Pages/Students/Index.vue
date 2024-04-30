@@ -136,6 +136,9 @@ const onCloseEnrollment = () => {
     showEnrollment.value = false
 }
 
+const download = (id: number) => {
+    window.open(route('students-download', { id }), '_BLANK')
+}
 </script>
 
 <template>
@@ -210,6 +213,9 @@ const onCloseEnrollment = () => {
                     </SecondaryButton>
                     <SecondaryButton @click="uploadPic(student)">
                         <Icon class="h-4 w-4" type="picture" /><span class="hidden md:block">Picture</span>
+                    </SecondaryButton>
+                    <SecondaryButton @click="download(student.id)">
+                        <Icon class="h-4 w-4" type="pdf" /><span class="hidden md:block">Download</span>
                     </SecondaryButton>
                     <SecondaryButton @click="viewStudent(student)">
                         <Icon class="h-4 w-4" type="person-details" /><span class="hidden md:block">Details</span>
