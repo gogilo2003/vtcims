@@ -89,64 +89,78 @@ class ExaminationController extends Controller
      */
     public function show(Examination $examination)
     {
-        return Inertia::render('Examinations/View', [
-            'examination' => [
-                "id" => $examination->id,
-                "title" => $examination->title,
-                "intakes" => $examination->intakes->map(fn(Intake $intake) => [
-                    "id" => $intake->id,
-                    "name" => $intake->name,
-                ]),
-                "tests" => $examination->tests->map(fn(Test $test) => [
-                    "id" => $test->id,
-                    "title" => $test->title,
-                ]),
-                "students" => $examination->intakes->flatMap->students->map(
-                    function (Student $student) use ($examination) {
-                        $student->load([
-                            'results' => function ($query) use ($examination) {
-                                $query->whereHas(
-                                    'test',
-                                    function ($query) use ($examination) {
-                                        $query->where('examination_id', $examination->id);
-                                    }
-                                );
-                            }
-                        ]);
-                        return [
-                            "id" => $student->id,
-                            "admission_no" => StudentUtil::prepAdmissionNo($student),
-                            "name" => Str::title(
-                                Str::lower(
-                                    sprintf(
-                                        "%s%s %s",
-                                        $student->first_name,
-                                        $student->middle_name ? ' ' . $student->middle_name : '',
-                                        $student->surname
-                                    )
-                                )
-                            ),
-                            "results" => $examination->tests->map(
-                                function (Test $test) use ($student) {
-                                    if ($result = $student->results->where('test_id', $test->id)->first()) {
-                                        return [
-                                            "id" => $result->id,
-                                            "test_id" => $result->test_id,
-                                            "score" => $result->score,
-                                        ];
-                                    }
-                                    return [
-                                        "id" => null,
-                                        "test_id" => $test->id,
-                                        "score" => null,
-                                    ];
-                                }
-                            ),
-                        ];
+        $examination = [
+            "id" => $examination->id,
+            "title" => $examination->title,
+            "intakes" => $examination->intakes->map(fn(Intake $intake) => [
+                "id" => $intake->id,
+                "name" => $intake->name,
+            ]),
+            "tests" => $examination->tests->map(fn(Test $test) => [
+                "id" => $test->id,
+                "title" => $test->title,
+            ]),
+            "students" => $examination->intakes->flatMap->students->map(
+                function (Student $student) use ($examination) {
+
+                    $results = $examination->tests->map(function (Test $test) use ($student) {
+                        $result = $student->results->where('test_id', $test->id)->first();
+
+                        $res = null;
+
+                        if ($result) {
+                            $res = (object) [
+                                "student_id" => $student->id,
+                                "id" => $result->id,
+                                "test_id" => $result->test_id,
+                                "score" => $result->score,
+                                "max" => $test->outof,
+                            ];
+                        } else {
+                            $res = (object) [
+                                "student_id" => $student->id,
+                                "id" => null,
+                                "test_id" => $test->id,
+                                "score" => null,
+                                "max" => $test->outof,
+                            ];
+                        }
+                        return $res;
+                    });
+
+                    $total = 0;
+                    foreach ($results as $result) {
+                        if ($result->score) {
+                            $total += $result->score;
+                        }
                     }
-                )->sortBy('admission_no')->values(),
-            ]
-        ]);
+
+                    $grade = do_grade($total);
+                    $remark = do_remarks($grade);
+
+                    return (object) [
+                        "id" => $student->id,
+                        "admission_no" => StudentUtil::prepAdmissionNo($student),
+                        "name" => Str::title(
+                            Str::lower(
+                                sprintf(
+                                    "%s%s %s",
+                                    $student->first_name,
+                                    $student->middle_name ? " " . $student->middle_name : "",
+                                    $student->surname
+                                )
+                            )
+                        ),
+                        "results" => $results,
+                        "total" => $total,
+                        "grade" => $grade,
+                        "remarks" => $remark,
+                    ];
+                }
+            )->sortBy('admission_no')->values(),
+        ];
+
+        return Inertia::render('Examinations/View', ['examination' => $examination]);
     }
 
     /**
@@ -188,18 +202,42 @@ class ExaminationController extends Controller
                 "title" => $examination->title,
                 "tests" => $examination->tests,
                 "students" => $examination->intakes->flatMap->students->map(
-                    function (Student $student) {
-                        $student->admission_no = StudentUtil::prepAdmissionNo($student);
-                        $student->name = Str::title(
-                            Str::lower(
-                                sprintf(
-                                    "%s%s %s",
-                                    $student->first_name,
-                                    $student->middle_name ? " " . $student->middle_name : "",
-                                    $student->surname
-                                )
-                            )
-                        );
+                    function (Student $student) use ($examination) {
+
+                        $results = $examination->tests->map(function (Test $test) use ($student) {
+                            $result = $student->results->where('test_id', $test->id)->first();
+
+                            $res = null;
+
+                            if ($result) {
+                                $res = (object) [
+                                    "student_id" => $student->id,
+                                    "id" => $result->id,
+                                    "test_id" => $result->test_id,
+                                    "score" => $result->score,
+                                    "max" => $test->outof,
+                                ];
+                            } else {
+                                $res = (object) [
+                                    "student_id" => $student->id,
+                                    "id" => null,
+                                    "test_id" => $test->id,
+                                    "score" => null,
+                                    "max" => $test->outof,
+                                ];
+                            }
+                            return $res;
+                        });
+                        $total = 0;
+                        foreach ($results as $result) {
+                            if ($result->score) {
+                                $total += $result->score;
+                            }
+                        }
+
+                        $grade = do_grade($total);
+                        $remark = do_remarks($grade);
+
                         return (object) [
                             "admission_no" => StudentUtil::prepAdmissionNo($student),
                             "name" => Str::title(
@@ -212,10 +250,13 @@ class ExaminationController extends Controller
                                     )
                                 )
                             ),
-                            "results" => $student->results
+                            "results" => $results,
+                            "total" => $total,
+                            "grade" => $grade,
+                            "remarks" => $remark,
                         ];
                     }
-                ),
+                )->sortBy('admission_no')->values(),
 
             ],
             'intakes' => $intakes
