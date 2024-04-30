@@ -28,14 +28,14 @@ function do_grade($score)
 function do_remarks($grade)
 {
     $remark = '';
-    if (((int)$grade == 2) || ((int)$grade == 1)) {
+    if (((int) $grade == 2) || ((int) $grade == 1)) {
         $remark = 'Distinction';
-    } elseif (((int)$grade == 3) || ((int)$grade == 4)) {
+    } elseif (((int) $grade == 3) || ((int) $grade == 4)) {
         $remark = "Credit";
-    } elseif (((int)$grade == 5) || ((int)$grade == 6)) {
+    } elseif (((int) $grade == 5) || ((int) $grade == 6)) {
         $remark = "Pass";
-    } elseif ((int)$grade == 7) {
-        $remark = "Refered";
+    } elseif ((int) $grade == 7) {
+        $remark = "Referred";
     } else {
         $remark = "Fail";
     }
