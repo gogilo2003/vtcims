@@ -614,6 +614,7 @@ export interface iStudentRoles {
 }
 
 export interface iMark {
+    code: string
     subject: string
     score: number
     grade: number
