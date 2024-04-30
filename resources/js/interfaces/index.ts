@@ -590,3 +590,25 @@ export interface iExaminations {
     to: number,
     total: number,
 }
+
+export interface iStudentRole {
+    id: number | null
+    name: string | null
+    description?: string | null
+    students?: iStudent[] | null
+}
+export interface iStudentRoles {
+    data: Array<iStudentRole>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
