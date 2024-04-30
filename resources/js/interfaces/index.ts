@@ -570,6 +570,7 @@ export interface iExamination {
             id: number | null
             test_id: number
             score: number
+            max: number
         }[]
     }[]
 
