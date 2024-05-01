@@ -18,7 +18,7 @@ class StudentUtil
      */
     static function prepAdmissionNo(Student $student): string
     {
-        $pattern = env('ADM_NUMBER_PATTERN');
+        $pattern = env('ADM_NUMBER_PATTERN','{course}/{id}/{year}');
 
         // Retrieve the necessary data from the student model
         $department = $student->intake->course->department->code;
