@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\V1\FeeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\V1\HomeController;
 use App\Http\Controllers\V1\TermController;
@@ -8,6 +9,8 @@ use App\Http\Controllers\V1\StaffController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\IntakeController;
 use App\Http\Controllers\V1\LessonController;
+use App\Http\Controllers\V1\AccountController;
+use App\Http\Controllers\V1\InvoiceController;
 use App\Http\Controllers\V1\ProgramController;
 use App\Http\Controllers\V1\SponsorController;
 use App\Http\Controllers\V1\StudentController;
@@ -202,6 +205,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('{term}/intake/{intake}', 'index')->name('-intake');
                 Route::get('{term}/student/{student}', 'index')->name('-student');
             });
+    });
+
+    Route::prefix('accounts')->name('accounts')->group(function () {
+        Route::controller(AccountController::class)->group(function () {
+            Route::get('', 'index');
+        });
+        Route::prefix('fees')->name('-fees')->controller(FeeController::class)->group(function () {
+            Route::get('', 'index');
+        });
+        Route::prefix('invoices')->name('-invoices')->controller(InvoiceController::class)->group(function () {
+            Route::get('', 'index');
+        });
     });
 
     Route::prefix('profile')->name('profile')->group(function () {

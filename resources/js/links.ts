@@ -89,6 +89,25 @@ export const links: iMenu[] = [
     },
     {
         name: '',
+        icon: 'money',
+        caption: 'Accounts',
+        items: [
+            {
+                name: 'accounts',
+                caption: 'Dashboard',
+            },
+            {
+                name: 'accounts-fees',
+                caption: 'Fees Setup',
+            },
+            {
+                name: 'accounts-invoices',
+                caption: 'Invoices',
+            },
+        ]
+    },
+    {
+        name: '',
         icon: 'settings',
         caption: 'Setup',
         items: [
