@@ -15,6 +15,7 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import Dropdown from 'primevue/dropdown';
+import InputNumber from 'primevue/inputnumber';
 
 const props = defineProps<{
     courses: iCourses
@@ -37,6 +38,8 @@ const editCourse = (course: iCourse) => {
     form.id = course.id
     form.code = course.code
     form.name = course.name
+    form.duration = course.duration
+    form.internship_duration = course.internship_duration
     form.department = course.department?.id
     form.staff = course.staff?.id
 
@@ -48,6 +51,8 @@ const form = useForm<iCourse>({
     id: null,
     code: "",
     name: "",
+    duration: null,
+    internship_duration: null,
     department: null,
     staff: null,
 })
@@ -196,8 +201,19 @@ watch(() => searchVal.value, debounce((value: string) => {
                         <InputError :message="form.errors.name" />
                     </div>
                     <div class="mb-4">
+                        <InputLabel value="Course Duration" />
+                        <InputNumber :useGrouping="false" suffix=" Months" v-model="form.duration" />
+                        <InputError :message="form.errors.duration" />
+                    </div>
+                    <div class="mb-4">
+                        <InputLabel value="Internship Duration" />
+                        <InputNumber :useGrouping="false" suffix=" Months" v-model="form.internship_duration" />
+                        <InputError :message="form.errors.internship_duration" />
+                    </div>
+                    <div class="mb-4">
                         <InputLabel value="Head of Course" />
-                        <Dropdown :options="instructors" optionValue="id" optionLabel="name" v-model="form.staff" />
+                        <Dropdown filter :options="instructors" optionValue="id" optionLabel="name"
+                            v-model="form.staff" />
                         <InputError :message="form.errors.staff" />
                     </div>
                     <div class="flex justify-between mt-4">

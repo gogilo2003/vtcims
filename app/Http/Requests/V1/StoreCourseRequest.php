@@ -25,7 +25,8 @@ class StoreCourseRequest extends FormRequest
             'department' => 'required|numeric|integer|exists:departments,id',
             'staff' => 'required|numeric|integer|exists:staff,id',
             'code' => 'required|string|unique:courses|max:5',
-            'name' => 'required|string|unique:courses,name,null,id,department_id,' . $this->department
+            'name' => 'required|string|unique:courses,name,null,id,department_id,' . $this->department,
+            'internship_duration' => 'required|numeric|integer|max:6|min:1'
         ];
     }
 }

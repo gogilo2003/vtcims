@@ -3,6 +3,7 @@ namespace App\Support;
 
 use App\Models\Result;
 use App\Models\Student;
+use Illuminate\Support\Str;
 
 /**
  * StudentUtil
@@ -18,12 +19,12 @@ class StudentUtil
      */
     static function prepAdmissionNo(Student $student): string
     {
-        $pattern = env('ADM_NUMBER_PATTERN','{course}/{id}/{year}');
+        $pattern = env('ADM_NUMBER_PATTERN', '{course}/{id}/{year}');
 
         // Retrieve the necessary data from the student model
         $department = $student->intake->course->department->code;
         $course = $student->intake->course->code;
-        $studentId = $student->id;
+        $studentId = str_pad($student->id, 4, '0', STR_PAD_LEFT);
         $year = date('Y', strtotime($student->date_of_admission));
 
         // Replace placeholders in the pattern with actual values

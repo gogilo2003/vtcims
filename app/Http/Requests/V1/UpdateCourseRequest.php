@@ -26,7 +26,8 @@ class UpdateCourseRequest extends FormRequest
             'department' => 'required|exists:departments,id',
             'staff' => 'required|exists:staff,id',
             'code' => 'required|unique:courses,code,' . $this->id . '|max:5',
-            'name' => 'required|string|unique:courses,name,' . $this->id . ',id,department_id,' . $this->department
+            'name' => 'required|string|unique:courses,name,' . $this->id . ',id,department_id,' . $this->department,
+            'internship_duration' => 'required|numeric|integer|max:6|min:1'
         ];
     }
 }

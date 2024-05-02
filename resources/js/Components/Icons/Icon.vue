@@ -46,6 +46,7 @@ import Checkmark from './Checkmark.vue'
 import Download from './Download.vue'
 import Upload from './Upload.vue'
 import Done from './Done.vue'
+import Teacher from './Teacher.vue'
 
 const props = defineProps({ type: String })
 
@@ -142,6 +143,8 @@ const icon = computed(() => {
         return Upload;
     } else if (props.type == 'done') {
         return Done;
+    } else if (props.type == 'teacher') {
+        return Teacher;
     }
     classes.value = `pi ${props.type}`
     return 'span';

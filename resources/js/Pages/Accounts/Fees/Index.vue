@@ -77,6 +77,12 @@ const newFee = () => {
 const cancel = () => {
     form.reset()
     form.clearErrors()
+
+    form.id = null
+    form.term = null
+    form.course = null
+    form.amount = null
+
     edit.value = false
 }
 

@@ -28,7 +28,7 @@ export const links: iMenu[] = [
     },
     {
         name: '',
-        icon: 'people',
+        icon: 'teacher',
         caption: 'Staff',
         items: [
             {
@@ -95,6 +95,10 @@ export const links: iMenu[] = [
             {
                 name: 'accounts',
                 caption: 'Dashboard',
+            },
+            {
+                name: 'accounts-transactions',
+                caption: 'Fee Transactions',
             },
             {
                 name: 'accounts-fees',

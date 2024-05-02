@@ -160,7 +160,7 @@ const deletePosition = (id: number) => {
                 <div>
                     <form @submit.prevent="submit">
                         <div class="mb-6">
-                            <InputLabel value="Position Name" />
+                            <InputLabel value="Status Name" />
                             <InputText v-model="form.name" />
                             <InputError :message="form.errors.name" />
                         </div>

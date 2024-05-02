@@ -53,11 +53,10 @@ const newIntake = () => {
 }
 
 const editIntake = (intake: iIntake) => {
-
     form.id = intake.id
     form.course = intake.course?.id
     form.start_date = intake.start_date
-    form.end_date = intake.end_date
+    form.end_date = intake.end_date ?? prepareEndDate(intake.start_date)
     form.name = intake.name
     form.instructor = intake.instructor?.id
 
@@ -162,15 +161,22 @@ const selectedCourse = ref<iCourse>({
 
 const endDate = ref<Date | null>()
 
-watch(() => selectedCourse.value, (value: iCourse) => {
-    form.course = value.id
+watch(() => form.course, (value) => {
+
+    selectedCourse.value = props.courses.filter((course: iCourse) => value == course.id)[0]
+
     if (form.end_date) {
-        let year = form.end_date.getFullYear()
-        let month = form.end_date?.getMonth() + (value?.duration ?? 0)
-        let date = form.end_date.getDate()
-        endDate.value = new Date(year, month, date)
+        endDate.value = prepareEndDate(form.start_date)
     }
 })
+
+const prepareEndDate = (start: any) => {
+    let endDate: Date = new Date(start)
+    let year = endDate.getFullYear()
+    let month = endDate?.getMonth() + (selectedCourse.value.duration ?? 0)
+    let date = endDate.getDate()
+    return new Date(year, month, date)
+}
 </script>
 <template>
     <Toast position="top-center" />
@@ -185,7 +191,7 @@ watch(() => selectedCourse.value, (value: iCourse) => {
             <div class="mb-3 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <InputLabel value="Course" />
-                    <Dropdown :options="courses" option-label="name" v-model="selectedCourse" filter />
+                    <Dropdown :options="courses" option-label="name" option-value="id" v-model="form.course" filter />
                     <InputError :message="form.errors.course" />
                 </div>
                 <div>

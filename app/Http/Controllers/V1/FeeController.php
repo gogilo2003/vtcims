@@ -5,12 +5,14 @@ namespace App\Http\Controllers\V1;
 use App\Models\Fee;
 use App\Models\Term;
 use Inertia\Inertia;
+use App\Models\Course;
+use App\Models\Student;
 use Illuminate\Support\Str;
+use App\Models\FeeTransaction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreFeeRequest;
 use App\Http\Requests\V1\UpdateFeeRequest;
-use App\Models\Course;
-use App\Models\FeeTransaction;
+use App\Models\FeeTransactionType;
 
 class FeeController extends Controller
 {
@@ -69,6 +71,37 @@ class FeeController extends Controller
         $fee->amount = $request->amount;
         $fee->save();
 
+        $students = Student::whereHas('intake', function ($query) use ($fee) {
+            $query->where('course_id', $fee->course_id);
+        })->where('status', 'In Session')->get();
+
+        $feeTransactionType = FeeTransactionType::where('code', 'FC')->first();
+
+        foreach ($students as $student) {
+            $feeTransaction = new FeeTransaction();
+            $feeTransaction->particulars = sprintf(
+                "%s for %s, %s-%s",
+                $feeTransactionType->description,
+                Str::title(
+                    Str::lower(
+                        sprintf(
+                            "%s%s %s",
+                            $student->first_name,
+                            $student->middle_name ? " " . $student->middle_name : '',
+                            $student->surname
+                        )
+                    )
+                ),
+                $fee->term->year,
+                Str::title(Str::lower($fee->term->name))
+            );
+            $feeTransaction->student_id = $student->id;
+            $feeTransaction->fee_id = $fee->id;
+            $feeTransaction->amount = $fee->amount;
+            $feeTransaction->mode = 'system';
+
+            $feeTransactionType->fee_transactions()->save($feeTransaction);
+        }
 
         return redirect()->back()->with('success', 'Fee stored');
     }

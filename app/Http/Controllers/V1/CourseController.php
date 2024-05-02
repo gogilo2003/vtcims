@@ -7,7 +7,6 @@ use App\Models\Staff;
 use App\Models\Course;
 use App\Models\Department;
 use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreCourseRequest;
 use App\Http\Requests\V1\UpdateCourseRequest;
@@ -22,11 +21,14 @@ class CourseController extends Controller
         $search = request()->input('search');
 
         $courses = Course::when($search, function ($query) use ($search) {
-            $query->where('name', 'LIKE', '%' . $search . '%');
+            $query->where('name', 'LIKE', '%' . $search . '%')
+                ->orWhere('code', 'like', '%' . $search . '%');
         })->with('staff')->paginate(10)->through(fn($item) => [
                 "id" => $item->id,
                 "code" => $item->code,
                 "name" => $item->name,
+                "duration" => explode(" ", $item->duration)[0],
+                "internship_duration" => $item->internship_duration,
                 "department" => [
                     "id" => $item->department->id,
                     "name" => $item->department->name,
@@ -34,11 +36,15 @@ class CourseController extends Controller
                 "staff" => [
                     "id" => $item->staff->id,
                     "name" => trim(
-                        sprintf(
-                            '%s %s %s',
-                            $item->staff->surname,
-                            $item->staff->first_name,
-                            $item->staff->middle_name
+                        Str::title(
+                            Str::lower(
+                                sprintf(
+                                    '%s%s %s',
+                                    $item->staff->first_name,
+                                    $item->staff->middle_name ? " " . $item->staff->middle_name : '',
+                                    $item->staff->surname
+                                )
+                            )
                         )
                     ),
                 ]
@@ -75,6 +81,8 @@ class CourseController extends Controller
         $course->department_id = $request->department;
         $course->code = $request->code;
         $course->name = $request->name;
+        $course->duration = $request->duration;
+        $course->internship_duration = $request->internship_duration;
         $course->staff_id = $request->staff;
         $course->save();
 
@@ -96,6 +104,7 @@ class CourseController extends Controller
         $course->department_id = $request->department;
         $course->code = $request->code;
         $course->name = $request->name;
+        $course->internship_duration = $request->internship_duration;
         $course->staff_id = $request->staff;
         $course->save();
 

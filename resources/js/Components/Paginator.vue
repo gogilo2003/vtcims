@@ -28,7 +28,7 @@ const gt = ref('Next &raquo;');
 
 const links = computed(() => {
     return props.items.links.map(link => {
-        let search = usePage().props.search
+        let search: string = usePage().props.search
         if (link.url && search) {
             let queryArray = link.url.split('?')
             if (queryArray.length > 1) {

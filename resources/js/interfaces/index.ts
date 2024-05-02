@@ -5,7 +5,7 @@ export interface iLink {
 }
 export interface iStudent {
     id: number | null,
-    photo?: string,
+    photo?: string | null,
     photo_url?: string | "",
     surname: string | "",
     first_name: string | "",
@@ -63,7 +63,7 @@ export interface iItem {
 export interface iPhoto {
     id: number | null,
     url?: string | null,
-    photo: string | null
+    photo?: string | null
 }
 
 export interface iMenu {
@@ -82,7 +82,8 @@ export interface iCourse {
     id: number | null
     code: string
     name: string
-    duration?: number
+    duration?: number | null
+    internship_duration?: number | null
     department?: Array<{
         id: number,
         name: string,
@@ -655,6 +656,29 @@ export interface iFee {
 }
 export interface iFees {
     data: Array<iFee>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
+
+export interface iFeeTransaction {
+    id: number | null
+    term: { id: number, name: string } | number | null
+    course: { id: number, name: string } | number | null
+    amount: number | null
+    transactions?: iTransaction[] | null
+}
+export interface iFeeTransactions {
+    data: Array<iFeeTransaction>
     current_page: number,
     first_page_url: string | null,
     from: number,

@@ -28,6 +28,7 @@ use App\Http\Controllers\V1\DesignationController;
 use App\Http\Controllers\V1\ExaminationController;
 use App\Http\Controllers\V1\StaffStatusController;
 use App\Http\Controllers\V1\StudentRoleController;
+use App\Http\Controllers\V1\FeeTransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -212,6 +213,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('', 'index');
         });
         Route::prefix('fees')->name('-fees')->controller(FeeController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('', 'store')->name('-store');
+            Route::patch('{fee}', 'update')->name('-update');
+            Route::delete('{fee}', 'destroy')->name('-destroy');
+        });
+        Route::prefix('transactions')->name('-transactions')->controller(FeeTransactionController::class)->group(function () {
             Route::get('', 'index');
             Route::post('', 'store')->name('-store');
             Route::patch('{fee}', 'update')->name('-update');
