@@ -213,9 +213,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
         Route::prefix('fees')->name('-fees')->controller(FeeController::class)->group(function () {
             Route::get('', 'index');
+            Route::post('', 'store')->name('-store');
+            Route::patch('{fee}', 'update')->name('-update');
+            Route::delete('{fee}', 'destroy')->name('-destroy');
         });
         Route::prefix('invoices')->name('-invoices')->controller(InvoiceController::class)->group(function () {
             Route::get('', 'index');
+            Route::post('', 'store')->name('-store');
+            Route::patch('{fee}', 'update')->name('-update');
+            Route::delete('{fee}', 'destroy')->name('-destroy');
         });
     });
 

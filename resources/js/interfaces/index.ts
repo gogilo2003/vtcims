@@ -635,3 +635,36 @@ export interface iTranscript {
     grade: number
     remark: string
 }
+
+export interface iTransaction {
+    id: number | null
+    particulars: string | ""
+    fee: { id: number, name: string } | number | null
+    type: { id: number, name: string } | number | null
+    mode: string | ""
+    amount: number | null
+    students?: iStudent[]
+}
+
+export interface iFee {
+    id: number | null
+    term: { id: number, name: string } | number | null
+    course: { id: number, name: string } | number | null
+    amount: number | null
+    transactions?: iTransaction[] | null
+}
+export interface iFees {
+    data: Array<iFee>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}

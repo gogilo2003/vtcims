@@ -64,3 +64,8 @@ export const replaceQueryParams = (url: string, newParams: Object) => {
 
     return updatedUrl;
 };
+
+export const formatCurrency = (amount: number | null) => {
+    // Use Intl.NumberFormat to format the currency
+    return new Intl.NumberFormat('en-KE', { style: 'currency', currency: 'KES' }).format(amount);
+}
