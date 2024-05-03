@@ -1,5 +1,6 @@
 <?php return array(
     'name' => env('APP_NAME', 'Name of School'),
+    'adm_number_pattern' => env('ADM_NUMBER_PATTERN', 'Name of School'),
     'logo' => [
         // 'logo1' => '/img/nairobi-city-county-logo.png',
         'logo1' => '/logo.png',

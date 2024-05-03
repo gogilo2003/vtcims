@@ -1,9 +1,13 @@
 <?php
 namespace App\Support;
 
+use App\Models\Fee;
 use App\Models\Result;
 use App\Models\Student;
 use Illuminate\Support\Str;
+use App\Models\FeeTransaction;
+use App\Models\FeeTransactionMode;
+use App\Models\FeeTransactionType;
 
 /**
  * StudentUtil
@@ -279,6 +283,45 @@ class StudentUtil
         }
 
         return collect($transcriptData)->sortBy('subject')->values();
+    }
+
+    /**
+     * Post new Fee Transaction
+     *
+     * @param \App\Models\Student $student
+     * @param \App\Models\Fee $fee
+     * @param \App\Models\FeeTransactionType $feeTransactionType
+     * @param float $amount
+     * @return void
+     */
+    static function postFeeTransaction(Student $student, Fee $fee, FeeTransactionType $feeTransactionType, float $amount, FeeTransactionMode $mode = null)
+    {
+        if (is_null($mode)) {
+            $mode = FeeTransactionMode::where('name', 'like', '%system%')->first();
+        }
+        $feeTransaction = new FeeTransaction();
+        $feeTransaction->particulars = sprintf(
+            "%s for %s, %s-%s",
+            $feeTransactionType->description,
+            Str::title(
+                Str::lower(
+                    sprintf(
+                        "%s%s %s",
+                        $student->first_name,
+                        $student->middle_name ? " " . $student->middle_name : '',
+                        $student->surname
+                    )
+                )
+            ),
+            $fee->term->year,
+            Str::title(Str::lower($fee->term->name))
+        );
+        $feeTransaction->student_id = $student->id;
+        $feeTransaction->fee_id = $fee->id;
+        $feeTransaction->amount = $amount;
+        $feeTransaction->transaction_mode_id = $mode->id;
+
+        $feeTransactionType->fee_transactions()->save($feeTransaction);
     }
 
     /**

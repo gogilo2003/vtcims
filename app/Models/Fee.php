@@ -8,21 +8,15 @@ class Fee extends Model
 {
     public function course()
     {
-        return $this->belongsTo('App\Models\Course');
+        return $this->belongsTo(Course::class);
     }
 
     public function term()
     {
-        return $this->belongsTo('App\Models\Term');
+        return $this->belongsTo(Term::class);
     }
-
-    public function vote_heads()
-    {
-        return $this->hasMany('App\Models\FeeVoteHeads');
-    }
-
     public function transactions()
     {
-        return $this->hasMany('App\Models\FeeTransaction');
+        return $this->hasMany(FeeTransaction::class);
     }
 }

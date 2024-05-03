@@ -3,7 +3,7 @@ import { Link, usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import Icon from './Icons/Icon.vue';
 import { iLink } from '@/interfaces';
-import { iFees, iStudents } from '../interfaces/index';
+import { iFees, iStudents, iFeeTransactions } from '../interfaces/index';
 
 const props = defineProps<{
     items: {
@@ -20,7 +20,7 @@ const props = defineProps<{
         prev_page_url: string
         to: number
         total: number
-    } | iFees | iStudents
+    } | iFees | iStudents | iFeeTransactions
 }>()
 
 const lt = ref('&laquo; Previous');
@@ -28,7 +28,8 @@ const gt = ref('Next &raquo;');
 
 const links = computed(() => {
     return props.items.links.map(link => {
-        let search: string = usePage().props.search
+        let search: string = new String(usePage().props.search ?? "").toString()
+
         if (link.url && search) {
             let queryArray = link.url.split('?')
             if (queryArray.length > 1) {

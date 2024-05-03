@@ -31,4 +31,14 @@ class FeeTransaction extends Model
     {
         return $this->belongsTo(FeeTransactionType::class, 'transaction_type_id', 'id');
     }
+
+    /**
+     * Get the transaction_mode that owns the FeeTransaction
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function transaction_mode(): BelongsTo
+    {
+        return $this->belongsTo(FeeTransactionMode::class, 'transaction_mode_id', 'id');
+    }
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreFeeRequest;
 use App\Http\Requests\V1\UpdateFeeRequest;
 use App\Models\FeeTransactionType;
+use App\Support\StudentUtil;
 
 class FeeController extends Controller
 {
@@ -78,29 +79,7 @@ class FeeController extends Controller
         $feeTransactionType = FeeTransactionType::where('code', 'FC')->first();
 
         foreach ($students as $student) {
-            $feeTransaction = new FeeTransaction();
-            $feeTransaction->particulars = sprintf(
-                "%s for %s, %s-%s",
-                $feeTransactionType->description,
-                Str::title(
-                    Str::lower(
-                        sprintf(
-                            "%s%s %s",
-                            $student->first_name,
-                            $student->middle_name ? " " . $student->middle_name : '',
-                            $student->surname
-                        )
-                    )
-                ),
-                $fee->term->year,
-                Str::title(Str::lower($fee->term->name))
-            );
-            $feeTransaction->student_id = $student->id;
-            $feeTransaction->fee_id = $fee->id;
-            $feeTransaction->amount = $fee->amount;
-            $feeTransaction->mode = 'system';
-
-            $feeTransactionType->fee_transactions()->save($feeTransaction);
+            StudentUtil::postFeeTransaction($student, $fee, $feeTransactionType, $fee->amount);
         }
 
         return redirect()->back()->with('success', 'Fee stored');

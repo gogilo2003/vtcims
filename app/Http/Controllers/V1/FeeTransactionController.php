@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Models\Fee;
 use Inertia\Inertia;
 use App\Models\Student;
 use Illuminate\Support\Str;
 use App\Support\StudentUtil;
 use App\Models\FeeTransaction;
+use App\Models\FeeTransactionMode;
+use App\Models\FeeTransactionType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreFeeTransactionRequest;
 use App\Http\Requests\V1\UpdateFeeTransactionRequest;
@@ -19,6 +22,7 @@ class FeeTransactionController extends Controller
     public function index()
     {
         $search = request()->input('search');
+
         $transactions = FeeTransaction::orderBy('id', 'DESC')->when($search, function ($query) use ($search) {
             $query->whereHas('student', function ($query) use ($search) {
                 $names = explode(" ", $search);
@@ -38,8 +42,61 @@ class FeeTransactionController extends Controller
                         $query->where('name', 'like', '%' . $search . '%');
                     });
                 });
+                $admission = explode("/", $search);
+                if (count($admission) == 3 || count($admission) == 4) {
+                    $pattern = explode("/", Str::replace("}", "", Str::replace("{", "", config('eschool.adm_number_pattern'))));
+
+                    $course = $admission[array_search('course', $pattern)];
+                    $department = $admission[array_search('department', $pattern)];
+                    $id = $admission[array_search('id', $pattern)];
+                    $year = $admission[array_search('year', $pattern)];
+
+                    $query->orWhereHas('intake', function ($query) use ($course, $department) {
+                        $query->when($course, function ($query) use ($course) {
+                            $query->where('course_id', $course);
+                        });
+                        $query->when($department, function ($query) use ($department) {
+                            $query->whereHas('course', function ($query) use ($department) {
+                                $query->where('department_id', $department);
+                            });
+                        });
+                    });
+                    $query->orWhere('id', $id);
+                }
             });
-        })->paginate(8)->through(fn(FeeTransaction $feeTransaction) => $feeTransaction);
+        })->paginate(8)->through(fn(FeeTransaction $feeTransaction) => [
+                "id" => $feeTransaction->id,
+                "particulars" => $feeTransaction->particulars,
+                "amount" => $feeTransaction->amount,
+                "student" => [
+                    "id" => $feeTransaction->student->id,
+                    "admission_no" => StudentUtil::prepAdmissionNo($feeTransaction->student),
+                    "name" => Str::title(
+                        Str::lower(
+                            sprintf(
+                                "%s%s %s",
+                                $feeTransaction->student->first_name,
+                                $feeTransaction->student->middle_name ? ' ' . $feeTransaction->student->middle_name : '',
+                                $feeTransaction->student->surname
+                            )
+                        )
+                    )
+                ],
+                "fee" => [
+                    "id" => $feeTransaction->fee->id,
+                    "name" => sprintf(
+                        "%d-%s : %s",
+                        $feeTransaction->fee->term->year,
+                        Str::title(Str::lower($feeTransaction->fee->term->name)),
+                        Str::title(Str::lower($feeTransaction->fee->course->name))
+                    ),
+                ],
+                "mode" => [
+                    "id" => $feeTransaction->transaction_mode->id,
+                    "name" => $feeTransaction->transaction_mode->name,
+                ],
+                "date" => $feeTransaction->created_at->isoFormat('ddd, D MMM Y HH:mm:s A'),
+            ]);
 
         $students = Student::where('status', 'In Session')->get()->map(fn(Student $student) => [
             "id" => $student->id,
@@ -54,9 +111,36 @@ class FeeTransactionController extends Controller
             )
         ])->sortBy('name')->values();
 
+        $transaction_types = FeeTransactionType::all()->map(fn(FeeTransactionType $ftp) => [
+            "id" => $ftp->id,
+            "name" => sprintf(
+                "%s-%s",
+                Str::upper(Str::lower($ftp->code)),
+                Str::title(Str::lower($ftp->description))
+            ),
+        ])->sortBy('name')->values();
+
+        $transaction_modes = FeeTransactionMode::all()->map(fn(FeeTransactionMode $ftp) => [
+            "id" => $ftp->id,
+            "name" => Str::upper(Str::lower($ftp->name)),
+        ])->sortBy('name')->values();
+
+        $fees = Fee::all()->map(fn(Fee $fee) => [
+            "id" => $fee->id,
+            "name" => sprintf(
+                "%s-%s:%s",
+                $fee->term->year,
+                Str::title(Str::lower($fee->term->name)),
+                Str::title(Str::lower($fee->course->name))
+            ),
+        ])->sortByDesc('name')->values();
+
         return Inertia::render('Accounts/Transactions/Index', [
             'transactions' => $transactions,
             'students' => $students,
+            'transaction_types' => $transaction_types,
+            'transaction_modes' => $transaction_modes,
+            'fees' => $fees,
             'search' => $search
         ]);
     }
@@ -66,7 +150,14 @@ class FeeTransactionController extends Controller
      */
     public function store(StoreFeeTransactionRequest $request)
     {
+        $student = Student::find($request->student);
+        $fee = Student::find($request->fee);
+        $feeTransactionType = FeeTransactionType::find($request->type);
+        $feeTransactionMode = FeeTransactionMode::find($request->mode);
 
+        StudentUtil::postFeeTransaction($student, $fee, $feeTransactionType, $request->amount, $feeTransactionMode);
+
+        return redirect()->back()->with('success', sprintf("%s transaction posted", $feeTransactionType->description));
     }
 
     /**

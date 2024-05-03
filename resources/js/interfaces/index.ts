@@ -672,10 +672,12 @@ export interface iFees {
 
 export interface iFeeTransaction {
     id: number | null
-    term: { id: number, name: string } | number | null
-    course: { id: number, name: string } | number | null
+    student: { id: number, admission_no: string, name: string } | number | null
+    fee: { id: number, name: string } | number | null
+    mode: { id: number, name: string } | number | null
     amount: number | null
-    transactions?: iTransaction[] | null
+    particulars: string
+    date: Date
 }
 export interface iFeeTransactions {
     data: Array<iFeeTransaction>
