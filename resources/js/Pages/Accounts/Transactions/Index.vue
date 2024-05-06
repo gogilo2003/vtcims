@@ -182,7 +182,7 @@ const submit = () => {
         <template #footer>
             <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" @click="submit">Save
             </PrimaryButton>
-            <SecondaryButton @click="close"></SecondaryButton>
+            <SecondaryButton @click="close">Close</SecondaryButton>
         </template>
     </Modal>
     <AuthenticatedLayout title="Fee Transactions">

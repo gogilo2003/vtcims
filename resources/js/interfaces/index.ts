@@ -39,6 +39,7 @@ export interface iStudent {
     role: { id: number, name: string, description?: string } | number | null,
     admission_no?: string | "",
     status: { id: number, name: string } | string | number | null | "",
+    fees?: { charged: number, paid: number, balance: number }
 }
 export interface iStudents {
     data: Array<iStudent>

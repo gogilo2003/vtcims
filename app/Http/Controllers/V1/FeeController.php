@@ -96,12 +96,18 @@ class FeeController extends Controller
         $fee->amount = $request->amount;
         $fee->save();
 
-        $transactions = FeeTransaction::whereHas('transaction_type', function ($query) {
+        FeeTransaction::whereHas('transaction_type', function ($query) {
             $query->where('code', 'like', 'FC');
-        })->get()->each(function (FeeTransaction $feeTransaction) {
-            $feeTransaction->amount = $feeTransaction->fee->amount;
-            $feeTransaction->save();
-        });
+        })->whereHas('fee', function ($query) use ($fee) {
+            $query->where('id', $fee->id);
+        })->whereHas('transaction_mode', function ($query) {
+            $query->where('name', 'like', '%system%');
+        })
+            ->get()
+            ->each(function (FeeTransaction $feeTransaction) {
+                $feeTransaction->amount = $feeTransaction->fee->amount;
+                $feeTransaction->save();
+            });
 
         return redirect()->back()->with('success', 'Fee updated');
     }

@@ -68,6 +68,7 @@ class StudentController extends Controller
             )->paginate(8)->through(
                 function ($student) {
                     $id = $student->id;
+                    // dd(StudentUtil::generateFeeSummary($id));
                     return (object) [
                         "id" => $student->id,
                         "admission_no" => StudentUtil::prepAdmissionNo($student),
@@ -118,7 +119,9 @@ class StudentController extends Controller
                         "plwd" => $student->plwd,
                         "plwd_details" => $student->plwd_details,
                         "examinations" => StudentUtil::generateExamSummary($id),
+                        "fees" => StudentUtil::generateFeeSummary($id),
                     ];
+
                 }
             );
 
@@ -285,7 +288,7 @@ class StudentController extends Controller
 
             $pdf->setOrientation('portrait');
             $pdf->loadView('pdf.students.view', [
-                'student' => $this->mapStudent($student),
+                'student' => $this->mapStudent($student, true),
                 "examination" => $examSummary,
                 "fees" => $feeSummary,
             ]);
@@ -361,7 +364,7 @@ class StudentController extends Controller
                     return $query->whereYear('date_of_admission', $year);
                 })
                 ->get()
-                ->map(fn(Student $student) => $this->mapStudent($student));
+                ->map(fn(Student $student) => $this->mapStudent($student, false));
 
             $data['students'] = $students;
             if ($title = request()->input('t')) {
@@ -439,13 +442,13 @@ class StudentController extends Controller
         return $pdf->stream();
         // return view('pdf.students.enrollment', compact('enrollments', 'years'));
     }
-    protected function mapStudent(Student $student)
+    protected function mapStudent(Student $student, $base64 = false)
     {
         return (object) [
             "id" => $student->id,
             "admission_no" => StudentUtil::prepAdmissionNo($student),
             "photo" => $student->photo ?? "",
-            "photo_url" => $student->photo ? Storage::disk('public')->url($student->photo) : asset('img/person_8x10.png'),
+            "photo_url" => StudentUtil::getPhotoUrl($student->photo, $base64),
             "surname" => ucfirst(Str::lower($student->surname)),
             "first_name" => ucfirst(Str::lower($student->first_name)),
             "middle_name" => ucfirst(Str::lower($student->middle_name)),

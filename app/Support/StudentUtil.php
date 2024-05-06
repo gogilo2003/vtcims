@@ -1,6 +1,7 @@
 <?php
 namespace App\Support;
 
+use Carbon\Carbon;
 use App\Models\Fee;
 use App\Models\Result;
 use App\Models\Student;
@@ -8,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Models\FeeTransaction;
 use App\Models\FeeTransactionMode;
 use App\Models\FeeTransactionType;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * StudentUtil
@@ -324,14 +326,130 @@ class StudentUtil
         $feeTransactionType->fee_transactions()->save($feeTransaction);
     }
 
+    static function getPhotoUrl($filePath, $base64 = false)
+    {
+        $defaultImagePath = 'img/person_8x10.png'; // Update this with your actual path
+        // $defaultImageBase64 = ''; // Add your base64 representation here if needed
+
+        if ($filePath) {
+            if ($base64) {
+                // Return base64 URL of the image
+                $imageType = pathinfo(storage_path('app/public/' . $filePath), PATHINFO_EXTENSION);
+                $imageData = file_get_contents(storage_path('app/public/' . $filePath));
+                $base64Image = 'data:image/' . $imageType . ';base64,' . base64_encode($imageData);
+                return $base64Image;
+            } else {
+                // Return regular path
+                return Storage::disk('public')->url($filePath);
+            }
+        } else {
+            if ($base64) {
+                // Return base64 URL of the default image
+                $defaultImageType = pathinfo(public_path($defaultImagePath), PATHINFO_EXTENSION);
+                $defaultImageData = file_get_contents(public_path($defaultImagePath));
+                $defaultBase64Image = 'data:image/' . $defaultImageType . ';base64,' . base64_encode($defaultImageData);
+                return $defaultBase64Image;
+            } else {
+                // Return regular path of the default image
+                return asset($defaultImagePath);
+            }
+        }
+    }
+
     /**
-     * Summary of generateFeeSummary
+     * generates a aggregate of student's school fees
      * @param mixed $studentId
-     * @return \Illuminate\Support\Collection
+     * @return object
      */
     static function generateFeeSummary($studentId)
     {
-        return collect();
+        // Fetch fee transactions for the student
+        $transactions = FeeTransaction::where('student_id', $studentId)->get();
+
+        // Initialize variables for total fee charged, total fee paid, and fee balance
+        $totalFeeCharged = 0;
+        $totalFeePaid = 0;
+        $feeBalance = 0;
+
+        // Process each transaction
+        foreach ($transactions as $transaction) {
+            if ($transaction->transaction_type->code == 'FC') {
+                // Fee charged
+                $totalFeeCharged += $transaction->amount;
+            } elseif ($transaction->transaction_type->code == 'FP') {
+                // Fee paid
+                $totalFeePaid += $transaction->amount;
+            } elseif ($transaction->transaction_type->code == 'FR') {
+                // Fee reversed (deduct from total fee paid)
+                $totalFeePaid -= $transaction->amount;
+            }
+        }
+
+        // Calculate fee balance
+        $feeBalance = $totalFeeCharged - $totalFeePaid;
+
+        // Return summary
+        return (object) [
+            'charged' => $totalFeeCharged,
+            'paid' => $totalFeePaid,
+            'balance' => $feeBalance
+        ];
     }
 
+    static function summarizeFeePaymentsByMonth($studentId)
+    {
+        // Get the current year
+        $currentYear = Carbon::now()->year;
+
+        // Get the fee payment data for the selected student for the current year
+        $feePayments = FeeTransaction::where('student_id', $studentId)
+            ->whereYear('created_at', $currentYear)
+            ->get();
+
+        // Initialize a collection to store the fee payment summary
+        $summary = collect();
+
+        // Loop through the fee payments and aggregate them by month
+        foreach ($feePayments as $payment) {
+            $month = Carbon::parse($payment->created_at)->format('F'); // Get the month name
+            $amount = $payment->amount;
+            $transactionType = $payment->transaction_type;
+
+            // If the month already exists in the summary collection, update it; otherwise, add a new entry
+            $summary->transform(function ($item) use ($month, $amount, $transactionType) {
+                if ($item['month'] === $month) {
+                    if ($transactionType === 'FC') {
+                        // Fee charged
+                        $item['charged'] += $amount;
+                    } elseif ($transactionType === 'FP') {
+                        // Fee paid
+                        $item['paid'] += $amount;
+                    } elseif ($transactionType === 'FR') {
+                        // Fee reversed
+                        $item['paid'] -= $amount;
+                    }
+                    $item['balance'] = $item['charged'] - $item['paid'];
+                }
+                return $item;
+            });
+
+            if (!$summary->contains('month', $month)) {
+                // Create a new entry for the month
+                $summary->push([
+                    'month' => $month,
+                    'charged' => ($transactionType === 'FC') ? $amount : 0,
+                    'paid' => ($transactionType === 'FP') ? $amount : 0,
+                    'balance' => 0 // Balance will be updated in the transform function
+                ]);
+            }
+        }
+
+        // Convert each month's summary into an object
+        $summary->transform(function ($item) {
+            return (object) $item;
+        });
+
+        // Return the fee payment summary as a collection
+        return $summary;
+    }
 }

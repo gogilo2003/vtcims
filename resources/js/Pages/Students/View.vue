@@ -4,6 +4,7 @@ import Toast from "primevue/toast";
 import { iStudent } from "@/interfaces/index";
 import Modal from '../../Components/Modal.vue'
 import Icon from '../../Components/Icons/Icon.vue'
+import FeeSummaryChart from "./FeeSummaryChart.vue";
 
 const props = defineProps<{
     show: boolean,
@@ -82,8 +83,9 @@ watch(() => props.show, (value) => {
                     </div>
                 </div>
             </div>
-            <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div class="shadow rounded-lg overflow-hidden border border-gray-500 dark:border-gray-500">
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div
+                    class="md:col-span-2 shadow rounded-lg overflow-hidden border border-gray-500 dark:border-gray-500">
                     <div
                         class="text-base font-semibold px-3 py-2 border-b border-primary-500 dark:border-gray-500 text-primary-500 dark:text-gray-400">
                         Examinations
@@ -113,9 +115,7 @@ watch(() => props.show, (value) => {
                         class="text-base font-semibold px-3 py-2 border-b border-gray-700 dark:border-gray-500 text-gray-700 dark:text-gray-400">
                         Fee Payment Summary</div>
                     <div class="p-4">
-                        <div>
-                            Current Term Paid:<span>122312</span>
-                        </div>
+                        <FeeSummaryChart :feeSummary="student?.fees" />
                     </div>
                 </div>
             </div>

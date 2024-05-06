@@ -120,7 +120,7 @@ class FeeTransactionController extends Controller
             ),
         ])->sortBy('name')->values();
 
-        $transaction_modes = FeeTransactionMode::all()->map(fn(FeeTransactionMode $ftp) => [
+        $transaction_modes = FeeTransactionMode::where('name', 'not like', '%system%')->get()->map(fn(FeeTransactionMode $ftp) => [
             "id" => $ftp->id,
             "name" => Str::upper(Str::lower($ftp->name)),
         ])->sortBy('name')->values();
@@ -151,7 +151,7 @@ class FeeTransactionController extends Controller
     public function store(StoreFeeTransactionRequest $request)
     {
         $student = Student::find($request->student);
-        $fee = Student::find($request->fee);
+        $fee = Fee::find($request->fee);
         $feeTransactionType = FeeTransactionType::find($request->type);
         $feeTransactionMode = FeeTransactionMode::find($request->mode);
 
