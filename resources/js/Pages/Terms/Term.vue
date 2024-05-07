@@ -38,7 +38,7 @@ const form = useForm(
         year: null,
         start_date: null,
         end_date: null,
-        allocate: null
+        allocate: false
     }
 )
 
@@ -131,12 +131,12 @@ const cancel = () => {
                 <InputError :message="form.errors.name" />
             </div>
             <div class="mb-4">
-                <InputLabel value="Year" />
+                <InputLabel value="Start Date" />
                 <Calendar dateFormat="D, d M, yy" view="date" v-model="form.start_date" />
                 <InputError :message="form.errors.start_date" />
             </div>
             <div class="mb-4">
-                <InputLabel value="Year" />
+                <InputLabel value="End Date" />
                 <Calendar dateFormat="D, d M, yy" view="date" v-model="form.end_date" />
                 <InputError :message="form.errors.end_date" />
             </div>

@@ -21,8 +21,8 @@ const selectedTerm = ref<iTerm>({
     id: null,
     name: "",
     year: "",
-    start_date: null,
-    end_date: null,
+    start_date: new Date(),
+    end_date: new Date(),
 })
 
 const newTerm = () => {
@@ -46,8 +46,8 @@ const editTerm = (term: iTerm) => {
         id: term.id,
         year: term.year,
         name: term.name,
-        start_date: new Date(term.start_date),
-        end_date: new Date(term.end_date),
+        start_date: new Date(term?.start_date ?? null),
+        end_date: new Date(term?.end_date ?? null),
     }
 
     show.value = true

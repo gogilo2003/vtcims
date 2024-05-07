@@ -312,8 +312,8 @@ export interface iTerm {
     id: number | null
     name: string | null
     year: number | null | string
-    start_date: Date | null
-    end_date: Date | null
+    start_date: Date
+    end_date: Date
     auto_allocate?: number
 }
 export interface iTerms {
