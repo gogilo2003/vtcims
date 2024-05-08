@@ -10,10 +10,15 @@ export default {
             { 'outline-none outline-offset-0 ring ring-primary-400/50 dark:ring-primary-300/50': state.focused }
         ]
     }),
+    input: {
+        class: [
+            'absolute z-10 w-full h-full opacity-0 rounded-full cursor-pointer left-0 top-0'
+        ]
+    },
     slider: ({ props }) => ({
         class: [
             // Position
-            'absolute top-0 left-0 right-0 bottom-0',
+            'absolute top-0 left-0 right-0 bottom-0 z-0',
             { 'before:transform before:translate-x-5': props.modelValue },
 
             // Shape

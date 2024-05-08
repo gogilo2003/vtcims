@@ -59,7 +59,7 @@ export const links: iMenu[] = [
     },
     {
         name: '',
-        icon: 'people',
+        icon: 'board_member',
         caption: 'BOG',
         items: [
             {
