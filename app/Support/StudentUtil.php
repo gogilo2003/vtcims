@@ -266,7 +266,7 @@ class StudentUtil
 
             // Calculate current term mean
             $currentTermMean = sprintf("%.1f", round(array_sum($currentTermSubjectScores)));
-
+            // dd($currentTermMean);
             // Calculate grade and remark for the current term using services
             $grade = self::calculateGrade($currentTermMean);
             $remark = self::generateRemark($grade);
