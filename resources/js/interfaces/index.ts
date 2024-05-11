@@ -3,6 +3,13 @@ export interface iLink {
     label: string,
     active: string,
 }
+
+export interface iGuardian {
+    id: number
+    name: string
+    phone: string
+    email?: string
+}
 export interface iStudent {
     id: number | null,
     photo?: string | null,
@@ -23,6 +30,7 @@ export interface iStudent {
     plwd: boolean,
     plwd_details?: string | "",
     date_of_admission: Date,
+    guardian: iGuardian
     intake: { id: number, name: string } | number | null,
     program: { id: number, name: string, description?: string } | number | null,
     sponsor: {

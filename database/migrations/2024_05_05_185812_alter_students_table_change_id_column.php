@@ -11,18 +11,22 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        try {
+            Schema::disableForeignKeyConstraints();
 
-        Schema::disableForeignKeyConstraints();
+            Schema::table('students', function (Blueprint $table) {
+                $table->dropPrimary();
+            });
 
-        Schema::table('students', function (Blueprint $table) {
-            $table->dropPrimary();
-        });
+            Schema::table('students', function (Blueprint $table) {
+                $table->bigIncrements('id')->change();
+            });
 
-        Schema::table('students', function (Blueprint $table) {
-            $table->bigIncrements('id')->change();
-        });
+            Schema::enableForeignKeyConstraints();
+        } catch (\Throwable $th) {
 
-        Schema::enableForeignKeyConstraints();
+        }
+
     }
 
     /**
