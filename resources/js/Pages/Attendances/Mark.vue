@@ -15,7 +15,7 @@ import { iAllocationLesson } from '../../interfaces/index';
 
 const props = defineProps<{
     lesson: iAllocationLesson,
-    search: string,
+    search?: string,
     current: string,
     notification: Object,
     errors: Object

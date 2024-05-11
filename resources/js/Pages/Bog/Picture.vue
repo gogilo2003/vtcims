@@ -12,7 +12,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 const props = defineProps<{
     show: boolean,
-    photo: iPhoto,
+    photo: iPhoto | null,
 
 }>()
 const emit = defineEmits(['closed', 'saved'])

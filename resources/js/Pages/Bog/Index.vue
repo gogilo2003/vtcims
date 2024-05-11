@@ -27,7 +27,7 @@ const props = defineProps<{
 const edit = ref(false)
 const show = ref(false)
 const bogMember = ref<iBogMember | null>(null)
-const photo = ref<iPhoto | undefined>()
+const photo = ref<iPhoto | null>(null)
 
 const newBogMember = () => {
     bogMember.value = {

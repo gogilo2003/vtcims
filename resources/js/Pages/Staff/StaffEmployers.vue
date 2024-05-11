@@ -16,7 +16,7 @@ import ListItem from '../../Components/ListItem.vue'
 import Paginator from '../../Components/Paginator.vue'
 
 const props = defineProps<{
-    search: string
+    search?: string
     employers: iEmployers,
     notification: iNotification
 }>()

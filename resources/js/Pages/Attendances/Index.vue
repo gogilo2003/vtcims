@@ -18,7 +18,7 @@ import Download from './Download.vue';
 
 const props = defineProps<{
     allocations: iAllocations,
-    search: string,
+    search?: string,
     current: string,
     notification: Object,
     errors: Object

@@ -20,7 +20,7 @@ import Modal from '../../Components/Modal.vue'
 
 const props = defineProps<{
     lessons: iLessons,
-    search: string,
+    search?: string,
     notification: iNotification,
     errors: Object
 }>()

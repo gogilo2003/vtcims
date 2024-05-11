@@ -27,6 +27,9 @@ export default {
             { 'opacity-60': props.disabled, 'pointer-events-none': props.disabled, 'cursor-default': props.disabled }
         ]
     }),
+    input: {
+        class: ['hidden']
+    },
     labelContainer: {
         class: 'overflow-hidden flex flex-auto cursor-pointer '
     },
@@ -160,30 +163,44 @@ export default {
         ]
     },
     headerCheckbox: ({ context, state }) => ({
-        class: [
-            // Alignment
-            'flex',
-            'items-center',
-            'justify-center',
-
-            // Size
-            'w-6',
-            'h-6',
-
-            // Shape
-            'rounded-lg',
-            'border-2',
-
-            // Colors
-            'text-surface-600',
-            {
-                'border-surface-200 dark:border-surface-700 bg-surface-0 dark:bg-surface-900': !context?.selected,
-                'border-primary-500 bg-primary-500 dark:border-primary-400 dark:bg-primary-400': context?.selected
-            },
-
-            'hover:border-primary-500',
-            { 'outline-none outline-offset-0 ring-2 ring-primary-400/50 dark:ring-primary-300/50': state.focused }
-        ]
+        root: {
+            class: ['relative', 'inline-flex', 'align-bottom', 'w-6', 'h-6', 'mr-2', 'cursor-pointer', 'select-none']
+        },
+        box: ({ props, context }) => ({
+            class: [
+                // Alignment
+                'flex',
+                'items-center',
+                'justify-center',
+                // Size
+                'w-6',
+                'h-6',
+                // Shape
+                'rounded-md',
+                'border-2',
+                // Colors
+                {
+                    'border-surface-200 bg-surface-0 dark:border-surface-700 dark:bg-surface-900': !context.checked,
+                    'border-primary-200 bg-primary-400': context.checked
+                },
+                // States
+                {
+                    'peer-hover:border-primary': !props.disabled && !context.checked,
+                    'peer-hover:bg-primary-hover peer-hover:border-primary-hover': !props.disabled && context.checked,
+                    'peer-focus-visible:border-primary-500 dark:peer-focus-visible:border-primary-400 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-400/20 dark:peer-focus-visible:ring-primary-300/20': !props.disabled,
+                    'cursor-default opacity-60': props.disabled
+                },
+                // Transitions
+                'transition-colors',
+                'duration-200'
+            ]
+        }),
+        input: {
+            class: ['peer', 'w-full ', 'h-full', 'absolute', 'top-0 left-0', 'z-10', 'p-0', 'm-0', 'opacity-0', 'rounded-md', 'outline-none', 'border-2 border-surface-200 dark:border-surface-700', 'appearance-none', 'cursor-pointer']
+        },
+        icon: {
+            class: ['text-base leading-none', 'w-4', 'h-4', 'text-white dark:text-surface-900', 'transition-all', 'duration-200']
+        }
     }),
     headercheckboxicon: {
         class: [
@@ -257,7 +274,7 @@ export default {
             'leading-none',
 
             // Flexbox
-            'flex items-center',
+            'flex items-center gap-2',
 
             // Position
             'relative',
@@ -290,6 +307,51 @@ export default {
             'whitespace-nowrap'
         ]
     }),
+    itemCheckbox: {
+        root: {
+            class: ['relative', 'inline-flex', 'align-bottom', 'w-6', 'h-6', 'mr-2', 'cursor-pointer', 'select-none']
+        },
+        box: ({ props, context }) => ({
+            class: [
+                // Alignment
+                'flex',
+                'items-center',
+                'justify-center',
+                // Size
+                'w-6',
+                'h-6',
+                // Shape
+                'rounded-md',
+                'border-2',
+                // Colors
+                {
+                    'border-surface-200 bg-surface-100 dark:border-surface-700 dark:bg-surface-900': !context.checked,
+                    'border-primary-200 bg-primary-400': context.checked
+                },
+                // States
+                {
+                    'peer-hover:border-primary': !props.disabled && !context.checked,
+                    'peer-hover:bg-primary-hover peer-hover:border-primary-hover': !props.disabled && context.checked,
+                    'peer-focus-visible:border-primary-500 dark:peer-focus-visible:border-primary-400 peer-focus-visible:ring-2 peer-focus-visible:ring-primary-400/20 dark:peer-focus-visible:ring-primary-300/20': !props.disabled,
+                    'cursor-default opacity-60': props.disabled
+                },
+                // Transitions
+                'transition-colors',
+                'duration-200'
+            ]
+        }),
+        input: {
+            class: ['peer', 'w-full ', 'h-full', 'absolute', 'top-0 left-0', 'z-10', 'p-0', 'm-0', 'opacity-0', 'rounded-md', 'outline-none', 'border-2 border-surface-200 dark:border-surface-700', 'appearance-none', 'cursor-pointer']
+        },
+        icon: {
+            class: ['text-base leading-none', 'w-4', 'h-4', 'text-white dark:text-surface-900', 'transition-all', 'duration-200']
+        }
+    },
+    option: {
+        root: {
+            // class: ['bg-red-600']
+        }
+    },
     checkboxContainer: {
         class: [
             'relative',

@@ -15,8 +15,8 @@ import Icon from "../../Components/Icons/Icon.vue";
 
 const props = defineProps<{
     show: boolean,
-    edit: Boolean,
-    member: iBogMember
+    edit: boolean,
+    member: iBogMember | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
@@ -305,9 +305,9 @@ watch(() => props.show, (value) => {
             </form>
         </div>
         <template #footer>
-            <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" type="submit"
-                label="Save" rounded></PrimaryButton>
-            <SecondaryButton type="reset" @click="close(false)" label="Cancel" rounded outlined severity="danger">
+            <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" @click="submit">
+                Save</PrimaryButton>
+            <SecondaryButton type="reset" @click="close(false)">Cancel
             </SecondaryButton>
         </template>
     </Modal>

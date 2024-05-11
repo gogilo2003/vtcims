@@ -23,7 +23,7 @@ const props = defineProps<{
     intakes: iIntakes,
     instructors: Array<iInstructor>
     courses: Array<iCourse>
-    search: string,
+    search?: string,
     notification: Object,
     errors: Object
 }>()

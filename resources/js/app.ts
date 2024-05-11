@@ -10,7 +10,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import VueClickAway from "vue3-click-away";
-import lara from '../assets/primevue-lara-theme';
+import lara from '../assets/primevue-themes/lara';
 
 const laraOptions = {
     unstyled: true,

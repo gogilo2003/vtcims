@@ -31,7 +31,14 @@ const title = computed(() => {
     return 'New Term'
 })
 
-const form = useForm(
+const form = useForm<{
+    id: number | null
+    name: string | null
+    year: string | number | null
+    start_date: Date | null
+    end_date: Date | null
+    allocate: boolean
+}>(
     {
         id: null,
         name: "",
@@ -119,7 +126,7 @@ const cancel = () => {
                 <Icon class="h-5 w-5" type="close" />
             </button>
         </template>
-        <div class="shadow bg-white p-3">
+        <div class="shadow p-3">
             <div class="mb-4">
                 <InputLabel value="Year" />
                 <Calendar dateFormat="yy" view="year" v-model="selectedYear" />

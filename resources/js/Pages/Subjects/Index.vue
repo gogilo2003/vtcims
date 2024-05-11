@@ -20,7 +20,7 @@ const props = defineProps<{
     subjects: iSubjects
     courses: Array<iItem>
     notification: iNotification
-    search: string
+    search?: string
 }>()
 
 const toast = useToast()

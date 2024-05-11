@@ -42,7 +42,7 @@ const props = defineProps<{
         end_date: string
     }>,
     lessons: Array<iLesson>
-    search: string,
+    search?: string,
     notification: Object,
     errors: Object
 }>()
@@ -210,7 +210,7 @@ const saveLessons = () => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Modal modal :show="showLessonsDialog">
+    <Modal :show="showLessonsDialog">
         <template #header>
             <div>Set Lessons</div>
             <button @click="cancelLessons"></button>
@@ -275,7 +275,7 @@ const saveLessons = () => {
             </SecondaryButton>
         </template>
     </Modal>
-    <Modal modal :show="showAllocationDialog">
+    <Modal :show="showAllocationDialog">
         <template #header>
             <div v-text="dialogTitle"></div>
             <button @click="cancel">

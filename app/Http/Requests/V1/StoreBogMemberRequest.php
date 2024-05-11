@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\V1;
 
+use App\Rules\PhoneNumber;
 use App\Support\Util;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,13 +30,13 @@ class StoreBogMemberRequest extends FormRequest
             "surname" => "required|string",
             "first_name" => "required|string",
             "middle_name" => "nullable|string",
-            "phone" => "nullable|string",
+            "phone" => ["nullable", "string", new PhoneNumber()],
             "email" => "nullable|string|email",
             "box_no" => "nullable|string",
             "post_code" => "nullable|string",
             "town" => "nullable|string",
-            "position" => "nullable|numeric|integer|exists:bog_positions,id",
-            "active" => "nullable|numeric|integer|max:1",
+            "position" => "required|numeric|integer|exists:bog_positions,id",
+            "active" => "required|numeric|integer|max:1",
             "term_start_at" => "nullable|date",
             "term_end_at" => "nullable|date",
             "term_count" => "nullable|numeric|integer",

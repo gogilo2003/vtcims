@@ -19,7 +19,7 @@ import Toast from 'primevue/toast'
 const props = defineProps<{
     sponsors: iSponsors
     notification: iNotification
-    search: string
+    search?: string
 }>()
 
 const toast = useToast()

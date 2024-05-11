@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\V1;
 
+use App\Support\Util;
 use App\Rules\PhoneNumber;
 use App\Support\PhoneTrait;
 use Illuminate\Foundation\Http\FormRequest;
@@ -43,5 +44,10 @@ class UpdateBogMemberRequest extends FormRequest
             "term_end_at" => "nullable|date",
             "term_count" => "nullable|numeric|integer",
         ];
+    }
+
+    function prepareForValidation()
+    {
+        $this->merge(['phone' => Util::formatPhoneNumber($this->phone)]);
     }
 }

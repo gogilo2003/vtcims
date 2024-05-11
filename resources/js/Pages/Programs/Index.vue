@@ -17,7 +17,7 @@ import Toast from 'primevue/toast'
 
 const props = defineProps<{
     programs: iPrograms
-    search: string
+    search?: string
     notification: iNotification
     errors: Object
 }>()
