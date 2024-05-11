@@ -8,7 +8,6 @@ export default {
             commit('SET_TERMS', response.data.data)
             return response
         }).catch(error => {
-            console.log(error)
             return error
         })
     },

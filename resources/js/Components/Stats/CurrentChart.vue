@@ -8,8 +8,6 @@ const props = defineProps({
 
 onMounted(() => {
     setTimeout(() => {
-        console.log('Set Data and Options');
-
         chartData.value = setChartData();
         chartOptions.value = setChartOptions();
     }, 1000);

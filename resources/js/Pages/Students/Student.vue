@@ -43,6 +43,9 @@ const form = useForm<{
     sponsor: number | null,
     role: number | null,
     status: string | "" | number | null | { id: number, name: string },
+    guardian_phone: string | "",
+    guardian_name: string | "",
+    guardian_email: string | "",
     plwd: boolean,
     plwd_details?: string | "",
 }>({
@@ -66,6 +69,9 @@ const form = useForm<{
     sponsor: null,
     role: null,
     status: "",
+    guardian_phone: "",
+    guardian_name: "",
+    guardian_email: "",
     plwd: false,
     plwd_details: "",
 })
@@ -104,6 +110,9 @@ watch(() => props.student, value => {
     form.sponsor = value?.sponsor?.id
     form.role = value?.role?.id
     form.status = value?.status
+    form.guardian_name = value?.guardian.name
+    form.guardian_phone = value?.guardian.phone
+    form.guardian_email = value?.guardian.email
     form.plwd = value?.plwd
     form.plwd_details = value?.plwd_details
 })
@@ -155,6 +164,9 @@ const submit = async () => {
                 form.sponsor = null
                 form.role = null
                 form.status = ""
+                form.guardian_name = ""
+                form.guardian_phone = ""
+                form.guardian_email = ""
                 form.plwd = false
                 form.plwd_details = ""
 
@@ -403,6 +415,18 @@ watch(() => props.show, (value) => {
                             <span class="text-red-400 text-xs" v-if="page.props.errors.plwd_details"
                                 v-text="page.props.errors.plwd_details"></span>
                         </div>
+                    </div>
+                    <div class="relative z-0 is-filled is-focused"
+                        :class="{ 'has-error': page.props.errors.plwd_details }">
+                        <label class="text-sm" :class="{ 'text-red-400': page.props.errors.plwd_details }"
+                            for="plwd_details">PLWD Details</label>
+                        <div>
+                            <InputText v-model="form.plwd_details"
+                                :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]" optionValue="id"
+                                optionLabel="name" :invalid="page.props.errors.plwd_details" />
+                        </div>
+                        <span class="text-red-400 text-xs" v-if="page.props.errors.plwd_details"
+                            v-text="page.props.errors.plwd_details"></span>
                     </div>
                 </div>
             </form>

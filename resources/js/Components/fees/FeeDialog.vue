@@ -3,99 +3,49 @@
         <!-- Button trigger modal -->
 
         <!-- Modal -->
-        <div
-            class="modal fade"
-            id="modelId"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="modelTitleId"
-            aria-hidden="true"
-            data-backdrop="static"
-        >
+        <div class="modal fade" id="modelId" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+            aria-hidden="true" data-backdrop="static">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="card">
                         <div class="card-header card-header-primary">
                             <h5 class="modal-title card-title">Fees Details</h5>
-                            <button
-                                type="button"
-                                class="close"
-                                data-dismiss="modal"
-                                aria-label="Close"
-                            >
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body card-body">
                             <div class="form-group">
-                                <label class="bmd-label-static" for="term"
-                                    >Term</label
-                                >
-                                <select
-                                    class="form-control selectpicker"
-                                    name="term"
-                                    id="term"
-                                    data-style="btn btn-link"
-                                    v-model="payload.term"
-                                >
-                                    <option
-                                        v-for="term in terms"
-                                        :key="term.id"
-                                        :value="term.id"
-                                    >
+                                <label class="bmd-label-static" for="term">Term</label>
+                                <select class="form-control selectpicker" name="term" id="term"
+                                    data-style="btn btn-link" v-model="payload.term">
+                                    <option v-for="term in terms" :key="term.id" :value="term.id">
                                         {{ term.year }}-{{ term.name }}
                                     </option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="bmd-label-static" for="term"
-                                    >Course</label
-                                >
-                                <select
-                                    class="form-control selectpicker"
-                                    name="course"
-                                    id="course"
-                                    data-style="btn btn-link"
-                                    v-model="payload.course"
-                                >
-                                    <option
-                                        v-for="course in courses"
-                                        :key="course.id"
-                                        :value="course.id"
-                                    >
+                                <label class="bmd-label-static" for="term">Course</label>
+                                <select class="form-control selectpicker" name="course" id="course"
+                                    data-style="btn btn-link" v-model="payload.course">
+                                    <option v-for="course in courses" :key="course.id" :value="course.id">
                                         {{ course.department.code }}|{{
-                                            course.name
-                                        }}
+                                        course.name
+                                    }}
                                     </option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="bmd-label-static" for="amount"
-                                    >Amount</label
-                                >
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    name="amount"
-                                    id="amount"
-                                    aria-describedby="amountHelpId"
-                                    v-model="payload.amount"
-                                />
+                                <label class="bmd-label-static" for="amount">Amount</label>
+                                <input type="text" class="form-control" name="amount" id="amount"
+                                    aria-describedby="amountHelpId" v-model="payload.amount" />
                             </div>
                         </div>
                         <div class="modal-footer card-footer">
-                            <button
-                                type="button"
-                                class="btn btn-outline-danger rounded-pill"
-                                data-dismiss="modal"
-                            >
+                            <button type="button" class="btn btn-outline-danger rounded-pill" data-dismiss="modal">
                                 Close
                             </button>
-                            <button
-                                type="button"
-                                class="btn btn-primary rounded-pill"
-                                @click="save"
-                            >
+                            <button type="button" class="btn btn-primary rounded-pill" @click="save">
                                 Save
                             </button>
                         </div>
@@ -142,9 +92,8 @@ export default {
             this.$store
                 .dispatch("fees/actionStore", this.payload)
                 .then((response) => {
-                    console.log("Something", { res: response });
                     if (response.success) {
-                        $.noify(
+                        $.notify(
                             {
                                 message: response.message,
                             },

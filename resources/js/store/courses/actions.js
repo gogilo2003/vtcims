@@ -6,7 +6,7 @@ export default {
     async actionList({ commit }) {
         return axios.get(`/api/eschool/courses?api_token=${token}`).then(response => {
             commit('SET_TERMS', response.data)
-        }).catch(error => { console.log(error) })
+        }).catch(error => { })
     },
     async actionView({ commit }, payload) {
         return axios.get(`/api/eschool/courses/view/${payload}/?api_token=${token}`).then(response => {

@@ -59,7 +59,6 @@ const setChartOptions = () => {
 const chart = ref(null)
 watchEffect(() => {
     if (chart.value) {
-        console.log('something');
         chartData.value = setChartData();
         chartOptions.value = setChartOptions();
     }

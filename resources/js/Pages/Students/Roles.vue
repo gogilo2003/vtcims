@@ -6,7 +6,7 @@ import InputText from 'primevue/inputtext';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import Icon from '../../Components/Icons/Icon.vue';
 import ListItem from '../../Components/ListItem.vue';
-import { useForm } from '@inertiajs/vue3';
+import { useForm, router } from '@inertiajs/vue3';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 import InputLabel from '../../Components/InputLabel.vue';
@@ -44,7 +44,15 @@ const formTitle = computed(() => {
 })
 
 watch(() => searchVal.value, (value) => {
-    console.log(value);
+    let options: { search?: string } = {}
+    if (value) {
+        options = { search: value }
+    }
+    router.get(route('students-roles'), options, {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['search', 'roles']
+    })
 
 })
 

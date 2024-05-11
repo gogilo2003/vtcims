@@ -65,8 +65,6 @@ const submit = () => {
             preserveScroll: true,
             preserveState: true,
             onSuccess: () => {
-                console.log('success');
-
                 toast.add({
                     severity: 'success',
                     summary: 'Success',

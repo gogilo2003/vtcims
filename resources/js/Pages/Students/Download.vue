@@ -9,6 +9,7 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
+import Icon from '../../Components/Icons/Icon.vue'
 
 defineProps({
     show: {
@@ -57,9 +58,6 @@ const downloadForm = ref<{
     y: null,
 })
 
-watch(() => downloadForm.value.g, () => {
-    console.log(downloadForm.value.g);
-})
 const download = () => {
 
     let data = {};

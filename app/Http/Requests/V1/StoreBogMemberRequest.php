@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\V1;
 
+use App\Support\Util;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreBogMemberRequest extends FormRequest
@@ -39,5 +40,10 @@ class StoreBogMemberRequest extends FormRequest
             "term_end_at" => "nullable|date",
             "term_count" => "nullable|numeric|integer",
         ];
+    }
+
+    function prepareForValidation()
+    {
+        $this->merge(['phone' => Util::formatPhoneNumber($this->phone)]);
     }
 }

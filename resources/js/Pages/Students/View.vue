@@ -8,7 +8,7 @@ import FeeSummaryChart from "./FeeSummaryChart.vue";
 
 const props = defineProps<{
     show: boolean,
-    student: iStudent
+    student: iStudent | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 

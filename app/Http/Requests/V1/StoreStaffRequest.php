@@ -4,6 +4,7 @@ namespace App\Http\Requests\V1;
 
 use App\Rules\PhoneNumber;
 use App\Support\PhoneTrait;
+use App\Support\Util;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreStaffRequest extends FormRequest
@@ -36,4 +37,8 @@ class StoreStaffRequest extends FormRequest
         ];
     }
 
+    function prepareForValidation(): void
+    {
+        $this->merge(['phone' => Util::formatPhoneNumber($this->phone)]);
+    }
 }

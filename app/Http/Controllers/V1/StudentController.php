@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\V1;
 
+use App\Models\Guardian;
 use Inertia\Inertia;
 use App\Models\Course;
 use App\Models\Intake;
@@ -116,6 +117,12 @@ class StudentController extends Controller
                             "description" => $student->role->description,
                         ],
                         "status" => $student->status,
+                        "guardian" => $student->guardian ? [
+                            "id" => $student->guardian->id,
+                            "name" => $student->guardian->name,
+                            "phone" => $student->guardian->phone,
+                            "email" => $student->guardian->email,
+                        ] : null,
                         "plwd" => $student->plwd,
                         "plwd_details" => $student->plwd_details,
                         "examinations" => StudentUtil::generateExamSummary($id),
@@ -205,7 +212,12 @@ class StudentController extends Controller
         $student->plwd = $request->plwd;
         $student->plwd_details = $request->plwd_details;
 
-        $student->save();
+        $guardian = new Guardian();
+        $guardian->name = $request->guardian_name;
+        $guardian->phone = $request->guardian_phone;
+        $guardian->email = $request->guardian_email;
+        $guardian->save();
+        $guardian->students()->save($student);
         return redirect()->back()->with('success', 'Student created');
     }
     /**
@@ -239,6 +251,12 @@ class StudentController extends Controller
         $student->plwd_details = $request->plwd_details;
 
         $student->save();
+
+        $guardian = $student->guardian;
+        $guardian->name = $request->guardian_name;
+        $guardian->phone = $request->guardian_phone;
+        $guardian->email = $request->guardian_email;
+        $guardian->save();
 
         return redirect()->back()->with('success', 'Student details updated');
     }

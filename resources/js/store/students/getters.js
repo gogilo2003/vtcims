@@ -6,7 +6,6 @@ export default {
         //         state.student = response.data
         //         return state.student
         //     }, (error) => {
-        //         console.log(error)
         //     })
         // } else {
         //     return state.student

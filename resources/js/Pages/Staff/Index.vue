@@ -65,8 +65,6 @@ const newStaffMember = () => {
 }
 
 const editStaffMember = (STAFF_MEMBER: iStaff) => {
-    console.log(STAFF_MEMBER.job_group);
-
     staffMember.value = STAFF_MEMBER
     show.value = true
     edit.value = true

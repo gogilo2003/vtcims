@@ -96,4 +96,14 @@ class Student extends Model
     {
         return $this->belongsToMany(Attendance::class);
     }
+
+    /**
+     * Get the guardian that owns the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function guardian(): BelongsTo
+    {
+        return $this->belongsTo(Guardian::class);
+    }
 }

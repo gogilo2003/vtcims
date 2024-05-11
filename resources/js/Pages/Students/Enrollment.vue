@@ -9,6 +9,7 @@ import PrimaryButton from '../../Components/PrimaryButton.vue';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
 import MultiSelect from 'primevue/multiselect';
+import Icon from '../../Components/Icons/Icon.vue';
 
 defineProps({
     show: {

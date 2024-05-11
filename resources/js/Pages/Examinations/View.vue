@@ -93,9 +93,6 @@ const markList = (blank: boolean = false) => {
         url = url + '?blank=true'
     }
 
-
-    console.log(blank, url);
-
     window.open(url)
 }
 

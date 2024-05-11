@@ -1,12 +1,11 @@
 export default {
     methods: {
         /**
-         * 
-         * @param {object|array} errors 
-         * @returns 
+         *
+         * @param {object|array} errors
+         * @returns
          */
         errorList(errors) {
-            console.log(typeof(errors))
             let list = `<ol>`
 
             for (const item in errors) {
