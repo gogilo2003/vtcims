@@ -12,11 +12,14 @@ import SecondaryButton from '../../Components/SecondaryButton.vue'
 
 const props = defineProps<{
     show: boolean,
-    photo: iPhoto,
+    photo: iPhoto | null,
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
-const form = useForm<iPhoto>({
+const form = useForm<{
+    id?: number | null
+    photo?: string | null
+}>({
     id: null,
     photo: null,
 })
@@ -25,8 +28,8 @@ const page = usePage()
 const toast = useToast()
 
 watch(() => props.photo, value => {
-    form.id = value.id
-    form.photo = value.photo
+    form.id = value?.id
+    form.photo = value?.photo
 })
 
 const submit = () => {

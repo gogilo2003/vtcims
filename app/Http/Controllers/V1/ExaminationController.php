@@ -27,7 +27,10 @@ class ExaminationController extends Controller
         $examinations = Examination::with('subject', 'term', 'intakes', 'tests')
             ->orderBy('title', 'DESC')
             ->when($search, function ($query) use ($search) {
-                $query->where('title', 'like', '%' . $search . '%');
+                $query->where('title', 'like', '%' . $search . '%')
+                    ->orWhereHas('term', function ($query) use ($search) {
+                        $query->where('year', $search);
+                    });
             })->paginate(8)->through(fn(Examination $examination) => [
                 "id" => $examination->id,
                 "title" => $examination->title,
@@ -50,14 +53,6 @@ class ExaminationController extends Controller
             'examinations' => $examinations,
             "search" => $search
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -161,14 +156,6 @@ class ExaminationController extends Controller
         ];
 
         return Inertia::render('Examinations/View', ['examination' => $examination]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Examination $examination)
-    {
-        //
     }
 
     /**

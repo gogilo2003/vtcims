@@ -22,18 +22,18 @@ export default {
             'before:h-5 before:w-5',
             'before:rounded-full',
             'before:duration-200',
-            'before:bg-surface-0 before:dark:bg-surface-900',
+            'before:bg-gray-0 before:dark:bg-gray-900',
             // Colors
             'border',
             {
-                'bg-surface-200 dark:bg-surface-600': props.modelValue != props.trueValue,
+                'bg-gray-200 dark:bg-gray-700': props.modelValue != props.trueValue,
                 'bg-primary-400': props.modelValue == props.trueValue
             },
             { 'border-transparent': !props.invalid },
             // Invalid State
             { 'border-red-500 dark:border-red-400': props.invalid },
             // States
-            { 'peer-hover:bg-surface-300 dark:peer-hover:bg-surface-600 ': props.modelValue != props.trueValue && !props.disabled },
+            { 'peer-hover:bg-gray-300 dark:peer-hover:bg-green-700 ': props.modelValue != props.trueValue && !props.disabled },
             { 'peer-hover:bg-primary-hover ': props.modelValue == props.trueValue && !props.disabled },
             'peer-focus-visible:ring peer-focus-visible:ring-primary-400/50 dark:peer-focus-visible:ring-primary-300/50',
             // Transition

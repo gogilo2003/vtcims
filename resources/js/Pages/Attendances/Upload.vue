@@ -13,7 +13,7 @@ import InputError from '../../Components/InputError.vue';
 
 const props = defineProps<{
     show: boolean
-    lesson: iAllocationLesson
+    lesson: iAllocationLesson | null
 }>()
 const emit = defineEmits(['closed'])
 

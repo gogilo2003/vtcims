@@ -213,9 +213,11 @@ const close = () => {
                 <Dropdown showClear v-model="downloadForm.y" :options="years" />
             </div>
         </div>
-        <div class="flex justify-between">
+        <template #footer>
+            <!-- <div class="flex justify-between"> -->
             <PrimaryButton @click="download">Download</PrimaryButton>
             <SecondaryButton @click="close">Cancel</SecondaryButton>
-        </div>
+            <!-- </div> -->
+        </template>
     </Modal>
 </template>

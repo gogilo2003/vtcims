@@ -33,8 +33,8 @@ const props = defineProps<{
 
 const edit = ref(false)
 const show = ref(false)
-const staffMember = ref<iStaff | null>()
-const photo = ref<iPhoto | undefined>()
+const staffMember = ref<iStaff | null>(null)
+const photo = ref<iPhoto | null>(null)
 
 const newStaffMember = () => {
     staffMember.value = {
@@ -145,9 +145,9 @@ const onCloseDownload = (val: boolean) => {
                     <Icon class="h-6 w-6" type="download" />
                     <span class="hidden md:inline-flex">Download</span>
                 </SecondaryButton>
-                <div class="w-56">
+                <!-- <div class="w-56">
                     <Dropdown @change="" :options="employers" optionValue="id" optionLabel="name" v-model="employer" />
-                </div>
+                </div> -->
             </div>
             <div>
                 <span class="relative">

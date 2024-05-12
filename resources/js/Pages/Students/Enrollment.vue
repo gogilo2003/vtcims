@@ -160,7 +160,7 @@ const close = () => {
 <template>
     <Modal :show="show">
         <template #header>
-            <div>Download Options</div>
+            <div>Enrollment Options</div>
             <button @click="close">
                 <Icon class="h-4 w-4" type="close" />
             </button>
@@ -210,9 +210,11 @@ const close = () => {
             <MultiSelect showClear v-model="downloadForm.y" :options="years" />
         </div>
         <!-- </div> -->
-        <div class="flex justify-between">
+        <template #footer>
+            <!-- <div class="flex justify-between"> -->
             <PrimaryButton @click="download">Download</PrimaryButton>
             <SecondaryButton @click="close">Cancel</SecondaryButton>
-        </div>
+            <!-- </div> -->
+        </template>
     </Modal>
 </template>

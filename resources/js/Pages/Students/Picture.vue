@@ -11,8 +11,8 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 import Modal from "@/Components/Modal.vue";
 
 const props = defineProps<{
-    show: boolean,
-    photo: iPhoto,
+    show: boolean
+    photo: iPhoto | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 

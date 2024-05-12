@@ -7,13 +7,11 @@ import { ref } from 'vue'
 import InputLabel from '../../Components/InputLabel.vue';
 import Dropdown from 'primevue/dropdown';
 import InputText from 'primevue/inputtext';
+import Icon from '../../Components/Icons/Icon.vue';
 
-const props = defineProps({
-    show: {
-        type: Boolean,
-        default: false
-    }
-})
+const props = defineProps<{
+    show: boolean
+}>()
 
 const emit = defineEmits(['closed'])
 

@@ -17,10 +17,10 @@ const props = defineProps<{
     search?: string | null
 }>()
 
-const selectedExamination = ref<iExamination | null>({})
+const selectedExamination = ref<iExamination | null>(null)
 const show = ref(false)
 
-const close = (value) => {
+const close = (value: boolean) => {
     show.value = value
 }
 
@@ -30,7 +30,7 @@ const editExamination = (examination: iExamination) => {
 }
 
 const newExamination = () => {
-    selectedExamination.value = {}
+    selectedExamination.value = null
     show.value = true
 }
 
@@ -46,14 +46,14 @@ const searchVal = ref(props.search)
 
 watch(() => searchVal.value, debounce((value: string) => {
 
-    let data = {}
+    let data: { search?: string | null } = {}
 
     if (value) {
         data = { search: value }
     }
 
-    router.get(route('departments'), data, {
-        only: ['departments', 'search'],
+    router.get(route('examinations'), data, {
+        only: ['examinations', 'search'],
         preserveScroll: true,
         preserveState: true
     })

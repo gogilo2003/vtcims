@@ -10,7 +10,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps<{
-    allocation: iAllocation
+    allocation: iAllocation | null
     show: boolean
 }>()
 

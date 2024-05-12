@@ -32,7 +32,7 @@ watchEffect(() => {
 
 const showSubmenu = ref(false)
 
-const onClickAway = () => {
+const onSubMenuClickAway = () => {
     showSubmenu.value = false
 }
 
@@ -75,7 +75,7 @@ watchEffect(() => {
             leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
             <div ref="submenu" v-if="items?.length && showSubmenu"
                 class="absolute z-20 left-0 top-[100%] bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-400 p-3 ml-6 w-[calc(100%_-_2.5rem)] rounded-lg flex flex-col gap-1"
-                v-click-away="onClickAway">
+                v-click-away="onSubMenuClickAway">
                 <Link
                     class="w-full text-sm font-light px-3 py-2 transition-all duration-300 rounded bg-gray-50 dark:bg-gray-700 hover:bg-primary-500 hover:text-gray-100"
                     :class="{ 'bg-primary-500 text-gray-100': route().current(name), 'dark:text-gray-300': !route().current(name) }"

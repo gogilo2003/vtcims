@@ -43,9 +43,9 @@ const form = useForm<{
     sponsor: number | null,
     role: number | null,
     status: string | "" | number | null | { id: number, name: string },
-    guardian_phone: string | "",
-    guardian_name: string | "",
-    guardian_email: string | "",
+    guardian_phone?: string | "",
+    guardian_name?: string | "",
+    guardian_email?: string | "",
     plwd: boolean,
     plwd_details?: string | "",
 }>({
@@ -110,9 +110,9 @@ watch(() => props.student, value => {
     form.sponsor = value?.sponsor?.id
     form.role = value?.role?.id
     form.status = value?.status
-    form.guardian_name = value?.guardian.name
-    form.guardian_phone = value?.guardian.phone
-    form.guardian_email = value?.guardian.email
+    form.guardian_name = value?.guardian?.name
+    form.guardian_phone = value?.guardian?.phone
+    form.guardian_email = value?.guardian?.email
     form.plwd = value?.plwd
     form.plwd_details = value?.plwd_details
 })
@@ -199,8 +199,6 @@ const submit = async () => {
 const resetErrors = () => {
     form.clearErrors()
 }
-onMounted(() => {
-})
 
 const close = (value: boolean) => {
     emit('closed', value)
@@ -232,7 +230,7 @@ watch(() => props.show, (value) => {
                                 for="first_name">First
                                 Name</label>
                             <InputText id="first_name" v-model="form.first_name"
-                                :invalid="page.props.errors.first_name" />
+                                :invalid="page.props.errors.first_name ? true : false" />
                             <span v-if="page.props.errors.first_name" v-text="page.props.errors.first_name"
                                 class="text-red-400 text-xs"></span>
                         </div>
@@ -241,28 +239,31 @@ watch(() => props.show, (value) => {
                                 for="middle_name">Middle
                                 Name</label>
                             <InputText id="middle_name" v-model="form.middle_name"
-                                :invalid="page.props.errors.middle_name" />
+                                :invalid="page.props.errors.middle_name ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.middle_name"
                                 v-text="page.props.errors.middle_name"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.surname }">
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.surname }"
                                 for="surname">Surname</label>
-                            <InputText id="surname" v-model="form.surname" :invalid="page.props.errors.surname" />
+                            <InputText id="surname" v-model="form.surname"
+                                :invalid="page.props.errors.surname ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.surname"
                                 v-text="page.props.errors.surname"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.phone }">
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.phone }"
                                 for="phone">Phone</label>
-                            <InputText id="phone" v-model="form.phone" :invalid="page.props.errors.phone" />
+                            <InputText id="phone" v-model="form.phone"
+                                :invalid="page.props.errors.phone ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.phone"
                                 v-text="page.props.errors.phone"></span>
                         </div>
                         <div class="relative z-0 md:col-span-2" :class="{ 'has-error': page.props.errors.email }">
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.email }"
                                 for="email">Email</label>
-                            <InputText id="email" v-model="form.email" :invalid="page.props.errors.email" />
+                            <InputText id="email" v-model="form.email"
+                                :invalid="page.props.errors.email ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.email"
                                 v-text="page.props.errors.email"></span>
                         </div>
@@ -270,7 +271,8 @@ watch(() => props.show, (value) => {
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.box_no }"
                                 for="box_no">Box
                                 No</label>
-                            <InputText id="box_no" v-model="form.box_no" :invalid="page.props.errors.box_no" />
+                            <InputText id="box_no" v-model="form.box_no"
+                                :invalid="page.props.errors.box_no ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.box_no"
                                 v-text="page.props.errors.box_no"></span>
                         </div>
@@ -278,14 +280,15 @@ watch(() => props.show, (value) => {
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.post_code }"
                                 for="post_code">Post
                                 Code</label>
-                            <InputText id="post_code" v-model="form.post_code" :invalid="page.props.errors.post_code" />
+                            <InputText id="post_code" v-model="form.post_code"
+                                :invalid="page.props.errors.post_code ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.post_code"
                                 v-text="page.props.errors.post_code"></span>
                         </div>
                         <div class="relative z-0" :class="{ 'has-error': page.props.errors.town }">
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.town }"
                                 for="town">Town</label>
-                            <InputText id="town" v-model="form.town" :invalid="page.props.errors.town" />
+                            <InputText id="town" v-model="form.town" :invalid="page.props.errors.town ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.town"
                                 v-text="page.props.errors.town"></span>
                         </div>
@@ -294,7 +297,7 @@ watch(() => props.show, (value) => {
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.physical_address }"
                                 for="physical_address">Physical Address</label>
                             <Textarea id="physical_address" v-model="form.physical_address"
-                                :invalid="page.props.errors.physical_address"></Textarea>
+                                :invalid="page.props.errors.physical_address ? true : false"></Textarea>
                             <span class="text-red-400 text-xs" v-if="page.props.errors.physical_address"
                                 v-text="page.props.errors.physical_address"></span>
                         </div>
@@ -304,7 +307,7 @@ watch(() => props.show, (value) => {
                                 of
                                 Birth</label>
                             <Calendar v-model="form.date_of_birth" :showIcon="true" iconDisplay="input"
-                                :manualInput="false" :invalid="page.props.errors.date_of_birth"
+                                :manualInput="false" :invalid="page.props.errors.date_of_birth ? true : false"
                                 dateFormat="D, d M, yy" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.date_of_birth"
                                 v-text="page.props.errors.date_of_birth"></span>
@@ -314,7 +317,7 @@ watch(() => props.show, (value) => {
                                 for="birth_cert_no">Birth
                                 Certificate No</label>
                             <InputText id="birth_cert_no" v-model="form.birth_cert_no"
-                                :invalid="page.props.errors.birth_cert_no" />
+                                :invalid="page.props.errors.birth_cert_no ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.birth_cert_no"
                                 v-text="page.props.errors.birth_cert_no"></span>
                         </div>
@@ -322,7 +325,7 @@ watch(() => props.show, (value) => {
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.idno }"
                                 for="idno">IDNo</label>
                             <InputNumber class="w-full" :useGrouping="false" id="idno" v-model="form.idno"
-                                :invalid="page.props.errors.idno" />
+                                :invalid="page.props.errors.idno ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.idno"
                                 v-text="page.props.errors.idno"></span>
                         </div>
@@ -331,7 +334,7 @@ watch(() => props.show, (value) => {
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.gender }"
                                 for="gender">Gender</label>
                             <Dropdown :options="genderOptions" option-label="name" option-value="id"
-                                v-model="form.gender" :invalid="page.props.errors.gender" />
+                                v-model="form.gender" :invalid="page.props.errors.gender ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.gender"
                                 v-text="page.props.errors.gender"></span>
                         </div>
@@ -340,8 +343,8 @@ watch(() => props.show, (value) => {
                                 for="date_of_admission">Date
                                 of Admission</label>
                             <Calendar id="date_of_admission" v-model="form.date_of_admission" :showIcon="true"
-                                iconDisplay="input" :manualInput="false" :invalid="page.props.errors.date_of_admission"
-                                dateFormat="D, d M, yy" />
+                                iconDisplay="input" :manualInput="false"
+                                :invalid="page.props.errors.date_of_admission ? true : false" dateFormat="D, d M, yy" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.date_of_admission"
                                 v-text="page.props.errors.date_of_admission"></span>
                         </div>
@@ -349,7 +352,7 @@ watch(() => props.show, (value) => {
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.intake }"
                                 for="intake">Intake</label>
                             <Dropdown id="intakes" :options="intakes" filter option-label="name" option-value="id"
-                                v-model="form.intake" :invalid="page.props.errors.intake" />
+                                v-model="form.intake" :invalid="page.props.errors.intake ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.intake"
                                 v-text="page.props.errors.intake"></span>
                         </div>
@@ -358,7 +361,7 @@ watch(() => props.show, (value) => {
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.program }"
                                 for="program">Program</label>
                             <Dropdown id="program" option-label="name" option-value="id" :options="programs"
-                                v-model="form.program" :invalid="page.props.errors.program" />
+                                v-model="form.program" :invalid="page.props.errors.program ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.program"
                                 v-text="page.props.errors.program"></span>
                         </div>
@@ -367,7 +370,7 @@ watch(() => props.show, (value) => {
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.sponsor }"
                                 for="sponsor">Sponsor</label>
                             <Dropdown id="sponsor" option-label="name" option-value="id" :options="sponsors"
-                                v-model="form.sponsor" :invalid="page.props.errors.sponsor" />
+                                v-model="form.sponsor" :invalid="page.props.errors.sponsor ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.sponsor"
                                 v-text="page.props.errors.sponsor"></span>
                         </div>
@@ -376,7 +379,7 @@ watch(() => props.show, (value) => {
                                 for="role">Student
                                 Role</label>
                             <Dropdown id="role" option-label="name" option-value="id" :options="roles"
-                                v-model="form.role" :invalid="page.props.errors.role" />
+                                v-model="form.role" :invalid="page.props.errors.role ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.role"
                                 v-text="page.props.errors.role"></span>
                         </div>
@@ -389,7 +392,7 @@ watch(() => props.show, (value) => {
                             <label class="text-sm" :class="{ 'text-red-400': page.props.errors.status }"
                                 for="status">Status</label>
                             <Dropdown id="status" :options="states" v-model="form.status"
-                                :invalid="page.props.errors.status" />
+                                :invalid="page.props.errors.status ? true : false" />
                             <span class="text-red-400 text-xs" v-if="page.props.errors.status"
                                 v-text="page.props.errors.status"></span>
                         </div>
@@ -398,7 +401,8 @@ watch(() => props.show, (value) => {
                                 for="plwd">PLWD</label>
                             <div>
                                 <Dropdown v-model="form.plwd" :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]"
-                                    optionValue="id" optionLabel="name" :invalid="page.props.errors.plwd" />
+                                    optionValue="id" optionLabel="name"
+                                    :invalid="page.props.errors.plwd ? true : false" />
                             </div>
                             <span class="text-red-400 text-xs" v-if="page.props.errors.plwd"
                                 v-text="page.props.errors.plwd"></span>
@@ -409,24 +413,49 @@ watch(() => props.show, (value) => {
                                 for="plwd_details">PLWD Details</label>
                             <div>
                                 <InputText v-model="form.plwd_details"
-                                    :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]" optionValue="id"
-                                    optionLabel="name" :invalid="page.props.errors.plwd_details" />
+                                    :invalid="page.props.errors.plwd_details ? true : false" />
                             </div>
                             <span class="text-red-400 text-xs" v-if="page.props.errors.plwd_details"
                                 v-text="page.props.errors.plwd_details"></span>
                         </div>
                     </div>
-                    <div class="relative z-0 is-filled is-focused"
-                        :class="{ 'has-error': page.props.errors.plwd_details }">
-                        <label class="text-sm" :class="{ 'text-red-400': page.props.errors.plwd_details }"
-                            for="plwd_details">PLWD Details</label>
-                        <div>
-                            <InputText v-model="form.plwd_details"
-                                :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]" optionValue="id"
-                                optionLabel="name" :invalid="page.props.errors.plwd_details" />
+                    <div class="shadow p-2 rounded border dark:border-gray-800 my-4">
+                        <div>Guardian Details</div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="relative md:col-span-3"
+                                :class="{ 'has-error': page.props.errors.plwd_details }">
+                                <label class="text-sm" :class="{ 'text-red-400': page.props.errors.guardian_name }"
+                                    for="guardian_name">Name</label>
+                                <div>
+                                    <InputText v-model="form.guardian_name"
+                                        :invalid="page.props.errors.guardian_name ? true : false" />
+                                </div>
+                                <span class="text-red-400 text-xs" v-if="page.props.errors.guardian_name"
+                                    v-text="page.props.errors.guardian_name"></span>
+                            </div>
+                            <div class="relative" :class="{ 'has-error': page.props.errors.guardian_phone }">
+                                <label class="text-sm" :class="{ 'text-red-400': page.props.errors.guardian_phone }"
+                                    for="guardian_phone">Phone</label>
+                                <div>
+                                    <InputText v-model="form.guardian_phone"
+                                        :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]" optionValue="id"
+                                        optionLabel="name" :invalid="page.props.errors.guardian_phone ? true : false" />
+                                </div>
+                                <span class="text-red-400 text-xs" v-if="page.props.errors.guardian_phone"
+                                    v-text="page.props.errors.guardian_phone"></span>
+                            </div>
+                            <div class="relative md:col-span-2"
+                                :class="{ 'has-error': page.props.errors.guardian_email }">
+                                <label class="text-sm" :class="{ 'text-red-400': page.props.errors.guardian_email }"
+                                    for="guardian_email">Email</label>
+                                <div>
+                                    <InputText v-model="form.guardian_email"
+                                        :invalid="page.props.errors.guardian_email ? true : false" />
+                                </div>
+                                <span class="text-red-400 text-xs" v-if="page.props.errors.guardian_email"
+                                    v-text="page.props.errors.guardian_email"></span>
+                            </div>
                         </div>
-                        <span class="text-red-400 text-xs" v-if="page.props.errors.plwd_details"
-                            v-text="page.props.errors.plwd_details"></span>
                     </div>
                 </div>
             </form>

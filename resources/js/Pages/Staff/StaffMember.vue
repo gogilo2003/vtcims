@@ -15,7 +15,7 @@ import SecondaryButton from "@/Components/SecondaryButton.vue";
 const props = defineProps<{
     show: boolean,
     edit: Boolean,
-    member?: iStaff | null
+    member: iStaff | null
 }>()
 const emit = defineEmits(['closed', 'saved'])
 

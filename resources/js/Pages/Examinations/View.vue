@@ -101,7 +101,7 @@ const markList = (blank: boolean = false) => {
 <template>
     <Toast position="top-center" />
     <AuthenticatedLayout title="Examinations">
-        <div class="shadow rounded-lg bg-white p-4">
+        <div class="shadow rounded-lg bg-white dark:bg-gray-800 p-4">
             <div class="text-3xl font-light uppercase text-center pt-3 pb-1" v-text="examination.title"></div>
             <div class="text-sm font-light pb-2 text-center"
                 v-text="examination?.intakes?.map(intake => intake.name).join(', ')">
@@ -145,7 +145,7 @@ const markList = (blank: boolean = false) => {
                     </tr>
                 </thead>
                 <tbody class="text-light">
-                    <tr class="even:bg-gray-100"
+                    <tr class="even:bg-gray-100 dark:even:bg-gray-600"
                         v-for="({ admission_no, name, marks, grade, remarks }, index) in form.students">
                         <td class="px-3 py-2 border" v-text="`${index + 1}.`"></td>
                         <td class="px-3 py-2 border" v-text="admission_no"></td>

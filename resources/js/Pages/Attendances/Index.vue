@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iAllocation, iAllocations, iAttendance, iAllocationLesson, iItem } from '../../interfaces/index';
+import { iAllocation, iAllocations, iAttendance, iAllocationLesson, iItem, iLesson } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import { ref, watch } from 'vue';
@@ -19,7 +19,7 @@ import Download from './Download.vue';
 const props = defineProps<{
     allocations: iAllocations,
     search?: string,
-    current: string,
+    current?: string,
     notification: Object,
     errors: Object
     terms: iItem[]
@@ -84,13 +84,13 @@ const closeUploadDialog = (value: boolean) => {
     showUploadDialog.value = value
 }
 
-const selectedAllocationLesson = ref()
+const selectedAllocationLesson = ref<iAllocationLesson | null>(null)
 const openUploadDialog = (allocationLesson: iAllocationLesson) => {
     showUploadDialog.value = true
     selectedAllocationLesson.value = allocationLesson
 }
 
-const selectedAllocation = ref()
+const selectedAllocation = ref<iAllocation | null>(null)
 const showDownloadDialog = ref(false)
 
 const closeDownloadDialog = (value: boolean) => {
@@ -114,21 +114,21 @@ const download = (allocation: iAllocation) => {
     <Upload :show="showUploadDialog" @closed="closeUploadDialog" :lesson="selectedAllocationLesson" />
     <Download :show="showDownloadDialog" @closed="closeDownloadDialog" :allocation="selectedAllocation" />
     <AuthenticatedLayout title="Attendances">
-        <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
+        <div class="flex items-center justify-between gap-2">
             <div>
-                <SecondaryButton @click="newAttendance">
+                <!-- <SecondaryButton @click="newAttendance">
                     <Icon type="add" />
                     <span class="hidden md:inline-flex">New Attendance</span>
-                </SecondaryButton>
-
-            </div>
-            <div class="flex flex-wrap gap-2 items-center relative">
+                </SecondaryButton> -->
 
                 <label for="current_term" class="flex items-center gap-2">
                     <InputSwitch id="current_term" v-model="currentTerm" />
                     Current Term
                 </label>
 
+
+            </div>
+            <div class="flex flex-wrap gap-2 items-center relative">
                 <span class="relative flex items-center">
                     <i class="pi pi-search absolute bottom-[50%] translate-y-[50%] left-2 opacity-50" />
                     <InputText v-model="searchVal" placeholder="Search" class="px-8 w-full"

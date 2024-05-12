@@ -148,7 +148,10 @@ const cancel = () => {
                 <InputError :message="form.errors.end_date" />
             </div>
             <div class="mb-4">
-                <InputSwitch v-model="form.allocate" />
+                <label class="flex gap-2 items-center">
+                    <InputSwitch v-model="form.allocate" />
+                    Auto Allocate Subjects
+                </label>
                 <InputError :message="form.errors.allocate" />
             </div>
         </div>

@@ -34,19 +34,6 @@ export default {
                     900: '#17210B',
                     950: '#090C04'
                 },
-                some: {
-                    50: 'rgb(var(--primary-50))',
-                    100: 'rgb(var(--primary-100))',
-                    200: 'rgb(var(--primary-200))',
-                    300: 'rgb(var(--primary-300))',
-                    400: 'rgb(var(--primary-400))',
-                    500: 'rgb(var(--primary-500))',
-                    600: 'rgb(var(--primary-600))',
-                    700: 'rgb(var(--primary-700))',
-                    800: 'rgb(var(--primary-800))',
-                    900: 'rgb(var(--primary-900))',
-                    950: 'rgb(var(--primary-950))',
-                },
                 surface: {
                     0: 'var(--surface-0)',
                     50: 'var(--surface-50)',
@@ -60,8 +47,21 @@ export default {
                     800: 'var(--surface-800)',
                     900: 'var(--surface-900)',
                     950: 'var(--surface-950)'
+                },
+                gray: {
+                    0: 'var(--gray-0)',
+                    50: 'var(--gray-50)',
+                    100: 'var(--gray-100)',
+                    200: 'var(--gray-200)',
+                    300: 'var(--gray-300)',
+                    400: 'var(--gray-400)',
+                    500: 'var(--gray-500)',
+                    600: 'var(--gray-600)',
+                    700: 'var(--gray-700)',
+                    800: 'var(--gray-800)',
+                    900: 'var(--gray-900)',
+                    950: 'var(--gray-950)'
                 }
-
             }
         },
     },

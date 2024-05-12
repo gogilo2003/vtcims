@@ -136,8 +136,18 @@ const onCloseEnrollment = () => {
     showEnrollment.value = false
 }
 
-const download = (id: number) => {
+const download = (id: number | null) => {
     window.open(route('students-download', { id }), '_BLANK')
+}
+
+const selectedId = ref<number | null>(null)
+
+const openTask = (id: number | null) => {
+    selectedId.value = id
+}
+
+const onClickAway = () => {
+    selectedId.value = null
 }
 </script>
 
@@ -208,28 +218,27 @@ const download = (id: number) => {
                     </div>
                 </div>
                 <div class="flex flex-wrap gap-1">
-                    <div class="relative group">
-                        <SecondaryButton class="peer">
+                    <div class="relative group" v-click-away="onClickAway">
+                        <SecondaryButton class="peer" @click="openTask(student.id)">
                             Tasks
                         </SecondaryButton>
-                        <div
-                            class="absolute z-10 top-full right-0 grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 bg-gray-100">
+                        <div class="absolute z-10 top-full -right-full md:right-0 grid grid-rows-[0fr] rounded-2xl group-hover:p-2 shadow group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-500 bg-gray-100"
+                            :class="{ 'p-2 shadow grid-rows-[1fr]': selectedId == student?.id }">
                             <div class="overflow-hidden w-fit flex flex-col gap-1">
-                                <SecondaryButton @click="editStudent(student)">
-                                    <Icon class="h-4 w-4" type="edit" /><span class="hidden md:block">edit</span>
+                                <SecondaryButton @click="editStudent(student)" class="flex gap-2 items-center">
+                                    <Icon class="h-4 w-4" type="edit" /><span>edit</span>
                                 </SecondaryButton>
-                                <SecondaryButton @click="uploadPic(student)">
-                                    <Icon class="h-4 w-4" type="picture" /><span class="hidden md:block">Picture</span>
+                                <SecondaryButton @click="uploadPic(student)" class="flex gap-2 items-center">
+                                    <Icon class="h-4 w-4" type="picture" /><span>Picture</span>
                                 </SecondaryButton>
-                                <SecondaryButton @click="download(student.id)">
-                                    <Icon class="h-4 w-4" type="pdf" /><span class="hidden md:block">Download</span>
+                                <SecondaryButton @click="download(student.id)" class="flex gap-2 items-center">
+                                    <Icon class="h-4 w-4" type="pdf" /><span>Download</span>
                                 </SecondaryButton>
-                                <SecondaryButton @click="viewStudent(student)">
-                                    <Icon class="h-4 w-4" type="person-details" /><span
-                                        class="hidden md:block">Details</span>
+                                <SecondaryButton @click="viewStudent(student)" class="flex gap-2 items-center">
+                                    <Icon class="h-4 w-4" type="person-details" /><span>Details</span>
                                 </SecondaryButton>
-                                <SecondaryButton>
-                                    <Icon class="h-4 w-4" type="delete" /><span class="hidden md:block">Delete</span>
+                                <SecondaryButton class="flex gap-2 items-center">
+                                    <Icon class="h-4 w-4" type="delete" /><span>Delete</span>
                                 </SecondaryButton>
                             </div>
                         </div>
