@@ -567,11 +567,17 @@ export interface iDesignations {
     total: number,
 }
 
+export interface iTest {
+    id: number
+    title: string
+    outof: number
+    taken_on: Date
+}
 export interface iExamination {
     id: number | null
     title: string | ""
     intakes: iItem[] | null
-    tests: { id: number, title: string }[]
+    tests: iTest[]
     students: {
         id: number,
         name?: string,

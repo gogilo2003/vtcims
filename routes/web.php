@@ -29,6 +29,7 @@ use App\Http\Controllers\V1\ExaminationController;
 use App\Http\Controllers\V1\StaffStatusController;
 use App\Http\Controllers\V1\StudentRoleController;
 use App\Http\Controllers\V1\FeeTransactionController;
+use App\Http\Controllers\V1\TestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -205,6 +206,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('{term}/course/{course}', 'index')->name('-course');
                 Route::get('{term}/intake/{intake}', 'index')->name('-intake');
                 Route::get('{term}/student/{student}', 'index')->name('-student');
+            });
+        Route::prefix('tests')
+            ->name('-tests')
+            ->controller(TestController::class)
+            ->group(function () {
+                Route::post('store', 'store')->name('-store');
+                Route::patch('update', 'update')->name('-update');
+                Route::delete('destroy', 'destroy')->name('-destroy');
             });
     });
 

@@ -47,6 +47,13 @@ class ExaminationController extends Controller
                     "id" => $intake->id,
                     "name" => $intake->name,
                 ]),
+                "tests" => $examination->tests->map(fn(Test $test) => [
+                    "id" => $test->id,
+                    "title" => $test->title,
+                    "outof" => $test->outof,
+                    "taken_on" => $test->taken_on,
+                    "results" => $test->results->count(),
+                ]),
             ]);
 
         return Inertia::render('Examinations/Index', [

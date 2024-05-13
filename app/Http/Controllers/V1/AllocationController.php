@@ -82,10 +82,21 @@ class AllocationController extends Controller
         $instructors = Staff::whereHas('status', function ($query) {
             $query->where('name', 'LIKE', '%current%');
         })->orderBy('first_name')
-            // ->where('teach', 1)
+            ->where('teach', 1)
+            ->whereHas('status', function ($query) {
+                $query->where('name', 'like', '%current%');
+            })
             ->get()->map(fn($item) => [
                 "id" => $item->id,
-                "name" => Str::title(Str::lower(sprintf("%s %s %s", $item->first_name, $item->middle_name ? ' ' . $item->middle_name : '', $item->surname)))
+                "name" => Str::title(
+                    Str::lower(
+                        sprintf(
+                            "%s %s",
+                            $item->first_name,
+                            $item->surname
+                        )
+                    )
+                )
             ]);
 
         $terms = Term::orderBy('year', 'DESC')->orderBy('name', 'DESC')->get()->map(fn($item) => [
