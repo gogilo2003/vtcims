@@ -181,7 +181,7 @@ watch(() => searchVal.value, debounce((value: string) => {
                 </ListItem>
                 <Paginator :items="courses" />
             </div>
-            <div class="rounded-lg shadow bg-white p-4">
+            <div class="rounded-lg shadow bg-white dark:bg-gray-800 p-4">
                 <div v-text="title" class="text-lg uppercase pb-3 font-light"></div>
                 <form @submit.prevent="submit">
                     <div class="mb-4">

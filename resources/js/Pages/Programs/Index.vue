@@ -157,7 +157,7 @@ const submit = () => {
                 </ListItem>
                 <Paginator :items="programs" />
             </div>
-            <div class="rounded-lg shadow bg-white p-4">
+            <div class="rounded-lg shadow bg-white dark:bg-gray-800 p-4">
                 <div class="font-light capitalize text-2xl" v-text="title"></div>
                 <form @submit.prevent="submit">
                     <div class="mb-4">

@@ -196,7 +196,7 @@ const deleteSubject = (id: number) => {
                 </ListItem>
                 <Paginator :items="subjects" />
             </div>
-            <div class="shadow rounded-lg bg-white p-4">
+            <div class="shadow rounded-lg bg-white dark:bg-gray-800 p-4">
                 <div v-text="title" class="text-lg font-light uppercase"></div>
                 <form @submit.prevent="submit">
                     <div class="mb-4">
