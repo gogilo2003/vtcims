@@ -60,6 +60,12 @@ class TestController extends Controller
      */
     public function destroy(Test $test)
     {
-        //
+        try {
+            Test::destroy($test->id);
+            return redirect()->back()->with('success', 'Test deleted');
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+
     }
 }

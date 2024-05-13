@@ -212,8 +212,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->controller(TestController::class)
             ->group(function () {
                 Route::post('store', 'store')->name('-store');
-                Route::patch('update', 'update')->name('-update');
-                Route::delete('destroy', 'destroy')->name('-destroy');
+                Route::patch('update/{test}', 'update')->name('-update');
+                Route::delete('destroy/{test}', 'destroy')->name('-destroy');
             });
     });
 

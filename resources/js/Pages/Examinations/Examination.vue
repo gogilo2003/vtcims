@@ -9,7 +9,7 @@ import InputError from '../../Components/InputError.vue';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import Calendar from 'primevue/calendar';
-import { useForm, usePage } from '@inertiajs/vue3';
+import { router, useForm, usePage } from '@inertiajs/vue3';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
 import { useToast } from 'primevue/usetoast';
@@ -82,7 +82,7 @@ const submit = () => {
                 examination: props.examination?.id,
                 ...data
             }
-        }).patch(route('examinations-tests-update'), {
+        }).patch(route('examinations-tests-update', form.id), {
             only: ['examinations', 'errors', 'notification'],
             onSuccess: () => {
                 toast.add({
@@ -130,6 +130,29 @@ const submit = () => {
         })
     }
 }
+
+const deleteTest = (id: number) => {
+    router.delete(route('examinations-tests-destroy', id), {
+        only: ['examinations', 'errors', 'notification'],
+        onSuccess: () => {
+            toast.add({
+                severity: 'success',
+                summary: 'success',
+                detail: usePage().props?.notification?.success,
+                life: 3000
+            })
+            cancel()
+        },
+        onError: () => {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: usePage().props?.notification?.danger ?? 'An error occurred! Please check your fields and try again',
+                life: 3000
+            })
+        }
+    })
+}
 </script>
 <template>
     <Modal :show="show">
@@ -157,12 +180,17 @@ const submit = () => {
                     <div class="flex gap-2 flex-row">
                         <span>Out Of</span>
                         <span v-text="test.outof"></span>
+                        <span v-text="test.results"></span>
                     </div>
                 </div>
-                <div>
+                <div class="flex gap-1">
                     <SecondaryButton @click="editTest(test)">
                         <Icon class="h-4 w-4" type="edit" />
                         <span>Edit</span>
+                    </SecondaryButton>
+                    <SecondaryButton @click="deleteTest(test?.id)">
+                        <Icon class="h-4 w-4" type="delete" />
+                        <span>Delete</span>
                     </SecondaryButton>
                 </div>
             </ListItem>
