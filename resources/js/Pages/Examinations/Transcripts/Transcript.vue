@@ -1,10 +1,21 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
 import { iTerm, iTranscript } from '../../../interfaces/index';
 const props = defineProps<{
     term: iTerm
     transcript: iTranscript
 }>()
-const { admission_no, name, marks, total, average, grade, remark, course, intake } = props.transcript
+
+const admission_no = computed(() => props.transcript.admission_no)
+const name = computed(() => props.transcript.name)
+const marks = computed(() => props.transcript.marks)
+const total = computed(() => props.transcript.total)
+const average = computed(() => props.transcript.average)
+const grade = computed(() => props.transcript.grade)
+const remark = computed(() => props.transcript.remark)
+const course = computed(() => props.transcript.course)
+const intake = computed(() => props.transcript.intake)
+
 </script>
 <template>
     <div class=" bg-gray-50 px-16 py-24 h-[70.14rem]">

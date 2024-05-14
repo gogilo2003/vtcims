@@ -19,14 +19,36 @@ class TranscriptController extends Controller
                 "id" => $term->id,
                 "name" => $term->name,
                 "year" => $term->year,
+                "year_name" => sprintf("%s-%s", $term->year, $term->name),
                 "start_date" => $term->start_date->isoFormat('ddd, D MMM Y'),
                 "end_date" => $term->end_date->isoFormat('ddd, D MMM Y'),
             ]);
 
         $search = request()->input('search');
-        $term = request()->input('term') ? Term::find(request()->input('term')) : $terms->first();
+        $term = request()->input('term')
+            ? Term::find(request()->input('term'))
+            : $terms->first();
+
+        $admission_no = request()->input('admission');
 
         $transcripts = Student::where('status', 'In Session')
+            ->whereHas('results.test.examination', function ($query) use ($term) {
+                $query->where('term_id', $term->id);
+            })
+            ->when($admission_no, function ($query) use ($admission_no) {
+
+                $arAdmissionNo = explode('/', $admission_no);
+                $admConfig = explode('/', config('eschool.adm_number_pattern'));
+
+                $index = array_search('{id}', $admConfig);
+
+                if (count($arAdmissionNo) == count($admConfig)) {
+                    $id = (int) $arAdmissionNo[$index];
+
+                    $query->where('id', $id);
+                }
+
+            })
             ->when($search, function ($query) use ($search) {
                 $names = explode(" ", $search);
                 foreach ($names as $name) {

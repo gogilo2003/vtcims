@@ -220,6 +220,5 @@ const deleteTest = (id: number) => {
                 </div>
             </form>
         </div>
-        <pre v-text="tests"></pre>
     </Modal>
 </template>
