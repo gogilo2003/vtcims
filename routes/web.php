@@ -2,7 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\FeeController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\V1\ProfileController;
+use App\Http\Controllers\V1\RoleController;
 use App\Http\Controllers\V1\HomeController;
 use App\Http\Controllers\V1\TermController;
 use App\Http\Controllers\V1\StaffController;
@@ -245,6 +246,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('', [ProfileController::class, 'edit'])->name('.edit');
         Route::patch('', [ProfileController::class, 'update'])->name('.update');
         Route::delete('', [ProfileController::class, 'destroy'])->name('.destroy');
+    });
+
+    Route::prefix('admin')->name('admin')->group(function () {
+        Route::prefix('roles')->name('-roles')->controller(RoleController::class)->group(function () { });
     });
 });
 

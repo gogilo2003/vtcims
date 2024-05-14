@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
-use App\Http\Requests\StoreRoleRequest;
-use App\Http\Requests\UpdateRoleRequest;
-use App\Models\Role;
+use App\Http\Requests\StoreFeeTransactionModeRequest;
+use App\Http\Requests\UpdateFeeTransactionModeRequest;
+use App\Models\FeeTransactionMode;
 
-class RoleController extends Controller
+class FeeTransactionModeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +27,7 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreRoleRequest $request)
+    public function store(StoreFeeTransactionModeRequest $request)
     {
         //
     }
@@ -35,7 +35,7 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Role $role)
+    public function show(FeeTransactionMode $feeTransactionMode)
     {
         //
     }
@@ -43,7 +43,7 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Role $role)
+    public function edit(FeeTransactionMode $feeTransactionMode)
     {
         //
     }
@@ -51,7 +51,7 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateRoleRequest $request, Role $role)
+    public function update(UpdateFeeTransactionModeRequest $request, FeeTransactionMode $feeTransactionMode)
     {
         //
     }
@@ -59,7 +59,7 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Role $role)
+    public function destroy(FeeTransactionMode $feeTransactionMode)
     {
         //
     }
