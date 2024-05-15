@@ -48,6 +48,7 @@ import Upload from './Upload.vue'
 import Done from './Done.vue'
 import Teacher from './Teacher.vue'
 import BoardMember from './BoardMember.vue';
+import Gear from './Gear.vue';
 
 const props = defineProps({ type: String })
 
@@ -148,6 +149,9 @@ const icon = computed(() => {
         return Teacher;
     } else if (props.type == 'board_member') {
         return BoardMember;
+    }
+    else if (props.type == 'gear') {
+        return Gear
     }
     classes.value = `pi ${props.type}`
     return 'span';

@@ -1,7 +1,9 @@
 <?php
 namespace App\Support;
 
+use Illuminate\Support\Str;
 use libphonenumber\PhoneNumberUtil;
+use Illuminate\Support\Facades\Route;
 use libphonenumber\PhoneNumberFormat;
 
 final class Util
@@ -44,4 +46,36 @@ final class Util
         return;
     }
 
+    static function getRoutes()
+    {
+        $routes = collect(Route::getRoutes())->map(function ($route) {
+            // Extract route name and generate corresponding caption
+            $routeName = $route->getName();
+            $routeCaption = ucwords(str_replace('-', ' ', $routeName));
+
+            // Return route name and caption as an associative array
+            return (object) [
+                'name' => $routeName,
+                'caption' => $routeCaption
+            ];
+        })->filter(function ($route) {
+            if ($route->name) {
+                if (
+                    Str::startsWith($route->name, 'ignition')
+                    || Str::startsWith($route->name, 'sanctum')
+                    || Str::startsWith($route->name, 'verification')
+                    || Str::startsWith($route->name, 'password')
+                    || Str::startsWith($route->name, 'profile')
+                    || Str::startsWith($route->name, 'login')
+                    || Str::startsWith($route->name, 'logout')
+                ) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        });
+
+        return collect($routes->sortBy('name')->values()->all());
+    }
 }

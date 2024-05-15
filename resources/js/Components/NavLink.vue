@@ -5,10 +5,10 @@ import { iMenuItem } from '../interfaces/index';
 import Icon from '@/Components/Icons/Icon.vue';
 
 const props = defineProps<{
-    icon: string;
+    icon?: string;
     href: string;
     active: boolean;
-    items: iMenuItem[] | null
+    items?: iMenuItem[] | null
 }>();
 
 const activeState = ref(false)

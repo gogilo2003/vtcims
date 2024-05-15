@@ -249,7 +249,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::prefix('admin')->name('admin')->group(function () {
-        Route::prefix('roles')->name('-roles')->controller(RoleController::class)->group(function () { });
+        Route::prefix('roles')->name('-roles')->controller(RoleController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('', 'store')->name('-store');
+            Route::patch('{role}', 'update')->name('-update');
+            Route::delete('{role}', 'destroy')->name('-destroy');
+        });
+        Route::prefix('users')->name('-users')->controller(RoleController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('', 'store')->name('-store');
+            Route::patch('{user}', 'update')->name('-update');
+            Route::delete('{user}', 'destroy')->name('-destroy');
+        });
     });
 });
 

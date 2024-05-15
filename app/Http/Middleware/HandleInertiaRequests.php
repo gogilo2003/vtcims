@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Util;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tightenco\Ziggy\Ziggy;
@@ -45,12 +46,26 @@ class HandleInertiaRequests extends Middleware
             $notification['info'] = session('info');
         }
 
+        $user = $request->user();
+
+        $permissions = $user->is_admin ? Util::getRoutes()->pluck('name') : $user->roles->flatMap(function ($role) {
+            return explode(',', $role->permissions);
+        })->unique()->values()->all();
+
+        $userData = [
+            "id" => $user->id,
+            "name" => $user->name,
+            "email" => $user->email,
+            "is_admin" => $user->is_admin,
+            "email_verified_at" => $user->email_verified_at,
+            "permissions" => $permissions,
+        ];
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $userData,
             ],
-            'ziggy' => fn () => [
+            'ziggy' => fn() => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],

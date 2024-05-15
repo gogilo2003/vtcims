@@ -9,6 +9,17 @@ export const links: iMenu[] = [
     },
     {
         name: '',
+        icon: 'gear',
+        caption: 'Administrator',
+        items: [
+            {
+                name: 'admin-roles',
+                caption: 'Roles'
+            }
+        ]
+    },
+    {
+        name: '',
         icon: 'people',
         caption: 'Students',
         items: [

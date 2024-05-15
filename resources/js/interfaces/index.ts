@@ -77,9 +77,9 @@ export interface iPhoto {
 
 export interface iMenu {
     name: string
-    icon: string
+    icon?: string
     caption: string
-    items: iMenuItem[] | null
+    items?: iMenuItem[] | null
 }
 
 export interface iMenuItem {
@@ -696,6 +696,30 @@ export interface iFeeTransaction {
 }
 export interface iFeeTransactions {
     data: Array<iFeeTransaction>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
+
+export interface iRole {
+    id: number | null
+    name: string
+    permissions: {
+        name: string,
+        caption: string
+    }[] | any[]
+}
+export interface iRoles {
+    data: Array<iRole>
     current_page: number,
     first_page_url: string | null,
     from: number,
