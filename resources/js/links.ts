@@ -15,6 +15,10 @@ export const links: iMenu[] = [
             {
                 name: 'admin-roles',
                 caption: 'Roles'
+            },
+            {
+                name: 'admin-users',
+                caption: 'Users'
             }
         ]
     },

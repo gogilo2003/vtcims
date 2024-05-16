@@ -33,7 +33,13 @@ class RoleController extends Controller
      */
     public function store(StoreRoleRequest $request)
     {
-        //
+        $role = new Role();
+
+        $role->name = $request->name;
+        $role->permissions = implode(",", $request->permissions);
+        $role->save();
+
+        return redirect()->back()->with('success', 'Role stored');
     }
 
     /**
@@ -41,7 +47,11 @@ class RoleController extends Controller
      */
     public function update(UpdateRoleRequest $request, Role $role)
     {
+        $role->name = $request->name;
+        $role->permissions = implode(",", $request->permissions);
+        $role->save();
 
+        return redirect()->back()->with('success', 'Role updated');
     }
 
     /**
@@ -49,6 +59,8 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        $role->delete();
+
+        return redirect()->back()->with('success', 'Role deleted');
     }
 }

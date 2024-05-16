@@ -733,3 +733,26 @@ export interface iRoles {
     to: number,
     total: number,
 }
+
+export interface iUser {
+    id: number | null
+    name: string
+    email: string
+    staff: number
+    roles: number[]
+}
+export interface iUsers {
+    data: Array<iUser>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}

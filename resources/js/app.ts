@@ -9,6 +9,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
+import ConfirmationService from 'primevue/confirmationservice';
 import VueClickAway from "vue3-click-away";
 import lara from '../assets/primevue-themes/lara';
 
@@ -26,6 +27,7 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(PrimeVue, laraOptions)
             .use(ToastService)
+            .use(ConfirmationService)
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(VueClickAway)

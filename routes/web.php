@@ -2,16 +2,18 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\V1\FeeController;
-use App\Http\Controllers\V1\ProfileController;
-use App\Http\Controllers\V1\RoleController;
 use App\Http\Controllers\V1\HomeController;
+use App\Http\Controllers\V1\RoleController;
 use App\Http\Controllers\V1\TermController;
+use App\Http\Controllers\V1\TestController;
+use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\StaffController;
 use App\Http\Controllers\V1\CourseController;
 use App\Http\Controllers\V1\IntakeController;
 use App\Http\Controllers\V1\LessonController;
 use App\Http\Controllers\V1\AccountController;
 use App\Http\Controllers\V1\InvoiceController;
+use App\Http\Controllers\V1\ProfileController;
 use App\Http\Controllers\V1\ProgramController;
 use App\Http\Controllers\V1\SponsorController;
 use App\Http\Controllers\V1\StudentController;
@@ -30,7 +32,6 @@ use App\Http\Controllers\V1\ExaminationController;
 use App\Http\Controllers\V1\StaffStatusController;
 use App\Http\Controllers\V1\StudentRoleController;
 use App\Http\Controllers\V1\FeeTransactionController;
-use App\Http\Controllers\V1\TestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -255,7 +256,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::patch('{role}', 'update')->name('-update');
             Route::delete('{role}', 'destroy')->name('-destroy');
         });
-        Route::prefix('users')->name('-users')->controller(RoleController::class)->group(function () {
+        Route::prefix('users')->name('-users')->controller(UserController::class)->group(function () {
             Route::get('', 'index');
             Route::post('', 'store')->name('-store');
             Route::patch('{user}', 'update')->name('-update');

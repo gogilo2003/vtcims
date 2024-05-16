@@ -46,20 +46,22 @@ class HandleInertiaRequests extends Middleware
             $notification['info'] = session('info');
         }
 
-        $user = $request->user();
+        $userData = null;
+        if ($user = $request->user()) {
 
-        $permissions = $user->is_admin ? Util::getRoutes()->pluck('name') : $user->roles->flatMap(function ($role) {
-            return explode(',', $role->permissions);
-        })->unique()->values()->all();
+            $permissions = $user->is_admin ? Util::getRoutes()->pluck('name') : $user->roles->flatMap(function ($role) {
+                return explode(',', $role->permissions);
+            })->unique()->values()->all();
 
-        $userData = [
-            "id" => $user->id,
-            "name" => $user->name,
-            "email" => $user->email,
-            "is_admin" => $user->is_admin,
-            "email_verified_at" => $user->email_verified_at,
-            "permissions" => $permissions,
-        ];
+            $userData = [
+                "id" => $user->id,
+                "name" => $user->name,
+                "email" => $user->email,
+                "is_admin" => $user->is_admin,
+                "email_verified_at" => $user->email_verified_at,
+                "permissions" => $permissions,
+            ];
+        }
         return [
             ...parent::share($request),
             'auth' => [

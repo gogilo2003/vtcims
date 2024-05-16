@@ -2,18 +2,16 @@
 
 namespace App\Http\Requests\V1;
 
-use App\Support\Util;
-use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreRoleRequest extends FormRequest
+class StoreUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return request()->user()->isAdmin() || request()->user()->hasPermission('admin-roles-store');
+        return request()->user()->isAdmin() || request()->user()->hasPermission('admin-users-store');
     }
 
     /**
@@ -24,9 +22,11 @@ class StoreRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => ["required", "string", "unique:roles,name"],
-            "permissions" => ["required", "array", "min:1"],
-            "permissions.*" => ["string", Rule::in(Util::getRoutes()->pluck('name')->toArray())]
+            "name" => ["required", "string"],
+            "email" => ["required", "string", "email", "unique:users,email"],
+            "password" => ["nullable", "string"],
+            "roles" => ["required", "array"],
+            "roles.*" => ["required", "numeric", "integer", "exists:roles,id"],
         ];
     }
 }
