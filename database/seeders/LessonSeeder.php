@@ -49,7 +49,7 @@ class LessonSeeder extends Seeder
 
         foreach ($days as $day) {
             foreach ($lessons as $lesson) {
-                $item = new Lesson();
+                $item = Lesson::where('day', $day)->where('title', 'like', '%' . $lesson->title . '%')->first() ?? new Lesson();
                 $item->title = sprintf('%s - %s', Str::substr($day, 0, 3), $lesson->title);
                 $item->day = $day;
                 $item->start_at = $lesson->start_at;

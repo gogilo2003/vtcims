@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\JobGroup;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class JobGroupSeeder extends Seeder
 {
@@ -26,7 +27,7 @@ class JobGroupSeeder extends Seeder
         ];
 
         foreach ($jobGroups as $jobGroup) {
-            $item = new \App\Models\JobGroup();
+            $item = JobGroup::where('name', $jobGroup)->first() ?? new JobGroup();
             $item->name = $jobGroup;
             $item->save();
         }

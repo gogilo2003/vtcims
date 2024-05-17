@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Designation;
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class DesignationSeeder extends Seeder
 {
@@ -22,7 +23,7 @@ class DesignationSeeder extends Seeder
         ];
 
         foreach ($designations as $designation) {
-            $item = new \App\Models\Designation();
+            $item = Designation::where('name', $designation)->first() ?? new Designation();
             $item->name = $designation;
             $item->save();
         }
