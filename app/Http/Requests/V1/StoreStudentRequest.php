@@ -39,8 +39,8 @@ class StoreStudentRequest extends FormRequest
             'sponsor' => 'required|exists:sponsors,id',
             'role' => 'required|exists:student_roles,id',
             'status' => 'required',
-            'guardian_name' => 'required|string',
-            'guardian_phone' => ['required', 'string', new PhoneNumber()],
+            'guardian_name' => 'nullable|string',
+            'guardian_phone' => ['nullable', 'string', new PhoneNumber()],
             'guardian_email' => 'nullable|string|email',
             'phone' => ['nullable', 'string', new PhoneNumber()],
         ];
