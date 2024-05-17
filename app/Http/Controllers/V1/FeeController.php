@@ -53,6 +53,8 @@ class FeeController extends Controller
             "name" => sprintf("%s - %s", Str::upper(Str::lower($course->code)), Str::title(Str::lower($course->name))),
         ])->sortBy('name')->values();
 
+
+
         return Inertia::render('Accounts/Fees/Index', [
             'fees' => $fees,
             'terms' => $terms,
