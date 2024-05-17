@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CopyRoles extends Command
 {
@@ -26,16 +27,18 @@ class CopyRoles extends Command
      */
     public function handle()
     {
-        if (DB::table('users')->count() === 0) {
-            DB::table('admin_roles')->get()->each(function ($admin_role) {
-                $user = new \App\Models\Role();
-                $user->name = $admin_role->name;
-                $user->permissions = $admin_role->details;
-                $user->save();
-            });
-            $this->info('Copy Admin Roles Done');
-        } else {
-            $this->info('Users table already has data. Skipping...');
+        if (Schema::hasTable('admin_roles')) {
+            if (DB::table('users')->count() === 0) {
+                DB::table('admin_roles')->get()->each(function ($admin_role) {
+                    $user = new \App\Models\Role();
+                    $user->name = $admin_role->name;
+                    $user->permissions = $admin_role->details;
+                    $user->save();
+                });
+                $this->info('Copy Admin Roles Done');
+            } else {
+                $this->info('Users table already has data. Skipping...');
+            }
         }
         return 0;
     }
