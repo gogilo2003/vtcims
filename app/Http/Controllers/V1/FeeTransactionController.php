@@ -152,7 +152,7 @@ class FeeTransactionController extends Controller
     {
         $student = Student::find($request->student);
         $fee = Fee::find($request->fee);
-        $feeTransactionType = FeeTransactionType::find($request->type);
+        $feeTransactionType = FeeTransactionType::where("code", $request->type)->first();
         $feeTransactionMode = FeeTransactionMode::find($request->mode);
 
         StudentUtil::postFeeTransaction($student, $fee, $feeTransactionType, $request->amount, $feeTransactionMode);

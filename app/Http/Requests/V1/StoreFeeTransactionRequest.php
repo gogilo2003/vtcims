@@ -22,7 +22,11 @@ class StoreFeeTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "amount" => ["required", "numeric", "min:1"],
+            "fee" => ["required", "numeric", "exists:fees,id"],
+            "mode" => ["required", "numeric", "exists:fee_transaction_modes,id"],
+            "student" => ["required", "numeric", "exists:students,id"],
+            "type" => ["required", "string", "exists:fee_transaction_types,code"],
         ];
     }
 }
