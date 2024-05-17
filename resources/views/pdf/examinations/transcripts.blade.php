@@ -17,7 +17,10 @@
                     'term' => $term,
                 ])
             @else
-                @include('pdf.examinations.transcript', ['transcript' => $transcript, 'term' => $term])
+                @include('pdf.examinations.transcript', [
+                    'transcript' => $transcript,
+                    'term' => $term,
+                ])
             @endif
         </div>
     @endforeach

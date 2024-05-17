@@ -21,5 +21,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Schema::defaultStringLength(191);
+
+        $viewNamespace = env('VIEW_NAMESPACE', 'default');
+
+        // Register the namespace
+        view()->addNamespace('custom', resource_path("views/$viewNamespace"));
+
     }
 }
