@@ -308,7 +308,7 @@ class AttendanceController extends Controller
                 if (file_exists(resource_path('views/custom/students/attendance'))) {
                     $viewName = 'pdf.custom.students.attendance';
                 }
-                $pdfContent = view($viewName, [
+                $pdfContent = view()->first(['pdf.custom.students.attendance', 'pdf.students.attendance'], [
                     'students' => $students,
                     'allocation' => $allocationData,
                     'logos' => $logos,
