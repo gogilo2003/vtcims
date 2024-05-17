@@ -6,6 +6,7 @@
 /storage/*.key
 /vendor
 /storage
+/resources/views/custom
 .env
 .env.backup
 .env.production
