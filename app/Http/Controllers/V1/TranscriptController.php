@@ -100,10 +100,15 @@ class TranscriptController extends Controller
 
             $name = sprintf('Transcripts-%s.pdf', time());
 
+            $viewName = 'pdf.examinations.transcripts';
+            if (file_exists(resource_path('views/pdf/custom/examinations/transcripts'))) {
+                $viewName = 'pdf.custom.examinations.transcripts';
+            }
+
             $pdf = App::make('snappy.pdf.wrapper')
                 ->setPaper('A4')
                 ->setOption('no-outline', true)
-                ->loadView('pdf.examinations.transcripts', ['transcripts' => $transcripts, 'term' => $term]);
+                ->loadView($viewName, ['transcripts' => $transcripts, 'term' => $term]);
 
             return $pdf->stream($name);
         }

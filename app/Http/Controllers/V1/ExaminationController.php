@@ -91,6 +91,11 @@ class ExaminationController extends Controller
      */
     public function show(Examination $examination)
     {
+        $examination->load([
+            'intakes.students' => function ($query) {
+                $query->where('status', 'In Session');
+            }
+        ]);
         $examination = [
             "id" => $examination->id,
             "title" => $examination->title,
@@ -260,7 +265,12 @@ class ExaminationController extends Controller
             $data['blank'] = true;
         }
 
-        $pdf->loadView('pdf.examinations.examination', $data)
+        $viewName = 'pdf.examinations.examination';
+        if (file_exists(resource_path('views/pdf/custom/examinations/examination'))) {
+            $viewName = 'pdf.custom.examinations.examination';
+        }
+
+        $pdf->loadView($viewName, $data)
             ->setPaper('A4')
             ->setOption('no-outline', true)
             ->setOption('footer-center', 'Page [page] of [toPage]')

@@ -304,7 +304,11 @@ class AttendanceController extends Controller
                 $date = request()->input('start_at') ? request()->input('start_at') : (new DateTime('monday this week'))->format('Y-m-d');
                 $startOfWeek = Carbon::parse($date)->isoFormat('ddd, D MMM Y');
                 $endOfWeek = Carbon::parse($date)->addWeek()->isoFormat('ddd, D MMM Y');
-                $pdfContent = view('pdf.students.attendance', [
+                $viewName = 'pdf.students.attendance';
+                if (file_exists(resource_path('views/custom/students/attendance'))) {
+                    $viewName = 'pdf.custom.students.attendance';
+                }
+                $pdfContent = view($viewName, [
                     'students' => $students,
                     'allocation' => $allocationData,
                     'logos' => $logos,
@@ -319,7 +323,11 @@ class AttendanceController extends Controller
                     : date('Y-m');
                 $startOfMonth = Carbon::parse(date('Y-m-01', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
                 $endOfMonth = Carbon::parse(date('Y-m-t', strtotime($currentMonth)))->isoFormat('ddd, D MMM Y');
-                $pdfContent = view('pdf.students.attendance', [
+                $viewName = 'pdf.students.attendance';
+                if (file_exists(resource_path('views/pdf/custom/students.attendance'))) {
+                    $viewName = 'pdf.custom.students.attendance';
+                }
+                $pdfContent = view($viewName, [
                     'students' => $students,
                     'allocation' => $allocationData,
                     'logos' => $logos,
@@ -337,7 +345,11 @@ class AttendanceController extends Controller
                     $startOfQuarter = Carbon::parse($term->start_date)->isoFormat('ddd, D MMM Y');
                     $endOfQuarter = Carbon::parse($term->end_date)->isoFormat('ddd, D MMM Y');
                 }
-                $pdfContent = view('pdf.students.attendance', [
+                $viewName = 'pdf.students.attendance';
+                if (file_exists(resource_path('views/pdf/custom/students.attendance'))) {
+                    $viewName = 'pdf.custom.students.attendance';
+                }
+                $pdfContent = view($viewName, [
                     'students' => $students,
                     'allocation' => $allocationData,
                     'logos' => $logos,

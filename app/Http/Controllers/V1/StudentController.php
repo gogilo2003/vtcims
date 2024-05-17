@@ -305,12 +305,18 @@ class StudentController extends Controller
             $feeSummary = StudentUtil::generateFeeSummary($id);
 
             $pdf->setOrientation('portrait');
-            $pdf->loadView('pdf.students.view', [
+
+            $viewName = 'pdf.students.view';
+            if (file_exists(resource_path('views/pdf/custom/students/view'))) {
+                $viewName = 'pdf.custom.students.view';
+            }
+
+            $pdf->loadView($viewName, [
                 'student' => $this->mapStudent($student, true),
                 "examination" => $examSummary,
                 "fees" => $feeSummary,
             ]);
-            // return view('pdf.students.view',compact('student'));
+
             $filename = str_replace('/', '_', $student->admission_no) . '.pdf';
             return $pdf->stream($filename);
         } else {
@@ -388,10 +394,16 @@ class StudentController extends Controller
             if ($title = request()->input('t')) {
                 $data['title'] = $title;
             }
+
+            $viewName = 'pdf.students.list';
+            if (file_exists(resource_path('views/pdf/custom/students/list'))) {
+                $viewName = 'pdf.custom.students.list';
+            }
+
             $pdf->setOrientation('landscape')
                 ->setOption('footer-center', 'Page [page] of [toPage]')
                 ->setOption('footer-font-size', 7)
-                ->loadView('pdf.students.list', $data);
+                ->loadView($vieName, $data);
 
             $filename = 'STUDENTS_' . date('d-m-Y') . '.pdf';
             return $pdf->stream($filename);
@@ -450,7 +462,13 @@ class StudentController extends Controller
         );
 
         $pdf = App::make('snappy.pdf.wrapper');
-        $pdf->loadView('pdf.students.enrollment', compact('enrollments', 'years'))
+
+        $viewName = 'pdf.students.enrollment';
+        if (file_exists(resource_path('views/pdf/custom/students/enrollment'))) {
+            $viewName = 'pdf.custom.students.enrollment';
+        }
+
+        $pdf->loadView($viewName, compact('enrollments', 'years'))
             ->setOption('orientation', 'landscape')
             ->setOption('no-outline', true)
             ->setOption('enable-javascript', true)
@@ -458,7 +476,6 @@ class StudentController extends Controller
             ->setOption('enable-smart-shrinking', true)
             ->setOption('no-stop-slow-scripts', true);
         return $pdf->stream();
-        // return view('pdf.students.enrollment', compact('enrollments', 'years'));
     }
     protected function mapStudent(Student $student, $base64 = false)
     {

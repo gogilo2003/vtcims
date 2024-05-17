@@ -221,7 +221,13 @@ class StaffController extends Controller
         if ($id) {
             $staff = Staff::find($id);
             $intake_subjects = Allocation::where('staff_id', $id)->with('subject', 'intake')->orderBy('intake_id', 'DESC')->get();
-            $pdf->loadView('pdf.staff.view', compact('staff', 'intake_subjects'));
+
+            $viewName = 'pdf.staff.view';
+            if (file_exists(resource_path('views/pdf/custom/staff/view'))) {
+                $viewName = 'pdf.custom.staff.view';
+            }
+
+            $pdf->loadView($viewName, compact('staff', 'intake_subjects'));
             return $pdf->download(strtoupper('Staff#' . str_pad($staff->id, 4, '0', 0)) . '.pdf');
         } else {
             $staff = Staff::when($status, function ($query) use ($status) {
@@ -244,7 +250,12 @@ class StaffController extends Controller
                 })
                 ->get();
 
-            $pdf->loadView('pdf.staff.list', compact('staff'))
+            $viewName = 'pdf.staff.list';
+            if (file_exists(resource_path('views/pdf/custom/staff/list'))) {
+                $viewName = 'pdf.custom.staff.list';
+            }
+
+            $pdf->loadView($viewName, compact('staff'))
                 ->setOrientation('landscape')
                 ->setPaper('A4')
                 ->setOption('footer-center', 'Page [page] of [toPage]')
