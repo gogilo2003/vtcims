@@ -11,7 +11,7 @@
             @if (!$loop->first)
                 @include('layout.pdf-header')
             @endif
-            @include('pdf.examinations.transcript', ['transcript' => $transcript, 'term' => $term])
+            @include('pdf.custom.examinations.transcript', ['transcript' => $transcript, 'term' => $term])
         </div>
     @endforeach
 @endsection

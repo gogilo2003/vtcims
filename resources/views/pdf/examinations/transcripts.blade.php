@@ -11,7 +11,14 @@
             @if (!$loop->first)
                 @include('layout.pdf-header')
             @endif
-            @include('pdf.examinations.transcript', ['transcript' => $transcript, 'term' => $term])
+            @if (file_exists(resource_path('views/pdf/custom/examinations/transcript')))
+                @include('pdf.custom.examinations.transcript', [
+                    'transcript' => $transcript,
+                    'term' => $term,
+                ])
+            @else
+                @include('pdf.examinations.transcript', ['transcript' => $transcript, 'term' => $term])
+            @endif
         </div>
     @endforeach
 @endsection
