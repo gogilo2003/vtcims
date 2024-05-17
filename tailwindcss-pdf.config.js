@@ -3,6 +3,7 @@ const plugin = require('tailwindcss/plugin');
 export default {
     content: [
         "./resources/views/pdf/**/*.blade.php",
+        "./resources/views/custom/pdf/**/*.blade.php",
         "./resources/views/students/download/**/*.blade.php",
         "./resources/views/layout/**/*.blade.php",
     ],
