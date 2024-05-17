@@ -186,7 +186,7 @@ const submit = () => {
                         <InputError :message="form.errors.amount" />
                     </div>
                     <div class="flex justify-between">
-                        <PrimaryButton>Save</PrimaryButton>
+                        <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing">Save</PrimaryButton>
                         <SecondaryButton type="button" v-if="edit" @click="cancel">Cancel</SecondaryButton>
                     </div>
                 </form>

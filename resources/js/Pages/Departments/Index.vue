@@ -189,7 +189,8 @@ watch(() => searchVal.value, debounce((value: string) => {
                         <InputError :message="form.errors.hod" />
                     </div>
                     <div class="flex justify-between">
-                        <PrimaryButton>Save</PrimaryButton>
+                        <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing">Save
+                        </PrimaryButton>
                         <SecondaryButton type="button" @click="cancel">Cancel</SecondaryButton>
                     </div>
                 </form>

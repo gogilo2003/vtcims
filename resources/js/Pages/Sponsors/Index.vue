@@ -198,7 +198,8 @@ const editSponsor = (sponsor: iSponsor) => {
             </div>
         </form>
         <template #footer>
-            <PrimaryButton @click="submit">Save</PrimaryButton>
+            <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" @click="submit">Save
+            </PrimaryButton>
             <SecondaryButton type="button" @click="cancel">Cancel</SecondaryButton>
         </template>
     </Modal>

@@ -218,7 +218,8 @@ const prepareEndDate = (start: any) => {
             </div>
         </form>
         <template #footer>
-            <PrimaryButton @click="submit">Save</PrimaryButton>
+            <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" @click="submit">Save
+            </PrimaryButton>
             <SecondaryButton @click="cancel">Cancel</SecondaryButton>
         </template>
     </Modal>

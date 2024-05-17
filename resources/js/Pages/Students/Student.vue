@@ -461,7 +461,8 @@ watch(() => props.show, (value) => {
             </form>
         </div>
         <template #footer>
-            <PrimaryButton type="submit" @click="submit">Save</PrimaryButton>
+            <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" type="submit"
+                @click="submit">Save</PrimaryButton>
             <SecondaryButton type="reset" @click="close(false)">Cancel</SecondaryButton>
         </template>
     </Modal>

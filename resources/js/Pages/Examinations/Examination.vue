@@ -215,7 +215,8 @@ const deleteTest = (id: number) => {
                     </div>
                 </div>
                 <div class="flex py-2 justify-between items-center">
-                    <PrimaryButton>Save</PrimaryButton>
+                    <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing">Save
+                    </PrimaryButton>
                     <SecondaryButton @click.prevent="cancel">Cancel</SecondaryButton>
                 </div>
             </form>

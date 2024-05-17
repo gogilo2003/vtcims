@@ -270,7 +270,8 @@ const saveLessons = () => {
             </div>
         </form>
         <template #footer>
-            <PrimaryButton @click="saveLessons">Save</PrimaryButton>
+            <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" @click="saveLessons">
+                Save</PrimaryButton>
             <SecondaryButton @click="cancelLessons">Cancel
             </SecondaryButton>
         </template>
@@ -309,7 +310,8 @@ const saveLessons = () => {
             </div>
         </form>
         <template #footer>
-            <PrimaryButton @click="submit">Save</PrimaryButton>
+            <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing" @click="submit">Save
+            </PrimaryButton>
             <SecondaryButton @click="cancel">Cancel</SecondaryButton>
         </template>
     </Modal>

@@ -176,7 +176,8 @@ const cancel = () => {
                         <InputError :message="form.errors.permissions" />
                     </div>
                     <div class="flex justify-between">
-                        <PrimaryButton>Save</PrimaryButton>
+                        <PrimaryButton :class="{ 'opacity-30': form.processing }" :disabled="form.processing">Save
+                        </PrimaryButton>
                         <SecondaryButton @click.prevent="cancel">Cancel</SecondaryButton>
                     </div>
                 </form>

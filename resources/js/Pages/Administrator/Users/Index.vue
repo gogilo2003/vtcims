@@ -78,24 +78,6 @@ const editUser = (user: iUser) => {
 }
 
 const deleteUser = (event, id: number | null) => {
-    console.log(event.currentTarget);
-
-    // confirm.require({
-    //     target: event.currentTarget,
-    //     message: 'Are you sure you want to proceed?',
-    //     icon: 'pi pi-exclamation-triangle',
-    //     rejectClass: 'p-button-secondary p-button-outlined p-button-sm',
-    //     acceptClass: 'p-button-sm',
-    //     rejectLabel: 'Cancel',
-    //     acceptLabel: 'Save',
-    //     accept: () => {
-    //         toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-    //     },
-    //     reject: () => {
-    //         toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-    //     }
-    // });
-
     confirm.require({
         target: event.currentTarget,
         message: "Are you sure you want to proceed?",
