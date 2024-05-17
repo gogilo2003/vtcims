@@ -17,5 +17,6 @@ const props = defineProps<{
                 <div class="text-sm font-semibold uppercase" v-text="title"></div>
             </div>
         </div>
+        <pre v-text="stats"></pre>
     </AuthenticatedLayout>
 </template>
