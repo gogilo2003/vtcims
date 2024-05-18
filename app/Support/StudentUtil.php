@@ -5,6 +5,7 @@ use Carbon\Carbon;
 use App\Models\Fee;
 use App\Models\Result;
 use App\Models\Student;
+use App\Models\Subject;
 use Illuminate\Support\Str;
 use App\Models\FeeTransaction;
 use App\Models\FeeTransactionMode;
@@ -203,89 +204,148 @@ class StudentUtil
      */
     static function prepareTranscript($studentId, $termId)
     {
-        // Retrieve all results data for the student for all terms
-        $allResults = Result::where('student_id', $studentId)
-            ->join('examination_tests', 'examination_results.test_id', '=', 'examination_tests.id')
-            ->join('examinations', 'examination_tests.examination_id', '=', 'examinations.id')
-            ->join('subjects', 'examinations.subject_id', '=', 'subjects.id')
-            ->select(
-                'subjects.code',
-                'subjects.name as subject',
-                'examination_results.score'
-            )
-            ->get();
+        // Get the student and intake
+        $student = Student::with('intake')->find($studentId);
 
-        // Initialize arrays for storing subject-wise scores
-        $subjectScores = [];
-
-        // Process all results data and organize scores by subject
-        foreach ($allResults as $result) {
-            $subject = $result->subject;
-            $code = $result->code;
-            $score = $result->score;
-
-            if (!isset($subjectScores[$subject])) {
-                $subjectScores[$subject] = [
-                    'code' => $code,
-                    'scores' => [],
-                ];
-            }
-
-            $subjectScores[$subject]['scores'][] = $score;
+        if (!$student) {
+            return response()->json(['error' => 'Student not found'], 404);
         }
 
-        // Retrieve results data for the current term
-        $currentTermResults = Result::where('student_id', $studentId)
-            ->join('examination_tests', 'examination_results.test_id', '=', 'examination_tests.id')
-            ->join('examinations', 'examination_tests.examination_id', '=', 'examinations.id')
-            ->join('subjects', 'examinations.subject_id', '=', 'subjects.id')
-            ->where('examinations.term_id', $termId)
-            ->select(
-                'subjects.code',
-                'subjects.name as subject',
-                'examination_results.score'
-            )
-            ->get();
+        // Get subjects for the student's course
+        $subjects = Subject::whereHas('courses', function ($query) use ($student) {
+            $query->where('courses.id', $student->intake->course_id);
+        })->get();
 
-        // Initialize arrays for storing grades and remarks
-        $transcriptData = [];
+        // Prepare the results
+        $results = [];
 
-        // Process subject-wise scores and calculate mean, min, and max
-        foreach ($subjectScores as $subject => $subjectData) {
-            $code = $subjectData['code'];
-            $allTimeScores = $subjectData['scores'];
+        foreach ($subjects as $subject) {
+            // Get the current term result
+            $curTermResults = Result::whereHas('test.examination', function ($query) use ($termId, $subject) {
+                $query->where('term_id', $termId)
+                    ->where('subject_id', $subject->id);
+            })->where('student_id', $studentId)->get();
 
-            // Calculate all-time mean, min, and max
-            $allTimeCount = count($allTimeScores);
-            $allTimeMean = sprintf("%.1f", round($allTimeCount > 0 ? array_sum($allTimeScores) / $allTimeCount : 0));
-            $allTimeMin = sprintf("%.1f", round($allTimeCount > 0 ? min($allTimeScores) : 0));
-            $allTimeMax = sprintf("%.1f", round($allTimeCount > 0 ? max($allTimeScores) : 0));
+            $currentTermResult = null;
 
-            // Retrieve scores for the current term for the subject
-            $currentTermSubjectScores = $currentTermResults->where('subject', $subject)->pluck('score')->toArray();
+            foreach ($curTermResults as $result) {
+                $currentTermResult += $result->score / $result->test->outof * 100;
+            }
 
-            // Calculate current term mean
-            $currentTermMean = sprintf("%.1f", round(array_sum($currentTermSubjectScores)));
-            // dd($currentTermMean);
-            // Calculate grade and remark for the current term using services
-            $grade = self::calculateGrade($currentTermMean);
-            $remark = self::generateRemark($grade);
+            if ($curTermResults->count()) {
+                $currentTermResult /= $curTermResults->count();
+            }
 
-            // Add subject data to transcript
-            $transcriptData[] = (object) [
-                'code' => $code,
-                'subject' => $subject,
-                'min' => $allTimeMin,
-                'max' => $allTimeMax,
-                'average' => $allTimeMean,
-                'score' => $currentTermMean,
+            // Get all-time statistics for the subject
+            $allTimeResults = Result::whereHas('test.examination', function ($query) use ($subject) {
+                $query->where('subject_id', $subject->id);
+            })->where('student_id', $studentId)->pluck('score');
+
+            $mean = $allTimeResults->avg();
+            $min = $allTimeResults->min();
+            $max = $allTimeResults->max();
+
+            $grade = $currentTermResult ? self::calculateGrade($currentTermResult) : null;
+            $remark = $grade ? self::generateRemark($grade) : null;
+            $results[] = (object) [
+                'code' => $subject->code,
+                'subject' => $subject->name,
+                'score' => $currentTermResult ? sprintf("%.1f", round($currentTermResult)) : null,
+                'average' => $mean ? sprintf("%.1f", round($mean)) : null,
+                'min' => $min,
+                'max' => $max,
                 'grade' => $grade,
                 'remark' => $remark,
             ];
         }
 
-        return collect($transcriptData)->sortBy('subject')->values();
+        return collect($results);
     }
+    // static function prepareTranscript($studentId, $termId)
+    // {
+    //     // Retrieve all results data for the student for all terms
+    //     $allResults = Result::where('student_id', $studentId)
+    //         ->join('examination_tests', 'examination_results.test_id', '=', 'examination_tests.id')
+    //         ->join('examinations', 'examination_tests.examination_id', '=', 'examinations.id')
+    //         ->join('subjects', 'examinations.subject_id', '=', 'subjects.id')
+    //         ->select(
+    //             'subjects.code',
+    //             'subjects.name as subject',
+    //             'examination_results.score'
+    //         )
+    //         ->get();
+
+    //     // Initialize arrays for storing subject-wise scores
+    //     $subjectScores = [];
+
+    //     // Process all results data and organize scores by subject
+    //     foreach ($allResults as $result) {
+    //         $subject = $result->subject;
+    //         $code = $result->code;
+    //         $score = $result->score;
+
+    //         if (!isset($subjectScores[$subject])) {
+    //             $subjectScores[$subject] = [
+    //                 'code' => $code,
+    //                 'scores' => [],
+    //             ];
+    //         }
+
+    //         $subjectScores[$subject]['scores'][] = $score;
+    //     }
+
+    //     // Retrieve results data for the current term
+    //     $currentTermResults = Result::where('student_id', $studentId)
+    //         ->join('examination_tests', 'examination_results.test_id', '=', 'examination_tests.id')
+    //         ->join('examinations', 'examination_tests.examination_id', '=', 'examinations.id')
+    //         ->join('subjects', 'examinations.subject_id', '=', 'subjects.id')
+    //         ->where('examinations.term_id', $termId)
+    //         ->select(
+    //             'subjects.code',
+    //             'subjects.name as subject',
+    //             'examination_results.score'
+    //         )
+    //         ->get();
+
+    //     // Initialize arrays for storing grades and remarks
+    //     $transcriptData = [];
+
+    //     // Process subject-wise scores and calculate mean, min, and max
+    //     foreach ($subjectScores as $subject => $subjectData) {
+    //         $code = $subjectData['code'];
+    //         $allTimeScores = $subjectData['scores'];
+
+    //         // Calculate all-time mean, min, and max
+    //         $allTimeCount = count($allTimeScores);
+    //         $allTimeMean = sprintf("%.1f", round($allTimeCount > 0 ? array_sum($allTimeScores) / $allTimeCount : 0));
+    //         $allTimeMin = sprintf("%.1f", round($allTimeCount > 0 ? min($allTimeScores) : 0));
+    //         $allTimeMax = sprintf("%.1f", round($allTimeCount > 0 ? max($allTimeScores) : 0));
+
+    //         // Retrieve scores for the current term for the subject
+    //         $currentTermSubjectScores = $currentTermResults->where('subject', $subject)->pluck('score')->toArray();
+
+    //         // Calculate current term mean
+    //         $currentTermMean = sprintf("%.1f", round(array_sum($currentTermSubjectScores)));
+    //         // dd($currentTermMean);
+    //         // Calculate grade and remark for the current term using services
+    //         $grade = self::calculateGrade($currentTermMean);
+    //         $remark = self::generateRemark($grade);
+
+    //         // Add subject data to transcript
+    //         $transcriptData[] = (object) [
+    //             'code' => $code,
+    //             'subject' => $subject,
+    //             'min' => $allTimeMin,
+    //             'max' => $allTimeMax,
+    //             'average' => $allTimeMean,
+    //             'score' => $currentTermMean,
+    //             'grade' => $grade,
+    //             'remark' => $remark,
+    //         ];
+    //     }
+
+    //     return collect($transcriptData)->sortBy('subject')->values();
+    // }
 
     /**
      * Post new Fee Transaction

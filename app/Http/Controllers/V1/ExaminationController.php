@@ -25,11 +25,13 @@ class ExaminationController extends Controller
         $search = request()->input('search');
 
         $examinations = Examination::with('subject', 'term', 'intakes', 'tests')
-            ->orderBy('title', 'DESC')
+            ->orderBy('created_at', 'DESC')
             ->when($search, function ($query) use ($search) {
+
                 $query->where('title', 'like', '%' . $search . '%')
                     ->orWhereHas('term', function ($query) use ($search) {
-                        $query->where('year', $search);
+                        $query->where('year', $search)
+                            ->orWhere('name', 'like', '%' . $search . '%');
                     });
             })->paginate(8)->through(fn(Examination $examination) => [
                 "id" => $examination->id,
@@ -91,11 +93,12 @@ class ExaminationController extends Controller
      */
     public function show(Examination $examination)
     {
-        $examination->load([
-            'intakes.students' => function ($query) {
-                $query->where('status', 'In Session');
-            }
-        ]);
+        // $examination->load([
+        //     'intakes.students' => function ($query) {
+        //         $query->where('status', 'In Session');
+        //     }
+        // ]);
+
         $examination = [
             "id" => $examination->id,
             "title" => $examination->title,

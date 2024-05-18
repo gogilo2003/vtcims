@@ -25,7 +25,7 @@ class UpdateTestRequest extends FormRequest
             "id" => ["required", "numeric", "integer", "exists:examination_tests,id"],
             "examination" => ["required", "numeric", "integer", "exists:examinations,id"],
             "title" => ["required", "string", "unique:examination_tests,title," . $this->id . ",id,examination_id," . $this->examination],
-            "outof" => ["required", "numeric"],
+            "outof" => ["required", "numeric", "min:1", "max:100"],
             "taken_on" => ["required", "date"],
         ];
     }

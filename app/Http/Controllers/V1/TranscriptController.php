@@ -31,10 +31,9 @@ class TranscriptController extends Controller
 
         $admission_no = request()->input('admission');
 
-        $transcripts = Student::where('status', 'In Session')
-            ->whereHas('results.test.examination', function ($query) use ($term) {
-                $query->where('term_id', $term->id);
-            })
+        $transcripts = Student::whereHas('results.test.examination', function ($query) use ($term) {
+            $query->where('term_id', $term->id);
+        })
             ->when($admission_no, function ($query) use ($admission_no) {
 
                 $arAdmissionNo = explode('/', $admission_no);

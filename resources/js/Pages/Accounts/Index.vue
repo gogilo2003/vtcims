@@ -12,11 +12,11 @@ const props = defineProps<{
 <template>
     <AuthenticatedLayout title="Accounts Dashboard">
         <div class="flex gap-4 w-full">
-            <div class="p-3 rounded-xl bg-white dark:bg-gray-800" v-for="{ title, amount } in stats">
+            <div class="p-3 rounded-xl bg-white dark:bg-gray-800 basis-1 flex-auto flex flex-col justify-end"
+                v-for="{ title, amount } in stats">
                 <div class="text-primary-500 text-2xl font-light" v-text="formatCurrency(amount)"></div>
-                <div class="text-sm font-semibold uppercase" v-text="title"></div>
+                <div class="text-xs font-medium uppercase" v-text="title"></div>
             </div>
         </div>
-        <pre v-text="stats"></pre>
     </AuthenticatedLayout>
 </template>

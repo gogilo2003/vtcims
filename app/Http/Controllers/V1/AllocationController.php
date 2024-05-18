@@ -208,14 +208,6 @@ class AllocationController extends Controller
         return redirect()->back()->with('success', 'Allocation updated');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Allocation $intakeStaffSubject)
-    {
-        //
-    }
-
     function lessons(AllocationLessonRequest $request, Allocation $allocation)
     {
         $allocation->lessons()->sync($request->lessons);

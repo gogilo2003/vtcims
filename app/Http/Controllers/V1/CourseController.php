@@ -5,6 +5,7 @@ namespace App\Http\Controllers\V1;
 use Inertia\Inertia;
 use App\Models\Staff;
 use App\Models\Course;
+use App\Models\Subject;
 use App\Models\Department;
 use Illuminate\Support\Str;
 use App\Http\Controllers\Controller;
@@ -23,7 +24,7 @@ class CourseController extends Controller
         $courses = Course::when($search, function ($query) use ($search) {
             $query->where('name', 'LIKE', '%' . $search . '%')
                 ->orWhere('code', 'like', '%' . $search . '%');
-        })->with('staff')->paginate(10)->through(fn($item) => [
+        })->with('staff')->paginate(8)->through(fn($item) => [
                 "id" => $item->id,
                 "code" => $item->code,
                 "name" => $item->name,
@@ -47,7 +48,12 @@ class CourseController extends Controller
                             )
                         )
                     ),
-                ]
+                ],
+                "subjects" => $item->subjects->map(fn(Subject $subject) => (object) [
+                    "id" => $subject->id,
+                    "code" => $subject->code,
+                    "name" => $subject->name,
+                ])
             ]);
         $instructors = Staff::whereHas('status', function ($query) {
             $query->where('name', 'current');

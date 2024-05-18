@@ -76,11 +76,6 @@ const intake = computed(() => props.transcript.intake)
                 <div>Mean Grade: <span v-text="grade"></span></div>
                 <div>Overall Remark: <span v-text="remark"></span></div>
             </div>
-            <div class="w-full grid gap-16 grid-cols-3 text-sm font-medium uppercase text-center mt-16">
-                <div class="border-t border-dashed border-gray-800 py-5">HOD's Signature</div>
-                <div class="border-t border-dashed border-gray-800 py-5">Principal's Signature</div>
-                <div class="border-t border-dashed border-gray-800 py-5">Parent/Guardian's Signature</div>
-            </div>
         </div>
     </div>
 </template>

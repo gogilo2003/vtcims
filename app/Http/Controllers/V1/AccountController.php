@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V1;
 
 use Inertia\Inertia;
 use Illuminate\Support\Str;
-use App\Models\FeeTransaction;
 use App\Models\FeeTransactionType;
 use App\Http\Controllers\Controller;
 
@@ -19,8 +18,10 @@ class AccountController extends Controller
 
         $stats = [];
 
-        foreach (FeeTransactionType::all() as $type) {
-            $stats = [
+        $feeTransactionTypes = FeeTransactionType::all();
+
+        foreach ($feeTransactionTypes as $type) {
+            $stats[] = [
                 "title" => Str::title(Str::lower($type->description)),
                 "amount" => $type->fee_transactions->sum('amount')
             ];

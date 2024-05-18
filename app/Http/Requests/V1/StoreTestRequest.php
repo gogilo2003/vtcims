@@ -24,7 +24,7 @@ class StoreTestRequest extends FormRequest
         return [
             "examination" => ["required", "numeric", "integer", "exists:examinations,id"],
             "title" => ["required", "string", "unique:examination_tests,title,null,id,examination_id," . $this->examination],
-            "outof" => ["required", "numeric"],
+            "outof" => ["required", "numeric", "min:1", "max:100"],
             "taken_on" => ["required", "date"],
         ];
     }

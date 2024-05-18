@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Subject extends Model
 {
     public function courses()
     {
-        return $this->belongsToMany('App\Models\Course')->withTimestamps();
+        return $this->belongsToMany(Course::class)->withTimestamps();
     }
 
     public function staff()
     {
-        return $this->belongsToMany('App\Models\Staff')->withTimestamps();
+        return $this->belongsToMany(Staff::class)->withTimestamps();
     }
 
     public function getCourseIdsAttribute()
@@ -29,12 +31,12 @@ class Subject extends Model
 
     public function intake_staff()
     {
-        return $this->hasMany('App\Models\IntakeStaffSubject');
+        return $this->hasMany(IntakeStaffSubject::class);
     }
 
     public function examinations()
     {
-        return $this->hasMany('App\Models\Examination');
+        return $this->hasMany(Examination::class);
     }
 
     /**
@@ -44,6 +46,16 @@ class Subject extends Model
      */
     public function allocations(): HasMany
     {
-        return $this->hasMany(Allocation::class,);
+        return $this->hasMany(Allocation::class, );
+    }
+
+    /**
+     * Get the subject's  name.
+     */
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => Str::title(Str::lower($value)),
+        );
     }
 }

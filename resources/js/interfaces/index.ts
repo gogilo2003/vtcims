@@ -97,10 +97,15 @@ export interface iCourse {
         id: number,
         name: string,
     }> | null | number
-    staff?: Array<{
+    staff?: {
         id: number,
         name: string,
-    }> | null | number
+    } | null | number,
+    subjects?: Array<{
+        id: number,
+        code: string,
+        name: string,
+    }> | null
 }
 export interface iCourses {
     data: Array<iCourse>

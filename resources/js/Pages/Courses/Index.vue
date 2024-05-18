@@ -151,7 +151,7 @@ watch(() => searchVal.value, debounce((value: string) => {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2 flex flex-col gap-2">
                 <ListItem v-for="course in courses.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
-                    <div>
+                    <div class="flex flex-col gap-2">
                         <div v-text="course.name"
                             class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-500">
                         </div>
@@ -170,6 +170,10 @@ watch(() => searchVal.value, debounce((value: string) => {
                                 <span v-text="course.department?.name"
                                     class="text-xs text-gray-500 dark:text-gray-400"></span>
                             </div>
+                        </div>
+                        <div class="text-xs flex gap-2">
+                            <span>Subjects:</span>
+                            <span v-text="course?.subjects?.map(subject => subject.name).join(', ')"></span>
                         </div>
                     </div>
                     <div class="flex gap-2">
