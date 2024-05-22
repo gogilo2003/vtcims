@@ -93,11 +93,18 @@ class ExaminationController extends Controller
      */
     public function show(Examination $examination)
     {
-        // $examination->load([
-        //     'intakes.students' => function ($query) {
-        //         $query->where('status', 'In Session');
-        //     }
-        // ]);
+        $status = request()->input('s') ? true : false;
+        $results = request()->input('r') ? true : false;
+
+        $students = Student::whereIn('intake_id', $examination->intakes->pluck('id')->toArray())
+            ->when($results, function ($query) use ($status, $examination) {
+                $query->whereHas('results', function ($query) use ($examination) {
+                    $query->whereIn('test_id', $examination->tests->pluck('id')->toArray());
+                });
+            })
+            ->when($status, function ($query) use ($status) {
+                $query->where('status', 'In Session');
+            })->get();
 
         $examination = [
             "id" => $examination->id,
@@ -110,7 +117,7 @@ class ExaminationController extends Controller
                 "id" => $test->id,
                 "title" => $test->title,
             ]),
-            "students" => $examination->intakes->flatMap->students->map(
+            "students" => $students->map(
                 function (Student $student) use ($examination) {
 
                     $results = $examination->tests->map(function (Test $test) use ($student) {
@@ -170,7 +177,7 @@ class ExaminationController extends Controller
             )->sortBy('admission_no')->values(),
         ];
 
-        return Inertia::render('Examinations/View', ['examination' => $examination]);
+        return Inertia::render('Examinations/View', ['examination' => $examination, 'status' => $status, 'results' => $results]);
     }
 
     /**
@@ -194,16 +201,29 @@ class ExaminationController extends Controller
         $pdf = App::make('snappy.pdf.wrapper');
         // $examination = Examination::with('tests')->find($id);
         $examination->load('tests');
-        $examination->load(['intakes.students.results']);
+        $examination->load(['intakes']);
         $intakes = implode(', ', $examination->intakes->pluck('name')->toArray());
         $blank = request()->input('blank');
+
+        $status = request()->input('s');
+        $results = request()->input('r');
+
+        $students = Student::whereIn('intake_id', $examination->intakes->pluck('id')->toArray())
+            ->when($results, function ($query) use ($status, $examination) {
+                $query->whereHas('results', function ($query) use ($examination) {
+                    $query->whereIn('test_id', $examination->tests->pluck('id')->toArray());
+                });
+            })
+            ->when($status, function ($query) use ($status) {
+                $query->where('status', 'In Session');
+            })->get();
 
         $data = [
             'examination' => (object) [
                 "id" => $examination->id,
                 "title" => $examination->title,
                 "tests" => $examination->tests,
-                "students" => $examination->intakes->flatMap->students->map(
+                "students" => $students->map(
                     function (Student $student) use ($examination) {
 
                         $results = $examination->tests->map(function (Test $test) use ($student) {
@@ -285,6 +305,6 @@ class ExaminationController extends Controller
         }
         $filename = strtoupper(str_replace('-', '_', str_replace(' ', '-', implode('-', $filename)))) . '.pdf';
 
-        return $pdf->stream($filename);
+        return $pdf->download($filename);
     }
 }
