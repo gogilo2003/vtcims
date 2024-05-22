@@ -109,7 +109,7 @@ class TranscriptController extends Controller
                 ->setOption('no-outline', true)
                 ->loadView($viewName, ['transcripts' => $transcripts, 'term' => $term]);
 
-            return $pdf->stream($name);
+            return $pdf->download($name);
         }
 
         return Inertia::render('Examinations/Transcripts/Index', [

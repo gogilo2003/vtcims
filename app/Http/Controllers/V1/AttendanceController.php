@@ -369,7 +369,7 @@ class AttendanceController extends Controller
 
             // return response($pdfContent);
             $pdf->loadHTML($pdfContent);
-            return $pdf->stream($filename . '.pdf', ["Attachment" => 0]);
+            return $pdf->download($filename . '.pdf', ["Attachment" => 0]);
 
         }
         return redirect()->back()->with('error', 'Allocation not found.');

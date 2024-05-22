@@ -318,7 +318,7 @@ class StudentController extends Controller
             ]);
 
             $filename = str_replace('/', '_', $student->admission_no) . '.pdf';
-            return $pdf->stream($filename);
+            return $pdf->download($filename);
         } else {
             $department = request()->input('d');
             $course = request()->input('c');
@@ -406,7 +406,7 @@ class StudentController extends Controller
                 ->loadView($vieName, $data);
 
             $filename = 'STUDENTS_' . date('d-m-Y') . '.pdf';
-            return $pdf->stream($filename);
+            return $pdf->download($filename);
         }
     }
 
@@ -475,7 +475,7 @@ class StudentController extends Controller
             ->setOption('javascript-delay', 10000)
             ->setOption('enable-smart-shrinking', true)
             ->setOption('no-stop-slow-scripts', true);
-        return $pdf->stream();
+        return $pdf->download();
     }
     protected function mapStudent(Student $student, $base64 = false)
     {

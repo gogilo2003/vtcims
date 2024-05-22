@@ -260,7 +260,7 @@ class StaffController extends Controller
                 ->setPaper('A4')
                 ->setOption('footer-center', 'Page [page] of [toPage]')
                 ->setOption('footer-font-size', 8);
-            return $pdf->stream(strtoupper('STAFF_LIST_' . date('d-M-Y')) . '.pdf');
+            return $pdf->download(strtoupper('STAFF_LIST_' . date('d-M-Y')) . '.pdf');
         }
     }
 }
