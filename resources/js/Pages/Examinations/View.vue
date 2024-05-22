@@ -2,13 +2,14 @@
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue';
 import { iExamination, iNotification } from '../../interfaces/index';
 import Toast from 'primevue/toast';
-import { useForm, Link } from '@inertiajs/vue3';
+import { useForm, Link, router } from '@inertiajs/vue3';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import Icon from '../../Components/Icons/Icon.vue';
-import { ref, watchEffect } from 'vue';
+import { ref, watch, watchEffect } from 'vue';
 import InputNumber from 'primevue/inputnumber';
 import { debounce } from 'lodash';
 import { useToast } from 'primevue/usetoast';
+import InputSwitch from 'primevue/inputswitch';
 
 const toast = useToast()
 
@@ -16,7 +17,7 @@ interface iResult {
     id: number | null
     test_id: number
     score: number | null
-    max?: number
+    max?: number,
 }
 
 interface iStudent {
@@ -31,6 +32,8 @@ interface iStudent {
 const props = defineProps<{
     examination: iExamination
     notification: iNotification
+    status?: boolean
+    results?: boolean
 }>()
 
 const form = useForm<{
@@ -85,17 +88,74 @@ const submit = () => {
     })
 }
 
+const hasResult = ref<boolean>(props?.results)
+const inSession = ref<boolean>(props?.status)
+
 const markList = (blank: boolean = false) => {
-    let options: { id: number | null, blank?: number } = { id: props.examination.id }
-    let url = route('examinations-marklist', options)
+    let options: {
+        blank?: boolean,
+        s?: boolean,
+        r?: boolean
+    } = {}
+
+    if (hasResult.value) {
+        options = { ...options, r: true }
+    }
+
+    if (inSession.value) {
+        options = { ...options, s: true }
+    }
 
     if (blank) {
-        url = url + '?blank=true'
+        options = { ...options, "blank": true }
+    }
+
+    let url = route('examinations-marklist', props.examination.id)
+    let queryParams = new URLSearchParams()
+
+    Object.entries(options).forEach(([paramName, paramValue]) => {
+        queryParams.set(paramName, paramValue.toString());
+    });
+
+    let query = queryParams.toString();
+
+    if (query) {
+        url += '?' + query
     }
 
     window.open(url)
 }
 
+watch(() => hasResult.value, (value) => {
+    let options: { s?: boolean, r?: boolean } = {}
+    if (value) {
+        options = { r: true }
+    }
+    if (inSession.value) {
+        options = { ...options, s: true }
+    }
+
+    router.get(route('examinations-show', props.examination.id), options, {
+        only: ['examination', 'result', 'status'],
+        preserveScroll: true,
+        preserveState: true
+    })
+})
+watch(() => inSession.value, (value) => {
+    let options: { s?: boolean, r?: boolean } = {}
+    if (value) {
+        options = { s: true }
+    }
+    if (hasResult.value) {
+        options = { ...options, r: true }
+    }
+
+    router.get(route('examinations-show', props.examination.id), options, {
+        only: ['examination', 'result', 'status'],
+        preserveScroll: true,
+        preserveState: true
+    })
+})
 
 </script>
 <template>
@@ -130,6 +190,14 @@ const markList = (blank: boolean = false) => {
                     <SecondaryButton v-if="edit" @click="submit">
                         <Icon class="h-4 w-4" type="checkmark" />Save
                     </SecondaryButton>
+                    <label class="flex items-center gap-2">
+                        <InputSwitch v-model="inSession" />
+                        <span>In Session</span>
+                    </label>
+                    <label class="flex items-center gap-2">
+                        <InputSwitch v-model="hasResult" />
+                        <span>Has Results</span>
+                    </label>
                 </div>
             </div>
             <table class="w-full border-collapse border text-sm uppercase">
