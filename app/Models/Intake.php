@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 // Represents a class of students and is named according to course/year/intake series
@@ -41,5 +43,20 @@ class Intake extends Model
     public function allocations(): HasMany
     {
         return $this->hasMany(Allocation::class);
+    }
+
+    public function startDate(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => Carbon::parse($value),
+            set: fn($value) => Carbon::parse($value),
+        );
+    }
+    public function endDate(): Attribute
+    {
+        return new Attribute(
+            get: fn($value) => Carbon::parse($value),
+            set: fn($value) => Carbon::parse($value),
+        );
     }
 }

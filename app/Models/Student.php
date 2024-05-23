@@ -106,4 +106,14 @@ class Student extends Model
     {
         return $this->belongsTo(Guardian::class);
     }
+
+    /**
+     * Get the academic_level that owns the Student
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function academic_level(): BelongsTo
+    {
+        return $this->belongsTo(AcademicLevel::class);
+    }
 }

@@ -75,6 +75,18 @@ class UpdateDatabase extends Command
         //     $this->info('Designations table already has data. Skipping seeder.');
         // }
 
+        $this->call('db:seed', ['--class' => 'AcademicLevelSeeder']);
+        $this->info('Academic Levels seeded successfully.');
+
+        $this->call('db:seed', ['--class' => 'ProgramSeeder']);
+        $this->info('Program seeded successfully.');
+
+        $this->call('db:seed', ['--class' => 'SponsorSeeder']);
+        $this->info('Sponsor seeded successfully.');
+
+        $this->call('db:seed', ['--class' => 'StudentRoleSeeder']);
+        $this->info('Student Role seeded successfully.');
+
         return 0;
     }
 }
