@@ -97,7 +97,7 @@ watch(() => props.photo?.id, (value) => {
                     <div class="relative">
                         <FileUpload :file-limit="1" :show-upload-button="false" :show-cancel-button="false"
                             :custom-upload="true" @upload.prevent="submit" :multiple="false" accept="image/*"
-                            :maxFileSize="1000000" :pt="{
+                            :maxFileSize="5 * 1024 * 1024" :pt="{
         unstyled: true,
         root: { class: 'relative z-0 flex items-center flex-col gap-3 justify-center' },
         content: { class: 'relative mt-4 z-0 p-3 pt-6 h-full w-full flex-1 border border-primary-300 rounded-lg min-h-24' },
@@ -122,8 +122,12 @@ watch(() => props.photo?.id, (value) => {
                 </div>
             </form>
         </div>
+        <div class="w-full h-1 rounded-xl bg-gray-800">
+            <div class="bg-gray-50 h-1" :style="`width: ${form.progress?.toString().concat('%')}`"></div>
+        </div>
         <template #footer>
-            <PrimaryButton @click="submit" :loading="form.processing" :disabled="form.processing">Upload Photo
+            <PrimaryButton @click="submit" :class="{ 'opacity-30': form.processing }" :loading="form.processing"
+                :disabled="form.processing">Upload Photo
             </PrimaryButton>
             <SecondaryButton @click="close(false)">Cancel</SecondaryButton>
         </template>
