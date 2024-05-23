@@ -403,7 +403,7 @@ class StudentController extends Controller
             $pdf->setOrientation('landscape')
                 ->setOption('footer-center', 'Page [page] of [toPage]')
                 ->setOption('footer-font-size', 7)
-                ->loadView($vieName, $data);
+                ->loadView($viewName, $data);
 
             $filename = 'STUDENTS_' . date('d-m-Y') . '.pdf';
             return $pdf->download($filename);
