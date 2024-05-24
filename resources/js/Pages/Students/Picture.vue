@@ -97,7 +97,10 @@ const props = defineProps<{
 }>()
 const emit = defineEmits(['closed', 'saved'])
 
-const form = useForm<iPhoto>({
+const form = useForm<{
+    id: number | null,
+    photo: File | null
+}>({
     id: null,
     photo: null,
 })
@@ -117,9 +120,9 @@ const ptOptions = ref({
     thumbnail: { class: 'w-full max-h-56 object-contain' }
 })
 
-watch(() => props.photo, value => {
-    form.id = value.id
-    form.photo = value.photo
+watch(() => props.photo, (value: iPhoto) => {
+    form.id = value?.id
+    form.photo = null
 })
 
 const submit = () => {
@@ -152,7 +155,7 @@ const input = async (event: any) => {
     const file = event.files[0];
     if (file) {
         const optimizedImage = await optimizeImage(file);
-        form.photo = optimizedImage;
+        form.photo = dataURLtoFile(optimizedImage, 'uploaded-photo.jpg');
     }
 }
 
@@ -162,6 +165,7 @@ const resetErrors = () => {
 
 const close = (value: boolean) => {
     form.photo = null
+    form.reset()
     emit('closed', value)
 }
 
@@ -172,7 +176,7 @@ watch(() => props.show, (value) => {
     visible.value = value
 })
 
-watch(() => props.photo?.id, (value) => {
+watch(() => props.photo?.id, (value: number | null) => {
     form.id = value
 })
 
