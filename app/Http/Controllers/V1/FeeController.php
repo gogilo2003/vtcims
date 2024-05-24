@@ -53,8 +53,6 @@ class FeeController extends Controller
             "name" => sprintf("%s - %s", Str::upper(Str::lower($course->code)), Str::title(Str::lower($course->name))),
         ])->sortBy('name')->values();
 
-
-
         return Inertia::render('Accounts/Fees/Index', [
             'fees' => $fees,
             'terms' => $terms,
@@ -75,7 +73,8 @@ class FeeController extends Controller
         $fee->save();
 
         $students = Student::whereHas('intake', function ($query) use ($fee) {
-            $query->where('course_id', $fee->course_id);
+            $query->where('course_id', $fee->course_id)
+                ->where('end_at', '<', now());
         })->where('status', 'In Session')->get();
 
         $feeTransactionType = FeeTransactionType::where('code', 'FC')->first();

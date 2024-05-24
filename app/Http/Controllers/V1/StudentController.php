@@ -148,10 +148,11 @@ class StudentController extends Controller
             });
         })->when($course = request()->input('c'), function ($query) use ($course) {
             $query->where('course_id', $course);
-        })->orderBy('name', 'DESC')->get()->map(fn($item) => [
+        })->orderBy('name', 'DESC')->get()->map(fn(Intake $item) => [
                 "id" => $item->id,
-                "name" => $item->name
+                "name" => $item->name,
             ]);
+
         $programs = Program::orderBy('name', 'DESC')->get()->map(fn($item) => [
             "id" => $item->id,
             "name" => $item->name
@@ -251,13 +252,18 @@ class StudentController extends Controller
         $student->plwd_details = $request->plwd_details;
 
         $student->save();
+        if ($request->guardian_name || $request->guardian_form || $request->guardian_email) {
 
-        $guardian = $student->guardian;
-        $guardian->name = $request->guardian_name;
-        $guardian->phone = $request->guardian_phone;
-        $guardian->email = $request->guardian_email;
-        $guardian->save();
+            $guardian = $student->guardian ?? new Guardian();
+            $guardian->name = $request->guardian_name;
+            $guardian->phone = $request->guardian_phone;
+            $guardian->email = $request->guardian_email;
+            $guardian->save();
 
+            if (!$student->guardian) {
+                $student->guardian()->attach($guardian);
+            }
+        }
         return redirect()->back()->with('success', 'Student details updated');
     }
 

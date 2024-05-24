@@ -180,7 +180,7 @@ const prepareEndDate = (start: any) => {
 </script>
 <template>
     <Toast position="top-center" />
-    <Modal modal :show="showIntakeDialog">
+    <Modal :show="showIntakeDialog">
         <template #header>
             <div v-text="dialogTitle"></div>
             <button @click="cancel">
