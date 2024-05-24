@@ -23,7 +23,7 @@ class UploadPictureRequest extends FormRequest
     {
         return [
             'id' => 'required|integer|exists:students,id',
-            'photo' => 'required|image',
+            'photo' => 'required|file|image',
         ];
     }
 }
