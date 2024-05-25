@@ -23,6 +23,7 @@ const props = defineProps<{
     programs: null | Array<iItem> | any[],
     sponsors: null | Array<iItem> | any[],
     roles: null | Array<iItem> | any[],
+    academicLevels: null | Array<iItem> | any[],
     years: null | Array<string> | any[],
     errors: Object,
     search?: string

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\V1\StoreStudentRequest;
 use App\Http\Requests\V1\UpdateStudentRequest;
 use App\Http\Requests\V1\UploadPictureRequest;
+use App\Models\AcademicLevel;
 use App\Support\StudentUtil;
 
 class StudentController extends Controller
@@ -67,7 +68,7 @@ class StudentController extends Controller
                     });
                 }
             )->paginate(8)->through(
-                function ($student) {
+                function (Student $student) {
                     $id = $student->id;
                     // dd(StudentUtil::generateFeeSummary($id));
                     return (object) [
@@ -116,6 +117,10 @@ class StudentController extends Controller
                             "name" => $student->role->name,
                             "description" => $student->role->description,
                         ],
+                        "level" => $student->academic_level ? [
+                            "id" => $student->academic_level->id,
+                            "name" => $student->academic_level->name,
+                        ] : null,
                         "status" => $student->status,
                         "guardian" => $student->guardian ? [
                             "id" => $student->guardian->id,
@@ -165,6 +170,10 @@ class StudentController extends Controller
             "id" => $item->id,
             "name" => $item->name
         ]);
+        $academicLevels = AcademicLevel::orderBy('name', 'DESC')->get()->map(fn($item) => [
+            "id" => $item->id,
+            "name" => $item->name
+        ])->sortBy('id')->values();
         $years = DB::table('students')
             ->selectRaw("DISTINCT DATE_FORMAT(date_of_admission,'%Y') as `YEAR`")
             ->orderBy('YEAR', 'DESC')->get()->pluck('YEAR');
@@ -177,6 +186,7 @@ class StudentController extends Controller
             'programs' => $programs,
             'sponsors' => $sponsors,
             'roles' => $roles,
+            'academicLevels' => $academicLevels,
             'years' => $years,
             'search' => $search,
         ]);
@@ -209,6 +219,7 @@ class StudentController extends Controller
         $student->program_id = $request->program;
         $student->sponsor_id = $request->sponsor;
         $student->student_role_id = $request->role;
+        $student->academic_level_id = $request->level;
         $student->status = $request->status;
         $student->plwd = $request->plwd;
         $student->plwd_details = $request->plwd_details;
@@ -247,6 +258,7 @@ class StudentController extends Controller
         $student->program_id = $request->program;
         $student->sponsor_id = $request->sponsor;
         $student->student_role_id = $request->role;
+        $student->academic_level_id = $request->level;
         $student->status = $request->status;
         $student->plwd = $request->plwd;
         $student->plwd_details = $request->plwd_details;

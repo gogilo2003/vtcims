@@ -45,6 +45,7 @@ export interface iStudent {
         address?: string
     } | number | null,
     role: { id: number, name: string, description?: string } | number | null,
+    level: { id: number, name: string } | number | null,
     admission_no?: string | "",
     status: { id: number, name: string } | string | number | null | "",
     fees?: { charged: number, paid: number, balance: number }

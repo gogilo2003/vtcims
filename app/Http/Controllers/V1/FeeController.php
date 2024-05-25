@@ -73,8 +73,7 @@ class FeeController extends Controller
         $fee->save();
 
         $students = Student::whereHas('intake', function ($query) use ($fee) {
-            $query->where('course_id', $fee->course_id)
-                ->where('end_at', '<', now());
+            $query->where('course_id', $fee->course_id);
         })->where('status', 'In Session')->get();
 
         $feeTransactionType = FeeTransactionType::where('code', 'FC')->first();
