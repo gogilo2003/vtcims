@@ -256,7 +256,8 @@ watch(() => props.show, (value) => {
                         <div class="relative z-0" :class="{ 'has-error': form.errors.phone }">
                             <label class="text-sm" :class="{ 'text-red-400': form.errors.phone }"
                                 for="phone">Phone</label>
-                            <InputText id="phone" v-model="form.phone" :invalid="form.errors.phone ? true : false" />
+                            <InputText placeholder="0712345678,0111234567" id="phone" v-model="form.phone"
+                                :invalid="form.errors.phone ? true : false" />
                             <span class="text-red-400 text-xs" v-if="form.errors.phone"
                                 v-text="form.errors.phone"></span>
                         </div>
@@ -296,6 +297,8 @@ watch(() => props.show, (value) => {
                             <span class="text-red-400 text-xs" v-if="form.errors.physical_address"
                                 v-text="form.errors.physical_address"></span>
                         </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                         <div class="relative z-0">
                             <label class="text-sm" :class="{ 'text-red-400': form.errors.date_of_birth }"
                                 for="date_of_birth">Date
@@ -372,8 +375,6 @@ watch(() => props.show, (value) => {
                             <span class="text-red-400 text-xs" v-if="form.errors.role" v-text="form.errors.role"></span>
                         </div>
 
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
 
                         <div class="relative z-0 is-filled is-focused" :class="{ 'has-error': form.errors.status }">
                             <label class="text-sm" :class="{ 'text-red-400': form.errors.status }"
@@ -415,7 +416,7 @@ watch(() => props.show, (value) => {
                         </div>
                     </div>
                     <div class="shadow p-2 rounded border dark:border-gray-800 my-4">
-                        <div>Guardian Details</div>
+                        <div>Parent/Guardian Details</div>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div class="relative md:col-span-3" :class="{ 'has-error': form.errors.plwd_details }">
                                 <label class="text-sm" :class="{ 'text-red-400': form.errors.guardian_name }"
@@ -431,7 +432,7 @@ watch(() => props.show, (value) => {
                                 <label class="text-sm" :class="{ 'text-red-400': form.errors.guardian_phone }"
                                     for="guardian_phone">Phone</label>
                                 <div>
-                                    <InputText v-model="form.guardian_phone"
+                                    <InputText v-model="form.guardian_phone" placeholder="0712345678,0111234567"
                                         :options="[{ id: 1, name: 'Yes' }, { id: 0, name: 'No' }]" optionValue="id"
                                         optionLabel="name" :invalid="form.errors.guardian_phone ? true : false" />
                                 </div>
