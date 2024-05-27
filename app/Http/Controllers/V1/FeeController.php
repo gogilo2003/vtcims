@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreFeeRequest;
 use App\Http\Requests\V1\UpdateFeeRequest;
 use App\Models\FeeTransactionType;
+use App\Models\FeeVoteHead;
 use App\Support\StudentUtil;
 
 class FeeController extends Controller
@@ -72,6 +73,18 @@ class FeeController extends Controller
         $fee->amount = $request->amount;
         $fee->save();
 
+        foreach ($request->voteHeads as $value) {
+            $voteHead = new FeeVoteHead();
+            if ($value['id']) {
+                $voteHead = FeeVoteHead::find($value['id']);
+            }
+
+            $voteHead->title = $value['title'];
+            $voteHead->share = $value['share'];
+            $voteHead->fee_id = $value['fee'];
+            $voteHead->save();
+        }
+
         $students = Student::whereHas('intake', function ($query) use ($fee) {
             $query->where('course_id', $fee->course_id);
         })->where('status', 'In Session')->get();
@@ -95,6 +108,18 @@ class FeeController extends Controller
         $fee->course_id = $request->course;
         $fee->amount = $request->amount;
         $fee->save();
+
+        foreach ($request->voteHeads as $value) {
+            $voteHead = new FeeVoteHead();
+            if ($value['id']) {
+                $voteHead = FeeVoteHead::find($value['id']);
+            }
+
+            $voteHead->title = $value['title'];
+            $voteHead->share = $value['share'];
+            $voteHead->fee_id = $value['fee'];
+            $voteHead->save();
+        }
 
         FeeTransaction::whereHas('transaction_type', function ($query) {
             $query->where('code', 'like', 'FC');

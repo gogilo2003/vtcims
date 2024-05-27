@@ -668,12 +668,19 @@ export interface iTransaction {
     students?: iStudent[]
 }
 
+export interface iVoteHead {
+    id: number | null
+    fee?: number | null
+    title: string | ""
+    share: number
+}
 export interface iFee {
     id: number | null
     term: { id: number, name: string } | number | null
     course: { id: number, name: string } | number | null
     amount: number | null
     transactions?: iTransaction[] | null
+    vote_heads: iVoteHead[] | []
 }
 export interface iFees {
     data: Array<iFee>
