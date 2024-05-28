@@ -55,7 +55,18 @@ class User extends Authenticatable
         if ($this->isAdmin()) {
             return true;
         }
-        return false;
+
+        $permissions = [];
+        $strPermissions = "";
+
+        foreach ($this->roles as $role) {
+            $strPermissions .= "," . $role->permissions;
+        }
+
+        $permissions = collect(explode(",", $strPermissions))->unique();
+        // dd($permission, $strPermissions, $permissions, $permissions->contains($permission));
+
+        return $permissions->contains($permission);
     }
 
     /**
