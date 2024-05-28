@@ -64,7 +64,6 @@ class User extends Authenticatable
         }
 
         $permissions = collect(explode(",", $strPermissions))->unique();
-        // dd($permission, $strPermissions, $permissions, $permissions->contains($permission));
 
         return $permissions->contains($permission);
     }
