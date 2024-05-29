@@ -32,6 +32,10 @@ class StoreFeeRequest extends FormRequest
             ],
             'course' => 'required|exists:courses,id',
             'amount' => 'required|numeric',
+            'vote_heads' => ['required', 'min:1'],
+            'vote_heads.*.amount' => ['numeric'],
+            'vote_heads.*.share' => ['numeric'],
+            'vote_heads.*.title' => ['string'],
         ];
     }
 

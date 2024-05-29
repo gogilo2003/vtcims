@@ -670,7 +670,7 @@ export interface iTransaction {
 
 export interface iVoteHead {
     id: number | null
-    fee?: number | null
+    amount: number
     title: string | ""
     share: number
 }

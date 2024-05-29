@@ -42,6 +42,12 @@ class FeeController extends Controller
                     "name" => sprintf("%s - %s", Str::upper(Str::lower($fee->course->code)), Str::title(Str::lower($fee->course->name))),
                 ],
                 "amount" => $fee->amount,
+                "vote_heads" => $fee->voteHeads->map(fn(FeeVoteHead $voteHead) => [
+                    "id" => $voteHead->id,
+                    "title" => $voteHead->title,
+                    "share" => $voteHead->share,
+                    "amount" => $voteHead->amount,
+                ])
             ]);
 
         $terms = Term::all()->map(fn(Term $term) => [
@@ -73,7 +79,7 @@ class FeeController extends Controller
         $fee->amount = $request->amount;
         $fee->save();
 
-        foreach ($request->voteHeads as $value) {
+        foreach ($request->vote_heads as $value) {
             $voteHead = new FeeVoteHead();
             if ($value['id']) {
                 $voteHead = FeeVoteHead::find($value['id']);
@@ -81,7 +87,8 @@ class FeeController extends Controller
 
             $voteHead->title = $value['title'];
             $voteHead->share = $value['share'];
-            $voteHead->fee_id = $value['fee'];
+            $voteHead->amount = $value['amount'];
+            $voteHead->fee_id = $fee->id;
             $voteHead->save();
         }
 
@@ -109,7 +116,15 @@ class FeeController extends Controller
         $fee->amount = $request->amount;
         $fee->save();
 
-        foreach ($request->voteHeads as $value) {
+        $voteHeadIds = collect($request->vote_heads)->filter(fn($vh) => $vh['id'])->pluck('id')->values()->toArray();
+
+        $deletedVoteHeads = FeeVoteHead::where('fee_id', $fee->id)->whereNotIn('id', $voteHeadIds)->get();
+        if ($deletedVoteHeads) {
+            foreach ($deletedVoteHeads as $voteHead) {
+                $voteHead->delete();
+            }
+        }
+        foreach ($request->vote_heads as $value) {
             $voteHead = new FeeVoteHead();
             if ($value['id']) {
                 $voteHead = FeeVoteHead::find($value['id']);
@@ -117,7 +132,8 @@ class FeeController extends Controller
 
             $voteHead->title = $value['title'];
             $voteHead->share = $value['share'];
-            $voteHead->fee_id = $value['fee'];
+            $voteHead->amount = $value['amount'];
+            $voteHead->fee_id = $fee->id;
             $voteHead->save();
         }
 
