@@ -17,15 +17,18 @@ return new class extends Migration {
             });
         } catch (Exception $exception) {
         }
-        Schema::table('fee_vote_heads', function (Blueprint $table) {
-            $table->dropColumn('id');
-        });
-        Schema::table('fee_vote_heads', function (Blueprint $table) {
-            $table->id()->first();
-        });
-        Schema::table('fee_transactions', function (Blueprint $table) {
-            $table->unsignedBigInteger('fee_vote_head_id')->nullable()->change();
-        });
+        try {
+            Schema::table('fee_vote_heads', function (Blueprint $table) {
+                $table->dropColumn('id');
+            });
+            Schema::table('fee_vote_heads', function (Blueprint $table) {
+                $table->id()->first();
+            });
+            Schema::table('fee_transactions', function (Blueprint $table) {
+                $table->unsignedBigInteger('fee_vote_head_id')->nullable()->change();
+            });
+        } catch (Exception $exception) {
+        }
         Schema::enableForeignKeyConstraints();
     }
 
