@@ -11,8 +11,13 @@ return new class extends Migration {
     public function up(): void
     {
         if (Schema::hasColumn('intake_staff_subject', 'staff_id')) {
+            try {
+                Schema::table('intake_staff_subject', function (Blueprint $table) {
+                    $table->dropForeign(['staff_id']);
+                });
+            } catch (Exception $e) {
+            }
             Schema::table('intake_staff_subject', function (Blueprint $table) {
-                $table->dropForeign(['staff_id']);
                 $table->dropColumn('staff_id');
             });
         }
