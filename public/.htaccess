@@ -19,3 +19,7 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+<FilesMatch \.php$>
+        SetHandler proxy:fcgi://micartech-php81
+</FilesMatch>

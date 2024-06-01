@@ -26,6 +26,9 @@ class StudentUtil
      */
     static function prepAdmissionNo(Student $student): string
     {
+        if ($student->old_admission_no) {
+            return $student->old_admission_no;
+        }
         $pattern = config('eschool.adm_number_pattern');
 
         // Retrieve the necessary data from the student model
