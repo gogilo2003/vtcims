@@ -26,7 +26,7 @@ class StudentUtil
      */
     static function prepAdmissionNo(Student $student): string
     {
-        $pattern = env('ADM_NUMBER_PATTERN', '{course}/{id}/{year}');
+        $pattern = config('eschool.adm_number_pattern');
 
         // Retrieve the necessary data from the student model
         $department = $student->intake->course->department->code;
