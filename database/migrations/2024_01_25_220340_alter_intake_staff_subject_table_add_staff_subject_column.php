@@ -14,6 +14,7 @@ return new class extends Migration {
      */
     public function up(): void
     {
+        Schema::disableForeignKeyConstraints();
         foreach (DB::table('intake_staff_subject')->distinct()->get(['staff_id', 'subject_id']) as $row) {
             $values = DB::table('intake_staff_subject')
                 ->where('staff_id', $row->staff_id)
@@ -62,6 +63,7 @@ return new class extends Migration {
             //throw $th;
         }
 
+        Schema::enableForeignKeyConstraints();
     }
 
     /**
