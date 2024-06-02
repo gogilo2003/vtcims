@@ -24,8 +24,8 @@ class StoreLessonRequest extends FormRequest
         return [
             "title" => ["required", "string", "unique:lessons,title"],
             "day" => ["required", "string"],
-            "start_at" => ["required", "time"],
-            "end_at" => ["required", "time"],
+            "start_at" => ["required", "string"],
+            "end_at" => ["required", "string"],
         ];
     }
 }

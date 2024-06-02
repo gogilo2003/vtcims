@@ -25,8 +25,8 @@ class UpdateLessonRequest extends FormRequest
             "id" => ["required", "numeric", "integer", "exists:lessons,id"],
             "title" => ["required", "string", "unique:lessons,title," . $this->id . ",id"],
             "day" => ["required", "string"],
-            "start_at" => ["required", "time"],
-            "end_at" => ["required", "time"],
+            "start_at" => ["required", "string"],
+            "end_at" => ["required", "string"],
         ];
     }
 }
