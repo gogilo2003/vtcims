@@ -14,9 +14,9 @@ class IntakeSeeder extends Seeder
      */
     public function run(): void
     {
-        $startYear = env('START_YEAR', 2022);
+        $startYear = env('VTCIMS_START_YEAR', 2022);
         $endYear = date('Y');
-        $intakeMonths = explode(",", strtoupper(strtolower(env('INTAKE_MONTHS', 'Jan,May,Sep'))));
+        $intakeMonths = explode(",", strtoupper(strtolower(env('VTCIMS_INTAKE_MONTHS', 'Jan,May,Sep'))));
 
         $courses = Course::all();
 
