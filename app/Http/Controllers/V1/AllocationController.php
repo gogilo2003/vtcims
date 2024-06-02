@@ -33,8 +33,8 @@ class AllocationController extends Controller
                     ->orWhere('middle_name', 'LIKE', "%$search%");
             })->orWhereHas('subject', function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%$search%");
-                // })->orWhereHas('intakes', function ($query) use ($search) {
-                //     $query->where('name', 'LIKE', "%$search%");
+            })->orWhereHas('intakes', function ($query) use ($search) {
+                $query->where('name', 'LIKE', "%$search%");
             })->orWhereHas('term', function ($query) use ($search) {
                 $query->where('name', 'LIKE', "%$search%")
                     ->orWhere('year', $search);
