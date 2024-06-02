@@ -11,7 +11,7 @@ class UpdateAllocationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return request()->user()->isAdmin() || request()->user()->hasPermission('allocation-update');
+        return request()->user()->isAdmin() || request()->user()->hasPermission('allocations-update');
     }
 
     /**

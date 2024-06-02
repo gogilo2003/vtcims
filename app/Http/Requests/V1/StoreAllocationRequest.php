@@ -11,7 +11,7 @@ class StoreAllocationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return request()->user()->isAdmin() || request()->user()->hasPermission('allocation-store');
+        return request()->user()->isAdmin() || request()->user()->hasPermission('allocations-store');
     }
 
     /**
