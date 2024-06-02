@@ -49,15 +49,17 @@ return new class extends Migration {
 
 
         // Update the new staff_subject_id field with the id from staff_subject table
-        foreach (StaffSubject::all() as $item) {
+        if (Schema::hasColumn('intake_staff_subject', 'staff_id')) {
+            foreach (StaffSubject::all() as $item) {
 
-            $allocations = IntakeStaffSubject::where('staff_id', $item->staff_id)
-                ->where('subject_id', $item->subject_id)
-                ->get();
+                $allocations = IntakeStaffSubject::where('staff_id', $item->staff_id)
+                    ->where('subject_id', $item->subject_id)
+                    ->get();
 
-            foreach ($allocations as $allocation) {
-                $allocation->staff_subject_id = $item->id;
-                $allocation->save();
+                foreach ($allocations as $allocation) {
+                    $allocation->staff_subject_id = $item->id;
+                    $allocation->save();
+                }
             }
         }
         try {
