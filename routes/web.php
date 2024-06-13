@@ -232,8 +232,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('transactions')->name('-transactions')->controller(FeeTransactionController::class)->group(function () {
             Route::get('', 'index');
             Route::post('', 'store')->name('-store');
-            Route::patch('{fee}', 'update')->name('-update');
-            Route::delete('{fee}', 'destroy')->name('-destroy');
+            Route::patch('{fee_transaction}', 'update')->name('-update');
+            Route::delete('{fee_transaction}', 'destroy')->name('-destroy');
+            Route::get('{fee_transaction}', 'download')->name('-download');
         });
         Route::prefix('invoices')->name('-invoices')->controller(InvoiceController::class)->group(function () {
             Route::get('', 'index');

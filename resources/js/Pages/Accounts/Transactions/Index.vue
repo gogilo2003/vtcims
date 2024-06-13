@@ -49,6 +49,11 @@ const onClosePayment = () => {
 const feePayment = () => {
     showPaymentDialog.value = true
 }
+
+const downloadReceipt = (id: number) => {
+    let url = route('accounts-transactions-download', id)
+    window.location = url
+}
 </script>
 <template>
     <Toast position="top-center" />
@@ -79,6 +84,12 @@ const feePayment = () => {
                         <span v-text="`Transaction Date: ${transaction.date}`"></span>
                     </div>
                     <div class="text-xs text-gray-600 dark:text-gray-500" v-text="transaction.particulars"></div>
+                </div>
+                <div>
+                    <SecondaryButton v-if="transaction.receipt" @click="downloadReceipt(transaction.id)">
+                        <Icon class="h-4 w-4" type="download" />
+                        <span>Receipt</span>
+                    </SecondaryButton>
                 </div>
             </ListItem>
             <Paginator :items="transactions" />

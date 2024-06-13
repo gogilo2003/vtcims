@@ -705,6 +705,7 @@ export interface iFeeTransaction {
     mode: { id: number, name: string } | number | null
     amount: number | null
     particulars: string
+    receipt: boolean
     date: Date
 }
 export interface iFeeTransactions {

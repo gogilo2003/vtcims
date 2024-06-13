@@ -4,12 +4,15 @@ namespace App\Http\Controllers\V1;
 
 use App\Models\Fee;
 use Inertia\Inertia;
+use App\Support\Util;
 use App\Models\Student;
 use Illuminate\Support\Str;
 use App\Support\StudentUtil;
 use App\Models\FeeTransaction;
+use Illuminate\Support\Carbon;
 use App\Models\FeeTransactionMode;
 use App\Models\FeeTransactionType;
+use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreFeeTransactionRequest;
 use App\Http\Requests\V1\UpdateFeeTransactionRequest;
@@ -61,10 +64,12 @@ class FeeTransactionController extends Controller
                             });
                         });
                     });
+
                     $query->orWhere('id', $id);
                 }
             });
-        })->paginate(8)->through(fn(FeeTransaction $feeTransaction) => [
+        })->paginate(8)
+            ->through(fn(FeeTransaction $feeTransaction) => [
                 "id" => $feeTransaction->id,
                 "particulars" => $feeTransaction->particulars,
                 "amount" => $feeTransaction->amount,
@@ -95,21 +100,24 @@ class FeeTransactionController extends Controller
                     "id" => $feeTransaction->transaction_mode->id,
                     "name" => $feeTransaction->transaction_mode->name,
                 ],
+                "receipt" => $feeTransaction->transaction_type->code == 'FP' ? true : false,
                 "date" => $feeTransaction->created_at->isoFormat('ddd, D MMM Y HH:mm:s A'),
             ]);
 
-        $students = Student::where('status', 'In Session')->get()->map(fn(Student $student) => [
-            "id" => $student->id,
-            "name" => trim(
-                sprintf(
-                    "%s - %s%s %s",
-                    StudentUtil::prepAdmissionNo($student),
-                    Str::title(Str::lower($student->first_name)),
-                    Str::title(Str::lower($student->middle_name ? " " . $student->middle_name : '')),
-                    Str::title(Str::lower($student->surname))
+        $students = Student::where('status', 'In Session')
+            ->get()
+            ->map(fn(Student $student) => [
+                "id" => $student->id,
+                "name" => trim(
+                    sprintf(
+                        "%s - %s%s %s",
+                        StudentUtil::prepAdmissionNo($student),
+                        Str::title(Str::lower($student->first_name)),
+                        Str::title(Str::lower($student->middle_name ? " " . $student->middle_name : '')),
+                        Str::title(Str::lower($student->surname))
+                    )
                 )
-            )
-        ])->sortBy('name')->values();
+            ])->sortBy('name')->values();
 
         $transaction_types = FeeTransactionType::all()->map(fn(FeeTransactionType $ftp) => [
             "id" => $ftp->id,
@@ -160,6 +168,38 @@ class FeeTransactionController extends Controller
         return redirect()->back()->with('success', sprintf("%s transaction posted", $feeTransactionType->description));
     }
 
+    /**
+     * Download in pdf the selected fee transaction record
+     * @param \App\Models\FeeTransaction $feeTransaction
+     * @return void
+     */
+    public function download(FeeTransaction $feeTransaction)
+    {
+
+        $viewName = 'pdf.transactions.receipt';
+        if (file_exists(resource_path('views/pdf/custom/transactions/receipt'))) {
+            $viewName = 'pdf.custom.transactions.receipt';
+        }
+
+        $data = [
+            'number' => sprintf("#%s", str_pad($feeTransaction->id, 6, "0", STR_PAD_LEFT)),
+            'description' => $feeTransaction->particulars,
+            'amount' => 'Ksh ' . number_format($feeTransaction->amount),
+            'txDate' => Carbon::parse($feeTransaction->created_at)->isoFormat('ddd, D MMM, Y h:m:s a'),
+            'logo' => Util::getImageBase64(public_path('logo.png')),
+        ];
+        $pdf = App::make('snappy.pdf.wrapper');
+
+        $pdf->setOption("page-width", "58mm")
+            ->setOption("page-height", "150mm")
+            ->setOption("margin-left", 0)
+            ->setOption("margin-right", 0)
+            // ->setOption("footer-center", "Page [page] of [toPage]")
+            ->setOption("footer-font-size", 7)
+            ->loadView($viewName, $data);
+
+        return $pdf->download(sprintf('Receipt-%d.pdf', $feeTransaction->id));
+    }
     /**
      * Display the specified resource.
      */

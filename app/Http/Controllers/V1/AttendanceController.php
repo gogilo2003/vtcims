@@ -250,29 +250,36 @@ class AttendanceController extends Controller
         $filename = "";
 
         if ($allocation) {
-            $allocation->load('intakes.students');
+            $allocation->load([
+                'intakes.students' => function ($query) {
+                    $query->where('status', 'In Session');
+                }
+            ]);
             $allocation->load('staff');
             $allocation->load('term');
             $allocation->load('subject');
 
             $filename = Str::upper(Str::lower(Str::replace(" ", "_", sprintf("%s %s %s", $allocation->subject->code, $allocation->term->year, $allocation->term->name))));
-            $students = $allocation->intakes->flatMap->students->map(function (Student $item) {
-                return (object) [
-                    "admission_no" => StudentUtil::prepAdmissionNo($item),
-                    "name" => Str::upper(
-                        Str::lower(
-                            sprintf(
-                                "%s%s %s",
-                                $item->first_name,
-                                $item->middle_name ? ' ' . $item->middle_name : '',
-                                $item->surname,
+            $students = $allocation->intakes
+                ->flatMap
+                ->students
+                ->map(function (Student $item) {
+                    return (object) [
+                        "admission_no" => StudentUtil::prepAdmissionNo($item),
+                        "name" => Str::upper(
+                            Str::lower(
+                                sprintf(
+                                    "%s%s %s",
+                                    $item->first_name,
+                                    $item->middle_name ? ' ' . $item->middle_name : '',
+                                    $item->surname,
+                                )
                             )
-                        )
-                    ), //Str::upper(Str::lower(sprintf("%s%s%s", $item->first_name, $item->middle_name, $item->surname)))
-                    "gender" => $item->gender ? 'Female' : 'Male',
-                    "plwd" => $item->plwd ? 'Yes' : 'No'
-                ];
-            });
+                        ), //Str::upper(Str::lower(sprintf("%s%s%s", $item->first_name, $item->middle_name, $item->surname)))
+                        "gender" => $item->gender ? 'Female' : 'Male',
+                        "plwd" => $item->plwd ? 'Yes' : 'No'
+                    ];
+                });
 
             // Fetch logo paths from the configuration
             $logos = collect(config('eschool.logo'))->map(function ($logo) {

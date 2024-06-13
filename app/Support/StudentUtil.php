@@ -371,10 +371,11 @@ class StudentUtil
             Str::title(
                 Str::lower(
                     sprintf(
-                        "%s%s %s",
+                        "%s%s %s(%s)",
                         $student->first_name,
                         $student->middle_name ? " " . $student->middle_name : '',
-                        $student->surname
+                        $student->surname,
+                        StudentUtil::prepAdmissionNo($student)
                     )
                 )
             ),

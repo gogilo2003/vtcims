@@ -78,4 +78,19 @@ final class Util
 
         return collect($routes->sortBy('name')->values()->all());
     }
+
+    static function getImageBase64($path)
+    {
+        $exists = file_exists($path);
+
+        // Ensure the file exists
+        if ($exists) {
+            $file = file_get_contents($path);
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($file);
+            return $base64;
+        }
+
+        return null;
+    }
 }
