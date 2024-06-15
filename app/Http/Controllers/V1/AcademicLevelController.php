@@ -1,11 +1,13 @@
 <?php
+namespace App\Http\Controllers\V1;
 
-namespace App\Http\Controllers;
 
+
+use Inertia\Inertia;
 use App\Models\AcademicLevel;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\StoreAcademicLevelRequest;
 use App\Http\Requests\V1\UpdateAcademicLevelRequest;
-use Inertia\Inertia;
 
 class AcademicLevelController extends Controller
 {
