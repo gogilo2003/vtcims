@@ -32,6 +32,7 @@ use App\Http\Controllers\V1\ExaminationController;
 use App\Http\Controllers\V1\StaffStatusController;
 use App\Http\Controllers\V1\StudentRoleController;
 use App\Http\Controllers\V1\FeeTransactionController;
+use App\Http\Controllers\V1\TradeAreaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +95,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('', [JobGroupController::class, 'store'])->name('-store');
             Route::patch('{job_group}', [JobGroupController::class, 'update'])->name('-update');
             Route::delete('{job_group}', [JobGroupController::class, 'destroy'])->name('-destroy');
+        });
+        Route::prefix('trade_areas')->name('-trade_areas')->controller(TradeAreaController::class)->group(function () {
+            Route::get('', 'index');
+            Route::post('', 'store')->name('-store');
+            Route::patch('{trade_area}', 'update')->name('-update');
+            Route::delete('{trade_area}', 'destroy')->name('-destroy');
         });
         Route::prefix('members')->name('-members')->group(function () {
             Route::get('', [StaffController::class, 'index']);

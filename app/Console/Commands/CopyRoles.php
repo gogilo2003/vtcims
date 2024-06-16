@@ -37,7 +37,7 @@ class CopyRoles extends Command
                 });
                 $this->info('Copy Admin Roles Done');
             } else {
-                $this->info('Users table already has data. Skipping...');
+                $this->info('Roles table already has data. Skipping...');
             }
         }
         return 0;

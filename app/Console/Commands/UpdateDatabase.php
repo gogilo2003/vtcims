@@ -87,6 +87,9 @@ class UpdateDatabase extends Command
         $this->call('db:seed', ['--class' => 'StudentRoleSeeder']);
         $this->info('Student Role seeded successfully.');
 
+        $this->call('db:seed', ['--class' => 'TradeAreaSeeder']);
+        $this->info('Trade Areas seeded successfully.');
+
         return 0;
     }
 }

@@ -70,6 +70,10 @@ export const links: iMenu[] = [
                 name: "staff-designations",
                 caption: "Designations"
             },
+            {
+                name: "staff-trade_areas",
+                caption: "Trade Areas"
+            },
         ]
     },
     {

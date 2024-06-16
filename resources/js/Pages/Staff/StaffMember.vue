@@ -40,6 +40,7 @@ const form = useForm<iStaff>({
     role: null,
     status: null,
     teach: null,
+    trade_area: null,
 })
 
 const page = usePage()
@@ -50,6 +51,7 @@ const statuses = computed<iItem[]>((): Array<iItem> => page?.props?.statuses)
 const employers = computed<iItem[]>((): Array<iItem> => page?.props?.employers)
 const job_groups = computed<iItem[]>((): Array<iItem> => page?.props?.job_groups)
 const designations = computed<iItem[]>((): Array<iItem> => page?.props?.designations)
+const trade_areas = computed<iItem[]>((): Array<iItem> => page?.props?.trade_areas)
 
 const genderOptions = ref([
     { value: "Male", text: 'Male' },
@@ -81,6 +83,7 @@ watch((): iStaff => props.member, (value: iStaff) => {
     form.teach = value.teach
     form.job_group = value.job_group?.id
     form.designation = value.designation?.id
+    form.trade_area = value.trade_area?.id
 
 })
 
@@ -305,6 +308,15 @@ watch(() => props.show, (value) => {
                             <Dropdown id="designation" :options="designations" v-model="form.designation"
                                 option-value="id" option-label="name" />
                             <span class="text-red-400" v-if="page.props.errors.designation"
+                                v-text="page.props.errors.active"></span>
+                        </div>
+                        <div class="relative z-0 is-filled is-focused"
+                            :class="{ 'has-error': page.props.errors.trade_area }">
+                            <label :class="{ 'text-red-400': page.props.errors.trade_area }" for="trade_area">Trade
+                                Area</label>
+                            <Dropdown id="trade_area" :options="trade_areas" v-model="form.trade_area" option-value="id"
+                                option-label="name" />
+                            <span class="text-red-400" v-if="page.props.errors.trade_area"
                                 v-text="page.props.errors.active"></span>
                         </div>
                     </div>

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\V1\StoreStaffRequest;
 use App\Http\Requests\V1\UpdateStaffRequest;
 use App\Http\Requests\V1\UploadStaffMemberPictureRequest;
+use App\Models\TradeArea;
 
 class StaffController extends Controller
 {
@@ -67,6 +68,10 @@ class StaffController extends Controller
                     "id" => $member->designation->id,
                     "name" => $member->designation->name,
                 ] : null,
+                "trade_area" => $member->trade_area ? [
+                    "id" => $member->trade_area->id,
+                    "name" => $member->trade_area->name,
+                ] : null,
                 "status" => [
                     "id" => $member->status->id,
                     "name" => $member->status->name,
@@ -98,6 +103,10 @@ class StaffController extends Controller
             "id" => $designation->id,
             "name" => $designation->name,
         ]);
+        $trade_areas = TradeArea::all()->map(fn(TradeArea $tradeArea) => [
+            "id" => $tradeArea->id,
+            "name" => $tradeArea->name,
+        ]);
 
         return Inertia::render("Staff/Index", [
             "members" => $members,
@@ -106,6 +115,7 @@ class StaffController extends Controller
             'employers' => $employers,
             'job_groups' => $job_groups,
             'designations' => $designations,
+            'trade_areas' => $trade_areas,
             "search" => $search
         ]);
     }
@@ -136,6 +146,7 @@ class StaffController extends Controller
         $staff->plwd = $request->plwd;
         $staff->job_group_id = $request->job_group;
         $staff->designation_id = $request->designation;
+        $staff->trade_area_id = $request->trade_area;
 
         $staff->save();
 
@@ -166,6 +177,7 @@ class StaffController extends Controller
         $staff->plwd = $request->plwd;
         $staff->job_group_id = $request->job_group;
         $staff->designation_id = $request->designation;
+        $staff->trade_area_id = $request->trade_area;
 
         $staff->save();
 

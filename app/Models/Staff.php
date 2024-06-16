@@ -171,4 +171,14 @@ class Staff extends Model
     {
         return $this->belongsTo(Designation::class);
     }
+
+    /**
+     * Get the trade_area that owns the Staff
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function trade_area(): BelongsTo
+    {
+        return $this->belongsTo(TradeArea::class);
+    }
 }

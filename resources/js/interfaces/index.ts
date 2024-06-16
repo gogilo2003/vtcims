@@ -176,6 +176,7 @@ export interface iStaff {
     job_group?: { id: number, name: string } | number | null,
     designation?: { id: number, name: string } | number | null,
     status?: { id: number, name: string } | number | null,
+    trade_area?: { id: number, name: string } | number | null,
     teach?: boolean | null,
     user?: { id: number, name: string, email: string } | number | null,
 }
@@ -757,6 +758,28 @@ export interface iUser {
 }
 export interface iUsers {
     data: Array<iUser>
+    current_page: number,
+    first_page_url: string | null,
+    from: number,
+    last_page: number,
+    last_page_url: string | null,
+    links: Array<iLink>,
+    next_page_url: string | null,
+    path: string | null,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number,
+}
+
+export interface iTradeArea {
+    id: number | null
+    name: string
+    description: string
+    staff: number[] | { id: number, name: string }[] | [] | iStaff[]
+}
+export interface iTradeAreas {
+    data: Array<iTradeArea>
     current_page: number,
     first_page_url: string | null,
     from: number,

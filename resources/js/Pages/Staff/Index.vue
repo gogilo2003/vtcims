@@ -23,6 +23,7 @@ const props = defineProps<{
     employers: Array<iItem>,
     job_groups: Array<iItem>,
     designations: Array<iItem>,
+    trade_areas: Array<iItem>,
     errors: Object,
     search?: string | null,
     notification: {
@@ -56,6 +57,8 @@ const newStaffMember = () => {
         gender: null,
         plwd: false,
         role: null,
+        trade_area: null,
+        designation: null,
         status: null,
         teach: null,
         user: null,
