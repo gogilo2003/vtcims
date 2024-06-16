@@ -21,13 +21,14 @@ class SubjectController extends Controller
     {
         $search = request()->input('search');
 
-        $subjects = Subject::when($search, function ($query) use ($search) {
+        $subjects = Subject::orderBy('name', 'ASC')->when($search, function ($query) use ($search) {
             $query->where('name', 'LIKE', '%' . $search . '%')
                 ->orWhere('code', 'LIKE', '%' . $search . '%');
         })->with('courses')->paginate(10)->through(fn($item) => [
                 "id" => $item->id,
                 "code" => $item->code,
                 "name" => $item->name,
+                "examinable" => $item->examinable,
                 "courses" => $item->courses->map(fn($item) => [
                     "id" => $item->id,
                     "code" => $item->code,
@@ -55,6 +56,7 @@ class SubjectController extends Controller
 
         $subject->name = $request->name;
         $subject->code = $request->code;
+        $subject->examinable = $request->examinable;
 
         $subject->save();
 
@@ -81,6 +83,7 @@ class SubjectController extends Controller
     {
         $subject->name = $request->name;
         $subject->code = $request->code;
+        $subject->examinable = $request->examinable;
 
         $subject->save();
         if ($request->has('courses')) {

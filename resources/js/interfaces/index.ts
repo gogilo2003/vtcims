@@ -127,6 +127,7 @@ export interface iSubject {
     id: number | null,
     code: string,
     name: string,
+    examinable: boolean,
     courses: Array<{
         id: number,
         code: string,

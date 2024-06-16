@@ -215,7 +215,7 @@ class StudentUtil
         }
 
         // Get subjects for the student's course
-        $subjects = Subject::whereHas('courses', function ($query) use ($student) {
+        $subjects = Subject::where('examinable', 1)->whereHas('courses', function ($query) use ($student) {
             $query->where('courses.id', $student->intake->course_id);
         })->get();
 

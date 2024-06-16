@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AuthenticatedLayout from '../../Layouts/AuthenticatedLayout.vue'
-import { iInstructor, iSubject, iSubjects, iNotification, iItem } from '../../interfaces/index';
+import { iSubject, iSubjects, iNotification, iItem } from '../../interfaces/index';
 import Paginator from '../../Components/Paginator.vue';
 import SecondaryButton from '../../Components/SecondaryButton.vue';
 import PrimaryButton from '../../Components/PrimaryButton.vue';
@@ -15,6 +15,7 @@ import Toast from 'primevue/toast'
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import MultiSelect from 'primevue/multiselect';
+import InputSwitch from 'primevue/inputswitch';
 
 const props = defineProps<{
     subjects: iSubjects
@@ -29,16 +30,20 @@ const form = useForm<iSubject>({
     id: null,
     code: "",
     name: "",
+    examinable: true,
     courses: [],
 })
 const edit = ref(false)
 const title = ref('New Subject')
 
-const newSubject = () => { }
+const newSubject = () => {
+    cancel()
+}
 const editSubject = (subject: iSubject) => {
     form.id = subject.id
     form.code = subject.code
     form.name = subject.name
+    form.examinable = subject.examinable
     form.courses = subject.courses.map(course => course.id)
 
     edit.value = true
@@ -151,10 +156,6 @@ const deleteSubject = (id: number) => {
     <Toast position="top-center" />
     <AuthenticatedLayout title="Subjects">
         <div class="flex items-center justify-between gap-2 mb-3 md:pb-8 ">
-            <SecondaryButton @click="newSubject">
-                <Icon type="add" />
-                <span class="hidden md:inline-flex">New Subject</span>
-            </SecondaryButton>
             <div>
                 <span class="relative">
                     <span class="pi pi-search absolute top-[50%] -translate-y-[50%] left-2 opacity-50"></span>
@@ -162,13 +163,20 @@ const deleteSubject = (id: number) => {
                         :pt="{ root: { class: 'rounded-full focus:ring-primary-500 text-surface-600 dark:text-surface-200 bg-surface-0 dark:bg-surface-700' } }" />
                 </span>
             </div>
+            <SecondaryButton @click="newSubject">
+                <Icon type="add" />
+                <span class="hidden md:inline-flex">New Subject</span>
+            </SecondaryButton>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="md:col-span-2 flex flex-col gap-2">
                 <ListItem v-for="subject in subjects.data" class="px-4 py-2 rounded-lg shadow-lg bg-white">
                     <div>
                         <div v-text="subject.name"
-                            class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-500">
+                            class="uppercase text-sm font-semibold text-gray-800 dark:text-primary-500" :class="{
+                        'text-gray-900': subject.examinable,
+                        'text-red-600': !subject.examinable
+                    }">
                         </div>
                         <div class="text-xs flex gap-3">
                             <div class="flex gap-1"><span class="font-medium">CODE:</span>
@@ -208,6 +216,13 @@ const deleteSubject = (id: number) => {
                         <InputLabel value="Subject Name" />
                         <InputText v-model="form.name" />
                         <InputError :message="form.errors.name" />
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2">
+                            <InputSwitch v-model="form.examinable" />
+                            <InputLabel value="Examinable" />
+                        </div>
+                        <InputError :message="form.errors.examinable" />
                     </div>
                     <div class="mb-4">
                         <InputLabel value="Courses" />
